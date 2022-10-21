@@ -67,3 +67,68 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+model Manufacturer {
+  id          String      @id @default(cuid())
+  name        String      @unique
+  skiFamilies SkiFamily[]
+  Ski         Ski[]
+}
+
+model SkiFamily {
+  id             String       @id @default(cuid())
+  name           String       @unique
+  manufacturerId String
+  manufacturer   Manufacturer @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
+  Ski            Ski[]
+}
+
+model Comparison {
+  id         String  @id @default(cuid())
+  attribute  String
+  quantifier Int
+  skiCompId  String
+  skiComp    SkiComp @relation(fields: [skiCompId], references: [id], onDelete: Cascade)
+}
+
+model SkiComp {
+  id             String       @id @default(cuid())
+  primarySkiId   String
+  primarySki     Ski          @relation("PrimarySki", fields: [primarySkiId], references: [id], onDelete: Cascade)
+  secondarySkiId String
+  secondarySki   Ski          @relation("SecondarySki", fields: [secondarySkiId], references: [id], onDelete: Cascade)
+  comps          Comparison[]
+
+  @@unique([primarySkiId, secondarySkiId])
+}
+
+model SkiLength {
+  id    String @id @default(cuid())
+  skiId String
+  ski   Ski    @relation(fields: [skiId], references: [id], onDelete: Cascade)
+}
+
+model Ski {
+  id                String       @id @default(cuid())
+  yearCurrent       Int
+  yearReleased      Int
+  retired           Boolean      @default(false)
+  manufacturerId    String
+  manufacturer      Manufacturer @relation(fields: [manufacturerId], references: [id], onDelete: SetNull)
+  model             String
+  predecessorId     String?      @unique
+  predecessor       Ski?         @relation("SkiSuccession", fields: [predecessorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  successor         Ski?         @relation("SkiSuccession")
+  familyId          String?
+  family            SkiFamily?    @relation(fields: [familyId], references: [id], onDelete: SetNull)
+  lengths           SkiLength[]
+  specs             String
+  guideInfo         String
+  notes             String
+  fullReview        String
+  firstLook         String
+  flashReview       String
+  deepDive          String
+  primarySkiComps   SkiComp[]    @relation("PrimarySki")
+  secondarySkiComps SkiComp[]    @relation("SecondarySki")
+}
