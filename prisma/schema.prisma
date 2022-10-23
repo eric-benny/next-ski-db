@@ -58,6 +58,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  notes         Note[]
 }
 
 model VerificationToken {
@@ -72,7 +73,7 @@ model Manufacturer {
   id          String      @id @default(cuid())
   name        String      @unique
   skiFamilies SkiFamily[]
-  Ski         Ski[]
+  skis        Ski[]
 }
 
 model SkiFamily {
@@ -80,7 +81,7 @@ model SkiFamily {
   name           String       @unique
   manufacturerId String
   manufacturer   Manufacturer @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
-  Ski            Ski[]
+  skis           Ski[]
 }
 
 model Comparison {
@@ -89,6 +90,8 @@ model Comparison {
   quantifier Int
   skiCompId  String
   skiComp    SkiComp @relation(fields: [skiCompId], references: [id], onDelete: Cascade)
+
+  @@unique([attribute, skiCompId])
 }
 
 model SkiComp {
@@ -103,9 +106,80 @@ model SkiComp {
 }
 
 model SkiLength {
-  id    String @id @default(cuid())
-  skiId String
-  ski   Ski    @relation(fields: [skiId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  length Float
+  skiId  String
+  ski    Ski    @relation(fields: [skiId], references: [id], onDelete: Cascade)
+}
+
+model Note {
+  id          String   @id @default(cuid())
+  note        String
+  lastUpdated DateTime
+  skiDays     Int
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  skiId       String
+  ski         Ski      @relation(fields: [skiId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skiId])
+}
+
+model GuideSki {
+  id         String @id @default(cuid())
+  year       Int
+  category   String
+  specLength Float
+  summary    String
+  skiId      String
+  ski        Ski    @relation(fields: [skiId], references: [id], onDelete: Cascade)
+
+  @@unique([skiId, year, category, specLength])
+}
+
+model MountPointFac {
+  id     String  @id @default(cuid())
+  desc   String
+  specId String
+  spec   SkiSpec @relation(fields: [specId], references: [id], onDelete: Cascade)
+}
+
+model MountPointBlist {
+  id     String  @id @default(cuid())
+  desc   String
+  specId String
+  spec   SkiSpec @relation(fields: [specId], references: [id], onDelete: Cascade)
+}
+
+model SkiSpec {
+  id              String            @id @default(cuid())
+  length          Float
+  measuredLength  Float
+  weightStated    Float
+  weightMeas1     Int
+  weightMeas2     Int
+  dimTip          Float
+  dimWaist        Float
+  dimTail         Float
+  dimTipMeas      Float
+  dimWaistMeas    Float
+  dimTailMeas     Float
+  sidcutStated    Float
+  splayTip        Int
+  splayTail       Int
+  camberStated    String
+  camberMeas      String
+  core            String
+  mountPointFac   MountPointFac[]
+  mountPointBlist MountPointBlist[]
+  flexTip         String
+  flexShovel      String
+  flexFront       String
+  flexFoot        String
+  flexBack        String
+  flexTail        String
+  skiId           String
+  ski             Ski               @relation(fields: [skiId], references: [id], onDelete: Cascade)
 }
 
 model Ski {
@@ -120,15 +194,17 @@ model Ski {
   predecessor       Ski?         @relation("SkiSuccession", fields: [predecessorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   successor         Ski?         @relation("SkiSuccession")
   familyId          String?
-  family            SkiFamily?    @relation(fields: [familyId], references: [id], onDelete: SetNull)
+  family            SkiFamily?   @relation(fields: [familyId], references: [id], onDelete: SetNull)
   lengths           SkiLength[]
-  specs             String
-  guideInfo         String
-  notes             String
+  specs             SkiSpec[]
+  guideInfo         GuideSki[]
+  notes             Note[]
   fullReview        String
   firstLook         String
   flashReview       String
   deepDive          String
   primarySkiComps   SkiComp[]    @relation("PrimarySki")
   secondarySkiComps SkiComp[]    @relation("SecondarySki")
+
+  @@unique([model, manufacturerId, yearReleased], name: "unique_ski")
 }
