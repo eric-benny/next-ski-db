@@ -138,46 +138,47 @@ model GuideSki {
 }
 
 model MountPointFac {
-  id     String  @id @default(cuid())
-  desc   String
-  specId String
-  spec   SkiSpec @relation(fields: [specId], references: [id], onDelete: Cascade)
+  id          String  @id @default(cuid())
+  description String
+  specId      String
+  spec        SkiSpec @relation(fields: [specId], references: [id], onDelete: Cascade)
 }
 
 model MountPointBlist {
-  id     String  @id @default(cuid())
-  desc   String
-  specId String
-  spec   SkiSpec @relation(fields: [specId], references: [id], onDelete: Cascade)
+  id          String  @id @default(cuid())
+  description String
+  specId      String
+  spec        SkiSpec @relation(fields: [specId], references: [id], onDelete: Cascade)
 }
 
 model SkiSpec {
   id              String            @id @default(cuid())
   length          Float
-  measuredLength  Float
-  weightStated    Float
-  weightMeas1     Int
-  weightMeas2     Int
-  dimTip          Float
-  dimWaist        Float
-  dimTail         Float
-  dimTipMeas      Float
-  dimWaistMeas    Float
-  dimTailMeas     Float
-  sidcutStated    Float
-  splayTip        Int
-  splayTail       Int
-  camberStated    String
-  camberMeas      String
-  core            String
+  measuredLength  Float?
+  weightStated    Float?
+  weightMeas1     Int?
+  weightMeas2     Int?
+  dimTip          Float?
+  dimWaist        Float?
+  dimTail         Float?
+  dimTipMeas      Float?
+  dimWaistMeas    Float?
+  dimTailMeas     Float?
+  sidcutStated    Float?
+  splayTip        Int?
+  splayTail       Int?
+  camberStated    String?
+  camberMeas      String?
+  core            String?
+  base            String?
   mountPointFac   MountPointFac[]
   mountPointBlist MountPointBlist[]
-  flexTip         String
-  flexShovel      String
-  flexFront       String
-  flexFoot        String
-  flexBack        String
-  flexTail        String
+  flexTip         String?
+  flexShovel      String?
+  flexFront       String?
+  flexFoot        String?
+  flexBack        String?
+  flexTail        String?
   skiId           String
   ski             Ski               @relation(fields: [skiId], references: [id], onDelete: Cascade)
 }
@@ -199,10 +200,10 @@ model Ski {
   specs             SkiSpec[]
   guideInfo         GuideSki[]
   notes             Note[]
-  fullReview        String
-  firstLook         String
-  flashReview       String
-  deepDive          String
+  fullReview        String?
+  firstLook         String?
+  flashReview       String?
+  deepDive          String?
   primarySkiComps   SkiComp[]    @relation("PrimarySki")
   secondarySkiComps SkiComp[]    @relation("SecondarySki")
 
