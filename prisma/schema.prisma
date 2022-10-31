@@ -114,9 +114,9 @@ model SkiLength {
 
 model Note {
   id          String   @id @default(cuid())
-  note        String
+  note        String?  @db.Text
   lastUpdated DateTime
-  skiDays     Int
+  skiDays     Int      @default(0)
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: SetNull)
   skiId       String
@@ -126,13 +126,13 @@ model Note {
 }
 
 model GuideSki {
-  id         String @id @default(cuid())
+  id         String  @id @default(cuid())
   year       Int
   category   String
   specLength Float
-  summary    String
+  summary    String? @db.Text
   skiId      String
-  ski        Ski    @relation(fields: [skiId], references: [id], onDelete: Cascade)
+  ski        Ski     @relation(fields: [skiId], references: [id], onDelete: Cascade)
 
   @@unique([skiId, year, category, specLength])
 }
