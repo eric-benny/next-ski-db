@@ -8,9 +8,21 @@ export const skiRouter = router({
         include: {
           manufacturer: true,
           family: true,
-          guideInfo: true
+          guideInfo: true,
+          specs: true,
         },
       }
     );
   }),
+  getOne: publicProcedure.query(({ ctx }) => {
+    return ctx.prisma.ski.findFirst(
+      {
+        include: {
+          manufacturer: true,
+          family: true,
+          guideInfo: true
+        },
+      }
+    );
+  })
 });
