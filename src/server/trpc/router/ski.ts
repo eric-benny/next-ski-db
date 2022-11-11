@@ -10,6 +10,7 @@ export const skiRouter = router({
           family: true,
           guideInfo: true,
           specs: true,
+          lengths: true
         },
       }
     );

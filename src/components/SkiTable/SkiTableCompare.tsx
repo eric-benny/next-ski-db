@@ -5,10 +5,10 @@ import { SkiData, useSkisFull } from '../../legacy/Services/Skis';
 import AddIcon from '@mui/icons-material/Add';
 import { theme } from '../../legacy/Theme';
 import { SkiTable } from '.';
-// import { ComparisonModal } from '../../Pages/Home/ComparisonModal';
+import { ComparisonModal } from '../ComparisonModal';
 import { GridRowId } from '@mui/x-data-grid';
 
-import { GuideSki, Manufacturer, Ski, SkiFamily, SkiSpec } from '@prisma/client';
+import { GuideSki, Manufacturer, Ski, SkiFamily, SkiSpec, SkiLength } from '@prisma/client';
  
 // type Skis = RouterOutput['ski']['getAll'];
 
@@ -17,6 +17,7 @@ type Skis = (Ski & {
     family: SkiFamily | null;
     guideInfo: GuideSki[];
     specs: SkiSpec[];
+    lengths: SkiLength[]
 })[]
 
 interface SkiTableProps {
@@ -73,7 +74,7 @@ export const SkiTableCompare = ({ skis, skisLoading, height }: SkiTableProps) =>
                         </Grid>
                     </Grid>
                 </Grid>
-                <SkiTable skis={skis} height={"1000px"} skisLoading={skisLoading} selectedSkis={compareSkis} setSelectedSkis={setCompareSkis} selectionLimit={4} />
+                <SkiTable skis={skis} skisLoading={skisLoading} selectedSkis={compareSkis} setSelectedSkis={setCompareSkis} selectionLimit={4} />
                 <Grid item xs={12} marginTop={2}>
                     <Grid container spacing={2}>
                         <Grid item xs={3}>
@@ -111,7 +112,7 @@ export const SkiTableCompare = ({ skis, skisLoading, height }: SkiTableProps) =>
                     </Grid>
                 </Grid>
             </Grid>
-            {/* <ComparisonModal skis={compareSkis} open={compModalOpen} onClose={onCompModalClose} /> */}
+            <ComparisonModal skis={compareSkis} open={compModalOpen} onClose={onCompModalClose} />
         </>
     )
 }

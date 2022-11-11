@@ -7,7 +7,7 @@ import { SkiData } from "../../legacy/Services/Skis"
 import { theme } from "../../legacy/Theme"
 
 import { GuideSki, Manufacturer, Ski, SkiFamily, SkiSpec } from '@prisma/client';
- 
+
 // type Skis = RouterOutput['ski']['getAll'];
 
 type Skis = (Ski & {
@@ -22,7 +22,7 @@ interface SkiTableProps {
     skisLoading: boolean
     height?: string | number
     selectedSkis?: Skis
-    setSelectedSkis?: any 
+    setSelectedSkis?: any
     selectionLimit?: number
 }
 
@@ -86,36 +86,43 @@ export const SkiTable = ({ skis, skisLoading, height, selectedSkis, setSelectedS
         setSelectionModel(newSelectionModel)
     }, [selectedSkis])
 
+    const [tableHeight, setTableHeight] = useState('500px')
+
+    useEffect(() => setTableHeight(`${window.innerHeight / 1.5}px`), [])
+
+    // console.log(tableHeight);
+    
+
     return (
         <>
             <Container>
-                <Grid container justifyContent="space-between" spacing={2} rowSpacing={2}>
-                    <Grid item xs={12}>
-                        <div style={{ display: 'flex', height: height ? height : typeof window !== "undefined" ? window.innerHeight / 1.5 : "100%" }}>
-                            <div style={{ flexGrow: 1 }}>
-                                <DataGrid
-                                    sx={{
-                                        "& .MuiDataGrid-columnHeaderCheckbox .MuiDataGrid-columnHeaderTitleContainer": {
-                                            display: "none"
-                                        }
-                                    }}
-                                    getRowId={(row) => row.id}
-                                    rows={rows}
-                                    columns={columns}
-                                    checkboxSelection={selectedSkis ? true : false}
-                                    isRowSelectable={(params: GridRowParams<Ski>) => selectionModel.includes(params.row.id) || (selectionLimit && selectedSkis ? selectedSkis.length < selectionLimit : true)}
-                                    onSelectionModelChange={(newSelectionModel) => {
-                                        selectedSkiChange(newSelectionModel)
-                                    }}
-                                    selectionModel={selectionModel}
-                                    loading={skisLoading}
-                                    disableSelectionOnClick
-                                    getRowHeight={() => 'auto'}
-                                />
+                    <Grid container justifyContent="space-between" spacing={2} rowSpacing={2}>
+                        <Grid item xs={12}>
+                            <div style={{ display: 'flex', height: height ? height : tableHeight }}>
+                                <div style={{ flexGrow: 1 }}>
+                                    <DataGrid
+                                        sx={{
+                                            "& .MuiDataGrid-columnHeaderCheckbox .MuiDataGrid-columnHeaderTitleContainer": {
+                                                display: "none"
+                                            }
+                                        }}
+                                        getRowId={(row) => row.id}
+                                        rows={rows}
+                                        columns={columns}
+                                        checkboxSelection={selectedSkis ? true : false}
+                                        isRowSelectable={(params: GridRowParams<Ski>) => selectionModel.includes(params.row.id) || (selectionLimit && selectedSkis ? selectedSkis.length < selectionLimit : true)}
+                                        onSelectionModelChange={(newSelectionModel) => {
+                                            selectedSkiChange(newSelectionModel)
+                                        }}
+                                        selectionModel={selectionModel}
+                                        loading={skisLoading}
+                                        disableSelectionOnClick
+                                        getRowHeight={() => 'auto'}
+                                    />
+                                </div>
                             </div>
-                        </div>
+                        </Grid>
                     </Grid>
-                </Grid>
             </Container>
         </>
     )

@@ -8,7 +8,7 @@ import { SkiTableCompare } from '../components/SkiTable/SkiTableCompare';
 import { trpc } from '../utils/trpc';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import { AppRouter } from '../server/trpc/router/_app';
-import { GuideSki, Manufacturer, Ski, SkiFamily, SkiSpec } from '@prisma/client';
+import { GuideSki, Manufacturer, Ski, SkiFamily, SkiSpec, SkiLength } from '@prisma/client';
 
 type RouterInput = inferRouterInputs<AppRouter>;
 type RouterOutput = inferRouterOutputs<AppRouter>;
@@ -20,6 +20,7 @@ type Skis = (Ski & {
     family: SkiFamily | null;
     guideInfo: GuideSki[];
     specs: SkiSpec[];
+    lengths: SkiLength[];
 })[]
 
 
@@ -70,6 +71,18 @@ export default function Skis() {
                                 >
                                     Ski
                                 </Button> */}
+                                <Button color='primary' sx={
+                                    {
+                                        "&:hover": {
+                                            backgroundColor: theme.palette.secondary.main,
+                                            color: "white"
+                                        }
+                                    }}
+                                    variant="contained"
+                                    startIcon={<AddIcon />}
+                                >
+                                    Ski
+                                </Button>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -85,9 +98,6 @@ export default function Skis() {
                     </Grid>
                     <SkiTableCompare skis={skis} skisLoading={data.isLoading} />
                 </Grid>
-
-                <Button onClick={() => {}}> button mui</Button>
-                <button onClick={() => {}}>button html</button>
             </Container>
         </>
     )
