@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react"
 import { SkiData } from "../../legacy/Services/Skis"
 import { theme } from "../../legacy/Theme"
 
-import { GuideSki, Manufacturer, Ski, SkiFamily, SkiSpec } from '@prisma/client';
+import { GuideSki, Manufacturer, Ski, SkiFamily, SkiSpec, SkiLength } from '@prisma/client';
 
 // type Skis = RouterOutput['ski']['getAll'];
 
@@ -15,6 +15,7 @@ type Skis = (Ski & {
     family: SkiFamily | null;
     guideInfo: GuideSki[];
     specs: SkiSpec[];
+    lengths: SkiLength[];
 })[]
 
 interface SkiTableProps {
@@ -51,8 +52,8 @@ export const SkiTable = ({ skis, skisLoading, height, selectedSkis, setSelectedS
         { field: 'yearReleased', headerName: 'Released' },
         {
             field: 'availableLengths', headerName: 'Lengths', minWidth: 150, align: 'left', type: 'string', valueGetter: (params) => {
-                return `${params.row.lengths?.reduce((allLengths: string, length: number) => {
-                    return allLengths ? `${allLengths}, ${length.toString()}` : length.toString()
+                return `${params.row.lengths?.reduce((allLengths: string, length: SkiLength) => {
+                    return allLengths ? `${allLengths}, ${length.length.toString()}` : length.length.toString()
                 }, "")}`
             }
         },

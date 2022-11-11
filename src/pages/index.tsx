@@ -2,9 +2,6 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
-import { json } from "stream/consumers";
-import Switch from "@mui/material/Switch";
-import { Navbar } from "../components/navbar";
 
 const Home: NextPage = () => {
   const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
