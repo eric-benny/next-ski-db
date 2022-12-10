@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Container, FormControl, Grid, TextField } from '@mui/material';
-import { SkiData, useSkisFull } from '../legacy/Services/Skis';
+import { SkiData, useSkisFull } from '../../legacy/Services/Skis';
 // import { Link as RouterLink } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
-import { theme } from '../legacy/Theme';
-import { SkiTableCompare } from '../components/SkiTable/SkiTableCompare';
-import { trpc } from '../utils/trpc';
+import { theme } from '../../legacy/Theme';
+import { SkiTableCompare } from '../../components/SkiTable/SkiTableCompare';
+import { trpc } from '../../utils/trpc';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
-import { AppRouter } from '../server/trpc/router/_app';
+import { AppRouter } from '../../server/trpc/router/_app';
 import { GuideSki, Manufacturer, Ski, SkiFamily, SkiSpec, SkiLength } from '@prisma/client';
 
 type RouterInput = inferRouterInputs<AppRouter>;
@@ -32,20 +32,25 @@ export default function Skis() {
 
     const [skis, setSkis] = useState<Skis>([])
     useEffect(() => {
+        console.log('data updated');
+        
         if (data.data && data.data.length > 0) {
             setSkis(data.data)
         }
-    }, [data])
+    }, [data.data])
 
 
     const [filter, setFilter] = useState<string>("")
     useEffect(() => {
-        if (skis && skis.length > 0) {
+        console.log('skis/filter updated');
+        if (skis && skis.length > 0 && data.data) {
             const searchTerms = filter.split(" ");
-            const newSkis = skis.filter(s => searchTerms.some(t => s.model.toLowerCase().indexOf(t.toLowerCase()) > -1) || searchTerms.some(t => s.manufacturer.name.toLowerCase().indexOf(t.toLowerCase()) > -1))
+            const newSkis = data.data.filter(s => searchTerms.some(t => s.model.toLowerCase().indexOf(t.toLowerCase()) > -1) || searchTerms.some(t => s.manufacturer.name.toLowerCase().indexOf(t.toLowerCase()) > -1))
+            console.log(newSkis);
+            
             setSkis(newSkis)
         }
-    }, [filter, skis])
+    }, [filter, data.data])
 
 
     if (data.isError && data.error instanceof Error) {

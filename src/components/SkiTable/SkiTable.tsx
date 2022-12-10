@@ -1,10 +1,11 @@
-import { Container, Chip, Button, Link, Grid } from "@mui/material"
+import { Container, Chip, Button, Link as MuiLink, Grid } from "@mui/material"
 import { GridRowsProp, GridColDef, GridRenderCellParams, GridSelectionModel, GridRowId, DataGrid, GridRowParams } from "@mui/x-data-grid"
 import React, { useEffect, useState } from "react"
 // import { Link as RouterLink } from 'react-router-dom';
 // import { ComparisonModal } from "../../Pages/Home/ComparisonModal"
 import { SkiData } from "../../legacy/Services/Skis"
 import { theme } from "../../legacy/Theme"
+import Link from 'next/link'
 
 import { GuideSki, Manufacturer, Ski, SkiFamily, SkiSpec, SkiLength } from '@prisma/client';
 
@@ -39,8 +40,12 @@ export const SkiTable = ({ skis, skisLoading, height, selectedSkis, setSelectedS
         {
             field: 'model', headerName: 'Model', minWidth: 200, align: 'left',
             renderCell: (params: GridRenderCellParams<String>) => (
-                // <Link color="secondary" underline="hover" variant="inherit" component={RouterLink} to={`/skis/${params.row._id}`}>{params.value}</Link>
-                <p>{params.value}</p>
+                // <MuiLink color="secondary" underline="hover" variant="inherit" component={Link} href={`/skis/${params.row.id}`}>{params.value}</MuiLink>
+                <Link  href={`/skis/${params.row.id}`}>
+                    <a className="text-red-500 no-underline hover:underline">{params.value}</a>
+                </Link>
+                // <p>{params.value}</p>
+
             )
         },
         {
@@ -92,38 +97,38 @@ export const SkiTable = ({ skis, skisLoading, height, selectedSkis, setSelectedS
     useEffect(() => setTableHeight(`${window.innerHeight / 1.5}px`), [])
 
     // console.log(tableHeight);
-    
+
 
     return (
         <>
             <Container>
-                    <Grid container justifyContent="space-between" spacing={2} rowSpacing={2}>
-                        <Grid item xs={12}>
-                            <div style={{ display: 'flex', height: height ? height : tableHeight }}>
-                                <div style={{ flexGrow: 1 }}>
-                                    <DataGrid
-                                        sx={{
-                                            "& .MuiDataGrid-columnHeaderCheckbox .MuiDataGrid-columnHeaderTitleContainer": {
-                                                display: "none"
-                                            }
-                                        }}
-                                        getRowId={(row) => row.id}
-                                        rows={rows}
-                                        columns={columns}
-                                        checkboxSelection={selectedSkis ? true : false}
-                                        isRowSelectable={(params: GridRowParams<Ski>) => selectionModel.includes(params.row.id) || (selectionLimit && selectedSkis ? selectedSkis.length < selectionLimit : true)}
-                                        onSelectionModelChange={(newSelectionModel) => {
-                                            selectedSkiChange(newSelectionModel)
-                                        }}
-                                        selectionModel={selectionModel}
-                                        loading={skisLoading}
-                                        disableSelectionOnClick
-                                        getRowHeight={() => 'auto'}
-                                    />
-                                </div>
+                <Grid container justifyContent="space-between" spacing={2} rowSpacing={2}>
+                    <Grid item xs={12}>
+                        <div style={{ display: 'flex', height: height ? height : tableHeight }}>
+                            <div style={{ flexGrow: 1 }}>
+                                <DataGrid
+                                    sx={{
+                                        "& .MuiDataGrid-columnHeaderCheckbox .MuiDataGrid-columnHeaderTitleContainer": {
+                                            display: "none"
+                                        }
+                                    }}
+                                    getRowId={(row) => row.id}
+                                    rows={rows}
+                                    columns={columns}
+                                    checkboxSelection={selectedSkis ? true : false}
+                                    isRowSelectable={(params: GridRowParams<Ski>) => selectionModel.includes(params.row.id) || (selectionLimit && selectedSkis ? selectedSkis.length < selectionLimit : true)}
+                                    onSelectionModelChange={(newSelectionModel) => {
+                                        selectedSkiChange(newSelectionModel)
+                                    }}
+                                    selectionModel={selectionModel}
+                                    loading={skisLoading}
+                                    disableSelectionOnClick
+                                    getRowHeight={() => 'auto'}
+                                />
                             </div>
-                        </Grid>
+                        </div>
                     </Grid>
+                </Grid>
             </Container>
         </>
     )
