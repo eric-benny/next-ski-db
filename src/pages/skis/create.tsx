@@ -57,7 +57,7 @@ const validYears = Array.from(Array(10).keys()).map(
 export default function CreateSki() {
   const router = useRouter();
 
-  let { skiId = "" }  = router.query;
+  const { skiId = "" }  = router.query;
 
   const {
     isLoading: isLoadingMan,
@@ -1748,4 +1748,4 @@ export default function CreateSki() {
       </Container>
     </>
   );
-};
+}

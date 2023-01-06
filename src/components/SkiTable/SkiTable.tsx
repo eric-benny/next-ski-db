@@ -1,18 +1,15 @@
-import { Container, Chip, Button, Link as MuiLink, Grid } from "@mui/material";
+import { Container, Grid } from "@mui/material";
 import {
   GridRowsProp,
   GridColDef,
   GridRenderCellParams,
   GridSelectionModel,
-  GridRowId,
   DataGrid,
   GridRowParams,
 } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 // import { Link as RouterLink } from 'react-router-dom';
 // import { ComparisonModal } from "../../Pages/Home/ComparisonModal"
-import { SkiData } from "../../legacy/Services/Skis";
-import { theme } from "../../legacy/Theme";
 import Link from "next/link";
 
 import {
@@ -63,7 +60,7 @@ export const SkiTable = ({
       headerName: "Model",
       minWidth: 200,
       align: "left",
-      renderCell: (params: GridRenderCellParams<String>) => (
+      renderCell: (params: GridRenderCellParams<string>) => (
         // <MuiLink color="secondary" underline="hover" variant="inherit" component={Link} href={`/skis/${params.row.id}`}>{params.value}</MuiLink>
         <Link
           href={`/skis/${params.row.id}`}

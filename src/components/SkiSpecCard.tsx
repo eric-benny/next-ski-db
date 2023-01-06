@@ -8,7 +8,7 @@ interface SkiSpecCardProps {
     textVariant: "body1" | "body2"
 }
 
-const formatSpec = (spec: string | number | undefined | null, dim: string = "") => {
+const formatSpec = (spec: string | number | undefined | null, dim = "") => {
     if (spec) {
         const specStr = spec.toString()
         return dim ? `${specStr} ${dim}` : `${specStr}`

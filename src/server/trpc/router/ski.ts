@@ -323,14 +323,14 @@ export const skiRouter = router({
           },
         });
 
-        const deleteMpf = await ctx.prisma.mountPointFac.deleteMany({
+        await ctx.prisma.mountPointFac.deleteMany({
           where: {
             specId: newSpec.id,
           },
         });
 
         for (const mpf of spec.mountPointFac) {
-          const newMpf = await ctx.prisma.mountPointFac.create({
+          await ctx.prisma.mountPointFac.create({
             data: {
               description: mpf,
               specId: newSpec.id,
@@ -338,14 +338,14 @@ export const skiRouter = router({
           });
         }
 
-        const deleteMpb = await ctx.prisma.mountPointBlist.deleteMany({
+        await ctx.prisma.mountPointBlist.deleteMany({
           where: {
             specId: newSpec.id,
           },
         });
 
         for (const mpb of spec.mountPointBlist) {
-          const newMpb = await ctx.prisma.mountPointBlist.create({
+          await ctx.prisma.mountPointBlist.create({
             data: {
               description: mpb,
               specId: newSpec.id,

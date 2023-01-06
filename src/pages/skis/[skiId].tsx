@@ -70,10 +70,6 @@ export default function SkiDetail() {
 
   console.log("ski", ski);
 
-  if (res.isError && res.error instanceof Error) {
-    return <span>Error: {res.error.message}</span>;
-  }
-
   // const { data: ski, isLoading } = useQuery(['ski', skiId], () => fetchSki(skiId), { enabled: skiId ? true : false });
 
   // const queryClient = useQueryClient();
@@ -276,6 +272,10 @@ export default function SkiDetail() {
   //     </>
   //   );
 
+  if (res.isError && res.error instanceof Error) {
+    return <span>Error: {res.error.message}</span>;
+  }
+  
   return (
     <>
       <Container>

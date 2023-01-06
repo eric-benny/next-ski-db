@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Container, FormControl, Grid, TextField } from '@mui/material';
-import { SkiData, useSkisFull } from '../../legacy/Services/Skis';
 // import { Link as RouterLink } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import { theme } from '../../legacy/Theme';
 import { SkiTableCompare } from '../../components/SkiTable/SkiTableCompare';
 import { trpc } from '../../utils/trpc';
-import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
-import { AppRouter } from '../../server/trpc/router/_app';
 import { GuideSki, Manufacturer, Ski, SkiFamily, SkiSpec, SkiLength } from '@prisma/client';
 import { useRouter } from "next/router";
-
-type RouterInput = inferRouterInputs<AppRouter>;
-type RouterOutput = inferRouterOutputs<AppRouter>;
  
 // type Skis = RouterOutput['ski']['getAll'];
 
@@ -52,7 +46,7 @@ export default function Skis() {
             
             setSkis(newSkis)
         }
-    }, [filter, data.data])
+    }, [filter, data.data, skis])
 
 
     if (data.isError && data.error instanceof Error) {
