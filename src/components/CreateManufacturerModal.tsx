@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
-import { Manufacturer } from '../../Services/Manufacturers';
+
 import { Box, Dialog, DialogTitle, FormControl, Grid, TextField, Typography } from '@mui/material';
-import { theme } from '../../Theme';
-import { CenterLoader } from '../../Components/CenterLoader';
+import { Manufacturer } from '../legacy/Services/Manufacturers';
+import { CenterLoader } from './CenterLoader';
+import { theme } from '../legacy/Theme';
+
 
 interface CreateManufacturerModalProps {
     currentManufacturers: Manufacturer[]

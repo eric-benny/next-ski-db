@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import { Box, Dialog, DialogTitle, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
-import { theme } from '../../Theme';
-import { SkiFamily } from '../../Services/SkiFamilies';
-import { Manufacturer } from '../../Services/Manufacturers';
-import { CenterLoader } from '../../Components/CenterLoader';
+import { SkiFamily } from '../legacy/Services/SkiFamilies';
+import { Manufacturer } from '../legacy/Services/Manufacturers';
+import { CenterLoader } from './CenterLoader';
+import { theme } from '../legacy/Theme';
+
 
 interface CreateFamilyModalProps {
     currentFamilies: SkiFamily[]

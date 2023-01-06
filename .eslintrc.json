@@ -11,7 +11,7 @@
       "files": [
         "*.ts",
         "*.tsx"
-      ], // Your TypeScript files extension
+      ] // Your TypeScript files extension
     }
   ],
   "extends": [
