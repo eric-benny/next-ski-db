@@ -180,7 +180,7 @@ export const fetchSkis = async (): Promise<Array<SkiSingle>> => {
 }
 
 
-export const useSkis = (enabled: boolean = true) => useQuery(['skis'], fetchSkis, { enabled: enabled })
+export const useSkis = (enabled = true) => useQuery(['skis'], fetchSkis, { enabled: enabled })
 
 export const fetchSkisFull = async (): Promise<Array<SkiData>> => {
     const res = await fetch(`${process.env.REACT_APP_API_ENDPOINT}/skis`, {headers: {'x-api-key': process.env.REACT_APP_API_KEY ? process.env.REACT_APP_API_KEY : "" }});
@@ -190,7 +190,7 @@ export const fetchSkisFull = async (): Promise<Array<SkiData>> => {
     return skisFull
 }
 
-export const useSkisFull = (enabled: boolean = true) => useQuery(['skisFull'], fetchSkisFull, { enabled: enabled })
+export const useSkisFull = (enabled = true) => useQuery(['skisFull'], fetchSkisFull, { enabled: enabled })
 
 export const fetchSki = async (skiId: string): Promise<SkiLegacy> => {
     const res = await fetch(`${process.env.REACT_APP_API_ENDPOINT}/skis/${skiId}`, {headers: {'x-api-key': process.env.REACT_APP_API_KEY ? process.env.REACT_APP_API_KEY : "" }});
