@@ -13,7 +13,7 @@ datasource db {
   // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
   // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
   url                  = env("DATABASE_URL")
-  referentialIntegrity = "prisma"
+  relationMode = "prisma"
 }
 
 model Example {
@@ -40,6 +40,7 @@ model Account {
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -48,6 +49,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model User {
@@ -82,6 +85,8 @@ model SkiFamily {
   manufacturerId String
   manufacturer   Manufacturer @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
   skis           Ski[]
+
+  @@index([manufacturerId])
 }
 
 model Comparison {
@@ -92,6 +97,7 @@ model Comparison {
   skiComp    SkiComp @relation(fields: [skiCompId], references: [id], onDelete: Cascade)
 
   @@unique([attribute, skiCompId])
+  @@index([skiCompId])
 }
 
 model SkiComp {
@@ -103,6 +109,7 @@ model SkiComp {
   comps          Comparison[]
 
   @@unique([primarySkiId, secondarySkiId])
+  @@index([secondarySkiId])
 }
 
 model SkiLength {
@@ -110,6 +117,8 @@ model SkiLength {
   length Float
   skiId  String
   ski    Ski    @relation(fields: [skiId], references: [id], onDelete: Cascade)
+
+  @@index([skiId])
 }
 
 model Note {
@@ -118,11 +127,12 @@ model Note {
   lastUpdated DateTime
   skiDays     Int      @default(0)
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user        User     @relation(fields: [userId], references: [id], onDelete: NoAction)
   skiId       String
   ski         Ski      @relation(fields: [skiId], references: [id], onDelete: Cascade)
 
   @@unique([userId, skiId])
+  @@index([skiId])
 }
 
 model GuideSki {
@@ -142,6 +152,8 @@ model MountPointFac {
   description String
   specId      String
   spec        SkiSpec @relation(fields: [specId], references: [id], onDelete: Cascade)
+
+  @@index([specId])
 }
 
 model MountPointBlist {
@@ -149,6 +161,8 @@ model MountPointBlist {
   description String
   specId      String
   spec        SkiSpec @relation(fields: [specId], references: [id], onDelete: Cascade)
+
+  @@index([specId])
 }
 
 model SkiSpec {
@@ -181,6 +195,9 @@ model SkiSpec {
   flexTail        String?
   skiId           String
   ski             Ski               @relation(fields: [skiId], references: [id], onDelete: Cascade)
+
+  @@unique([skiId, length], name: "unique_spec")
+  @@index([skiId])
 }
 
 model Ski {
@@ -189,7 +206,7 @@ model Ski {
   yearReleased      Int
   retired           Boolean      @default(false)
   manufacturerId    String
-  manufacturer      Manufacturer @relation(fields: [manufacturerId], references: [id], onDelete: SetNull)
+  manufacturer      Manufacturer @relation(fields: [manufacturerId], references: [id], onDelete: NoAction)
   model             String
   predecessorId     String?      @unique
   predecessor       Ski?         @relation("SkiSuccession", fields: [predecessorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -208,4 +225,6 @@ model Ski {
   secondarySkiComps SkiComp[]    @relation("SecondarySki")
 
   @@unique([model, manufacturerId, yearReleased], name: "unique_ski")
+  @@index([manufacturerId])
+  @@index([familyId])
 }

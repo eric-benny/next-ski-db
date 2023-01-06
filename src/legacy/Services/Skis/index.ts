@@ -15,4 +15,4 @@ export {
     deleteGuideSki,
     fetchGuideSkisSki
 } from './Skis'
-export type { SkiSingle, SkiSpec, Ski, SkiData, Note, NoteUpload, SkiComp, GuideSki } from './Skis'
+export type { SkiSingle, SkiSpec, SkiLegacy, SkiData, Note, NoteUpload, SkiComp, GuideSki } from './Skis'

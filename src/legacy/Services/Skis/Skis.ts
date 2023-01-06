@@ -66,7 +66,7 @@ export interface SkiCompUpload {
     notes: string
 }
 
-export interface Ski {
+export interface SkiLegacy {
     _id?: string
     yearCurrent: number
     yearReleased: number
@@ -74,7 +74,7 @@ export interface Ski {
     retired: boolean
     manufacturer: Manufacturer
     model: string
-    parent: Ski | undefined
+    parent: SkiLegacy | undefined
     family: SkiFamily | undefined
     lengths: Array<number>
     specs: Array<SkiSpec>
@@ -88,7 +88,7 @@ export interface Ski {
     deepDive: string
 }
 
-export interface SkiData extends Ski {
+export interface SkiData extends SkiLegacy {
     _id: string
 }
 
@@ -116,7 +116,7 @@ export interface SkiSingle {
     retired: boolean
     manufacturer: string
     model: string
-    parent: Ski | undefined
+    parent: SkiLegacy | undefined
     family: SkiFamily | undefined
     lengths: Array<number>
     url: string
@@ -155,7 +155,7 @@ export const fetchSkis = async (): Promise<Array<SkiSingle>> => {
     const response = await res.json()
 
     const skisFull = response.data
-    const skis = skisFull.reduce((skis: Array<SkiSingle>, ski: Ski) => {
+    const skis = skisFull.reduce((skis: Array<SkiSingle>, ski: SkiLegacy) => {
         for (let i = 0; i < 1; i++) {
             const skiSingle = {
                 mongo_id: ski._id,
@@ -192,7 +192,7 @@ export const fetchSkisFull = async (): Promise<Array<SkiData>> => {
 
 export const useSkisFull = (enabled: boolean = true) => useQuery(['skisFull'], fetchSkisFull, { enabled: enabled })
 
-export const fetchSki = async (skiId: string): Promise<Ski> => {
+export const fetchSki = async (skiId: string): Promise<SkiLegacy> => {
     const res = await fetch(`${process.env.REACT_APP_API_ENDPOINT}/skis/${skiId}`, {headers: {'x-api-key': process.env.REACT_APP_API_KEY ? process.env.REACT_APP_API_KEY : "" }});
     const response = await res.json()
 
@@ -218,7 +218,7 @@ export const updateSki = async (updateData: {skiId: string, skiData: SkiUpload |
     }
 }
 
-export const postSki = async (newSki: SkiUpload): Promise<Ski | ServiceError> => {
+export const postSki = async (newSki: SkiUpload): Promise<SkiLegacy | ServiceError> => {
 
     const res = await fetch(`${process.env.REACT_APP_API_ENDPOINT}/skis`, { method: 'POST', body: JSON.stringify(newSki), headers: {'x-api-key': process.env.REACT_APP_API_KEY ? process.env.REACT_APP_API_KEY : "" } });
 

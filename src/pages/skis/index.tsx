@@ -9,6 +9,7 @@ import { trpc } from '../../utils/trpc';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import { AppRouter } from '../../server/trpc/router/_app';
 import { GuideSki, Manufacturer, Ski, SkiFamily, SkiSpec, SkiLength } from '@prisma/client';
+import { useRouter } from "next/router";
 
 type RouterInput = inferRouterInputs<AppRouter>;
 type RouterOutput = inferRouterOutputs<AppRouter>;
@@ -25,6 +26,7 @@ type Skis = (Ski & {
 
 
 export default function Skis() {
+    const router = useRouter()
 
     const data = trpc.ski.getAll.useQuery()
 
@@ -64,19 +66,7 @@ export default function Skis() {
                     <Grid item xs={12}>
                         <Grid container justifyContent="flex-end">
                             <Grid item xs={2} md={1} marginRight={2}>
-                                {/* <Button component={RouterLink} to={'/skis/create'} color='primary' sx={
-                                    {
-                                        "&:hover": {
-                                            backgroundColor: theme.palette.secondary.main,
-                                            color: "white"
-                                        }
-                                    }}
-                                    variant="contained"
-                                    startIcon={<AddIcon />}
-                                >
-                                    Ski
-                                </Button> */}
-                                <Button color='primary' sx={
+                                <Button onClick={() => router.push('/skis/create')} color='primary' sx={
                                     {
                                         "&:hover": {
                                             backgroundColor: theme.palette.secondary.main,
