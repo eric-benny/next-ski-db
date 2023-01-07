@@ -609,7 +609,7 @@ export default function CreateSki() {
           <Alert severity="success">
             <AlertTitle>Success</AlertTitle>
             View New Ski
-            {alertContent && alertContent._id && (
+            {alertContent && alertContent.id && (
               <Button
                 onClick={() => router.push(`/skis/${alertContent._id}`)}
                 color="primary"
