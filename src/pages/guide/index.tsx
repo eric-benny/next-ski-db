@@ -53,6 +53,7 @@ import { SkiSpecCard } from "../../components/SkiSpecCard";
 import { theme } from "../../legacy/Theme";
 import { SkiTable } from "../../components/SkiTable";
 import { Skis } from "../../components/SkiTable/SkiTable";
+import { AddGuideSkisModal } from "../../components/AddGuideSkisModal";
 // import { CenterLoader } from '../../Components/CenterLoader';
 
 export const CATEGORIES = [
@@ -588,13 +589,13 @@ export default function Guide() {
           </Grid>
         )}
       </Container>
-      {/* <AddGuideSkisModal
+      <AddGuideSkisModal
         currentGuideSkis={guideSkis ? guideSkis : []}
         skisToAdd={skisToAdd}
         year={year}
         open={addModalOpen}
         onClose={onAddModalClose}
-      /> */}
+      />
     </>
   );
 }

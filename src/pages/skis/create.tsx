@@ -180,26 +180,26 @@ export default function CreateSki() {
       },
     });
 
-//   const { mutate: mutateMan, isLoading: isLoadingCreateMan } = useMutation(
-//     postManufacturer,
-//     {
-//       onSuccess: (data) => {
-//         if (isServiceError(data)) {
-//           setManResponse(data);
-//         } else {
-//           setManModalOpen(false);
-//           setManufacturer(data._id);
-//           setManResponse(undefined);
-//         }
-//       },
-//       onError: () => {
-//         alert("there was an error");
-//       },
-//       onSettled: () => {
-//         queryClient.invalidateQueries(["manufacturers"]);
-//       },
-//     }
-//   );
+  //   const { mutate: mutateMan, isLoading: isLoadingCreateMan } = useMutation(
+  //     postManufacturer,
+  //     {
+  //       onSuccess: (data) => {
+  //         if (isServiceError(data)) {
+  //           setManResponse(data);
+  //         } else {
+  //           setManModalOpen(false);
+  //           setManufacturer(data._id);
+  //           setManResponse(undefined);
+  //         }
+  //       },
+  //       onError: () => {
+  //         alert("there was an error");
+  //       },
+  //       onSettled: () => {
+  //         queryClient.invalidateQueries(["manufacturers"]);
+  //       },
+  //     }
+  //   );
 
   //   const [famResponse, setFamResponse] = useState<any>(undefined);
   //   const { mutate: mutateFam, isLoading: isLoadingCreateFam } = useMutation(
@@ -633,7 +633,7 @@ export default function CreateSki() {
             View New Ski
             {alertContent && alertContent.id && (
               <Button
-                onClick={() => router.push(`/skis/${alertContent._id}`)}
+                onClick={() => router.push(`/skis/${alertContent.id}`)}
                 color="primary"
               >
                 Go!

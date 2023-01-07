@@ -23,13 +23,15 @@ import {
 
 // type Skis = RouterOutput['ski']['getAll'];
 
-export type Skis = (Ski & {
+export type FullSKi = Ski & {
   manufacturer: Manufacturer;
   family: SkiFamily | null;
   guideInfo: GuideSki[];
   specs: SkiSpec[];
   lengths: SkiLength[];
-})[];
+};
+
+export type Skis = FullSKi[];
 
 interface SkiTableProps {
   skis: Skis;

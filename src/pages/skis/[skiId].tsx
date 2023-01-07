@@ -54,7 +54,7 @@ import { CenterLoader } from "../../components/CenterLoader";
 import { Ski, SkiLength } from "@prisma/client";
 import { SkiSpecCard } from "../../components/SkiSpecCard";
 import Link from "next/link";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const StyledControl = styled(CarouselControl)({});
 
@@ -275,7 +275,7 @@ export default function SkiDetail() {
   if (res.isError && res.error instanceof Error) {
     return <span>Error: {res.error.message}</span>;
   }
-  
+
   return (
     <>
       <Container>
@@ -495,28 +495,32 @@ export default function SkiDetail() {
                     </CarouselItem>
                   );
                 })}
-                <StyledControl
-                  sx={{
-                    display: {
-                      xs: "none",
-                      sm: ski.specs.length > 1 ? "flex" : "none",
-                    },
-                  }}
-                  direction="prev"
-                  directionText="Previous"
-                  onClickHandler={previous}
-                />
-                <StyledControl
-                  sx={{
-                    display: {
-                      xs: "none",
-                      sm: ski.specs.length > 1 ? "flex" : "none",
-                    },
-                  }}
-                  direction="next"
-                  directionText="Next"
-                  onClickHandler={next}
-                />
+                {ski.specs.length > 1 && (
+                  <>
+                    <StyledControl
+                      sx={{
+                        display: {
+                          xs: "none",
+                          sm: ski.specs.length > 1 ? "flex" : "none",
+                        },
+                      }}
+                      direction="prev"
+                      directionText="Previous"
+                      onClickHandler={previous}
+                    />
+                    <StyledControl
+                      sx={{
+                        display: {
+                          xs: "none",
+                          sm: ski.specs.length > 1 ? "flex" : "none",
+                        },
+                      }}
+                      direction="next"
+                      directionText="Next"
+                      onClickHandler={next}
+                    />
+                  </>
+                )}
               </Carousel>
             </Grid>
             <Grid item xs={12} md={3}>
