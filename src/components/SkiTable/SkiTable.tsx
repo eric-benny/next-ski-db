@@ -23,7 +23,7 @@ import {
 
 // type Skis = RouterOutput['ski']['getAll'];
 
-type Skis = (Ski & {
+export type Skis = (Ski & {
   manufacturer: Manufacturer;
   family: SkiFamily | null;
   guideInfo: GuideSki[];
