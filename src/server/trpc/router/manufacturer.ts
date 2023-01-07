@@ -1,37 +1,18 @@
 import { router, publicProcedure } from "../trpc";
-// import { z } from "zod";
+import { z } from "zod";
 
 export const manufacturerRouter = router({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.manufacturer.findMany({});
   }),
-//   getOne: publicProcedure
-//     .input(z.object({ skiId: z.string().nullish() }))
-//     .query(({ ctx, input }) => {
-//       if (input.skiId) {
-//         return ctx.prisma.ski.findFirst({
-//           where: {
-//             id: input.skiId,
-//           },
-//           include: {
-//             manufacturer: true,
-//             family: true,
-//             guideInfo: true,
-//             specs: true,
-//             lengths: true,
-//             predecessor: true,
-//           },
-//         });
-//       }
-//       return ctx.prisma.ski.findFirst({
-//         include: {
-//           manufacturer: true,
-//           family: true,
-//           guideInfo: true,
-//           specs: true,
-//           lengths: true,
-//           predecessor: true,
-//         },
-//       });
-//     }),
+  create: publicProcedure
+    .input(z.object({ name: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const newManufacturer = await ctx.prisma.manufacturer.create({
+        data: {
+          name: input.name,
+        },
+      });
+      return newManufacturer;
+    }),
 });

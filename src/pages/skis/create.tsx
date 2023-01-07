@@ -57,7 +57,7 @@ const validYears = Array.from(Array(10).keys()).map(
 export default function CreateSki() {
   const router = useRouter();
 
-  const { skiId = "" }  = router.query;
+  const { skiId = "" } = router.query;
 
   const {
     isLoading: isLoadingMan,
@@ -94,7 +94,7 @@ export default function CreateSki() {
         clear();
       },
       onError: (error) => {
-        console.error(error)
+        console.error(error);
         alert(`there was an error: ${error.message}`);
       },
       onSettled: () => {
@@ -129,10 +129,10 @@ export default function CreateSki() {
         setAlertContent(data);
         setSuccessAlert(true);
         clear();
-        router.push(`/skis/${skiId}`)
+        router.push(`/skis/${skiId}`);
       },
       onError: (error) => {
-        console.error(error)
+        console.error(error);
         alert(`there was an error: ${error.message}`);
       },
       onSettled: () => {
@@ -140,29 +140,46 @@ export default function CreateSki() {
       },
     });
 
-//   const { mutate: mutateUpdate, isLoading: isLoadingUpdate } = useMutation(
-//     updateSki,
-//     {
-//       onSuccess: (data) => {
-//         setAlertContent(data);
-//         if (isServiceError(data)) {
-//           setErrorAlert(true);
-//         } else {
-//           setSuccessAlert(true);
-//           clear();
-//           navigate(`/skis/${skiId}`);
-//         }
-//       },
-//       onError: () => {
-//         alert("there was an error");
-//       },
-//       onSettled: () => {
-//         queryClient.invalidateQueries([]);
-//       },
-//     }
-//   );
+  //   const { mutate: mutateUpdate, isLoading: isLoadingUpdate } = useMutation(
+  //     updateSki,
+  //     {
+  //       onSuccess: (data) => {
+  //         setAlertContent(data);
+  //         if (isServiceError(data)) {
+  //           setErrorAlert(true);
+  //         } else {
+  //           setSuccessAlert(true);
+  //           clear();
+  //           navigate(`/skis/${skiId}`);
+  //         }
+  //       },
+  //       onError: () => {
+  //         alert("there was an error");
+  //       },
+  //       onSettled: () => {
+  //         queryClient.invalidateQueries([]);
+  //       },
+  //     }
+  //   );
 
-//   const [manResponse, setManResponse] = useState<any>(undefined);
+  const [manResponse, setManResponse] = useState<any>(undefined);
+
+  const { mutate: mutateMan, isLoading: isLoadingCreateMan } =
+    trpc.manufacturer.create.useMutation({
+      onSuccess: (data) => {
+        setManModalOpen(false);
+        setManufacturer(data.id);
+        setManResponse(undefined);
+      },
+      onError: (error) => {
+        console.error(error);
+        alert(`there was an error: ${error.message}`);
+      },
+      onSettled: () => {
+        utils.manufacturer.getAll.invalidate();
+      },
+    });
+
 //   const { mutate: mutateMan, isLoading: isLoadingCreateMan } = useMutation(
 //     postManufacturer,
 //     {
@@ -184,29 +201,29 @@ export default function CreateSki() {
 //     }
 //   );
 
-//   const [famResponse, setFamResponse] = useState<any>(undefined);
-//   const { mutate: mutateFam, isLoading: isLoadingCreateFam } = useMutation(
-//     postFamily,
-//     {
-//       onSuccess: (data) => {
-//         if (isServiceError(data)) {
-//           setFamResponse(data);
-//         } else {
-//           setFamModalOpen(false);
-//           if (data.manufacturer._id === manufacturer) {
-//             setSkiFamily(data._id);
-//           }
-//           setFamResponse(undefined);
-//         }
-//       },
-//       onError: () => {
-//         alert("there was an error");
-//       },
-//       onSettled: () => {
-//         queryClient.invalidateQueries(["skiFamilies"]);
-//       },
-//     }
-//   );
+  //   const [famResponse, setFamResponse] = useState<any>(undefined);
+  //   const { mutate: mutateFam, isLoading: isLoadingCreateFam } = useMutation(
+  //     postFamily,
+  //     {
+  //       onSuccess: (data) => {
+  //         if (isServiceError(data)) {
+  //           setFamResponse(data);
+  //         } else {
+  //           setFamModalOpen(false);
+  //           if (data.manufacturer._id === manufacturer) {
+  //             setSkiFamily(data._id);
+  //           }
+  //           setFamResponse(undefined);
+  //         }
+  //       },
+  //       onError: () => {
+  //         alert("there was an error");
+  //       },
+  //       onSettled: () => {
+  //         queryClient.invalidateQueries(["skiFamilies"]);
+  //       },
+  //     }
+  //   );
 
   const createSki = () => {
     const newSpecs: SkiSpec[] = specs
@@ -463,13 +480,16 @@ export default function CreateSki() {
       setFirstLookUrl(dataEdit.firstLook || "");
       setFlashReviewUrl(dataEdit.flashReview || "");
       setDeepDiveUrl(dataEdit.deepDive || "");
-      setAvailableLengths(dataEdit.lengths.map(l => l.length));
+      setAvailableLengths(dataEdit.lengths.map((l) => l.length));
       const editSpecs = dataEdit.specs.map((spec) => ({
         active: true,
         length: spec.length,
         measuredLength: spec.measuredLength?.toString(),
         weightStated: spec.weightStated?.toString(),
-        weightMeas: spec.weightMeas1 && spec.weightMeas2 ? [spec.weightMeas1?.toString(), spec.weightMeas2?.toString()] : ["", ""],
+        weightMeas:
+          spec.weightMeas1 && spec.weightMeas2
+            ? [spec.weightMeas1?.toString(), spec.weightMeas2?.toString()]
+            : ["", ""],
         dimTip: spec.dimTip?.toString(),
         dimWaist: spec.dimWaist?.toString(),
         dimTail: spec.dimTail?.toString(),
@@ -483,8 +503,8 @@ export default function CreateSki() {
         camberMeas: spec.camberMeas?.toString(),
         core: spec.core || undefined,
         base: spec.base || undefined,
-        mountPointFac: spec.mountPointFac.map(m => m.description),
-        mountPointBlist: spec.mountPointBlist.map(m => m.description),
+        mountPointFac: spec.mountPointFac.map((m) => m.description),
+        mountPointBlist: spec.mountPointBlist.map((m) => m.description),
         flexTip: spec.flexTip || undefined,
         flexShovel: spec.flexShovel || undefined,
         flexFront: spec.flexFront || undefined,
@@ -496,7 +516,9 @@ export default function CreateSki() {
       setSpecs([
         ...editSpecs,
         ...dataEdit.lengths
-          .filter((l) => !dataEdit.specs.find((spec) => spec.length === l.length))
+          .filter(
+            (l) => !dataEdit.specs.find((spec) => spec.length === l.length)
+          )
           .map((l) => {
             return {
               active: false,
@@ -532,32 +554,32 @@ export default function CreateSki() {
   }, [skiId, dataEdit, isLoadingEdit]);
 
   interface SkiSpecEdit {
-    active: boolean
-    length: number
-    measuredLength: string | undefined
-    weightStated: string | undefined
-    weightMeas: Array<string>
-    dimTip: string | undefined
-    dimWaist: string | undefined
-    dimTail: string | undefined
-    dimTipMeas: string | undefined
-    dimWaistMeas: string | undefined
-    dimTailMeas: string | undefined
-    sidcutStated: string | undefined
-    splayTip: string | undefined
-    splayTail: string | undefined
-    camberStated: string | undefined
-    camberMeas: string | undefined
-    core: string | undefined
-    base: string | undefined
-    mountPointFac: Array<string>
-    mountPointBlist: Array<string>
-    flexTip: string | undefined
-    flexShovel: string | undefined
-    flexFront: string | undefined
-    flexFoot: string | undefined
-    flexBack: string | undefined
-    flexTail: string | undefined
+    active: boolean;
+    length: number;
+    measuredLength: string | undefined;
+    weightStated: string | undefined;
+    weightMeas: Array<string>;
+    dimTip: string | undefined;
+    dimWaist: string | undefined;
+    dimTail: string | undefined;
+    dimTipMeas: string | undefined;
+    dimWaistMeas: string | undefined;
+    dimTailMeas: string | undefined;
+    sidcutStated: string | undefined;
+    splayTip: string | undefined;
+    splayTail: string | undefined;
+    camberStated: string | undefined;
+    camberMeas: string | undefined;
+    core: string | undefined;
+    base: string | undefined;
+    mountPointFac: Array<string>;
+    mountPointBlist: Array<string>;
+    flexTip: string | undefined;
+    flexShovel: string | undefined;
+    flexFront: string | undefined;
+    flexFoot: string | undefined;
+    flexBack: string | undefined;
+    flexTail: string | undefined;
   }
 
   // Error Checks
@@ -1701,7 +1723,9 @@ export default function CreateSki() {
                     <Button
                       color="error"
                       variant="contained"
-                      onClick={() => router.push(skiId ? `/skis/${skiId}` : "/skis")}
+                      onClick={() =>
+                        router.push(skiId ? `/skis/${skiId}` : "/skis")
+                      }
                     >
                       Cancel
                     </Button>
@@ -1727,14 +1751,14 @@ export default function CreateSki() {
             </>
           )}
         </Grid>
-        {/* <CreateManufacturerModal
+        <CreateManufacturerModal
           currentManufacturers={dataMan ? dataMan : []}
           onCreate={mutateMan}
           open={manModalOpen}
           createLoading={isLoadingCreateMan}
           responseContent={manResponse}
           onClose={onManModalClose}
-        /> */}
+        />
         {/* <CreateFamilyModal
           currentFamilies={dataFam ? dataFam : []}
           onCreate={mutateFam}

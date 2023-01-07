@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 
 import { Box, Dialog, DialogTitle, FormControl, Grid, TextField, Typography } from '@mui/material';
-import { Manufacturer } from '../legacy/Services/Manufacturers';
+// import { Manufacturer } from '../legacy/Services/Manufacturers';
 import { CenterLoader } from './CenterLoader';
 import { theme } from '../legacy/Theme';
+import { Manufacturer } from '@prisma/client';
 
 
 interface CreateManufacturerModalProps {
