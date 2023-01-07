@@ -627,7 +627,7 @@ export default function CreateSki() {
         >
           <Grid item xs={12}>
             <Typography variant="h2">
-              {skiId ? "Edit SkiLegacy" : "Create New SkiLegacy"}
+              {skiId ? "Edit Ski" : "Create New Ski"}
             </Typography>
           </Grid>
           {isLoadingCreate || isLoadingUpdate ? (
@@ -636,7 +636,7 @@ export default function CreateSki() {
             <>
               <Grid item xs={12}>
                 <Typography variant="h4" align="left">
-                  SkiLegacy Info:
+                  Ski Info:
                 </Typography>
               </Grid>
               {/* Model */}
@@ -723,7 +723,7 @@ export default function CreateSki() {
                             ? skiFamily
                             : ""
                         }
-                        label="SkiLegacy Family"
+                        label="Ski Family"
                         onChange={(e) => setSkiFamily(e.target.value)}
                       >
                         <MenuItem value={""}>
@@ -959,7 +959,7 @@ export default function CreateSki() {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="h4" align="left">
-                  SkiLegacy Specs:
+                  Ski Specs:
                 </Typography>
                 <Grid item xs={12}>
                   {availableLengths.length < 1 ? (

@@ -174,6 +174,7 @@ export const skiRouter = router({
           },
         },
         include: {
+          lengths: true,
           specs: {
             include: {
               mountPointFac: true,
@@ -258,9 +259,23 @@ export const skiRouter = router({
           firstLook: input.ski.firstLook,
           flashReview: input.ski.flashReview,
           deepDive: input.ski.deepDive,
-          // TODO: update lengths
         },
       });
+
+      await ctx.prisma.skiLength.deleteMany({
+        where: {
+          skiId: newSki.id,
+        },
+      });
+
+      for (const l of input.ski.lengths) {
+        await ctx.prisma.skiLength.create({
+          data: {
+            length: l,
+            skiId: newSki.id,
+          },
+        });
+      }
 
       for (const spec of input.ski.specs) {
         const newSpec = await ctx.prisma.skiSpec.upsert({

@@ -39,14 +39,14 @@ export default function Skis() {
     const [filter, setFilter] = useState<string>("")
     useEffect(() => {
         console.log('skis/filter updated');
-        if (skis && skis.length > 0 && data.data) {
+        if (data.data && data.data.length > 0 && data.data) {
             const searchTerms = filter.split(" ");
             const newSkis = data.data.filter(s => searchTerms.some(t => s.model.toLowerCase().indexOf(t.toLowerCase()) > -1) || searchTerms.some(t => s.manufacturer.name.toLowerCase().indexOf(t.toLowerCase()) > -1))
             console.log(newSkis);
             
             setSkis(newSkis)
         }
-    }, [filter, data.data, skis])
+    }, [filter, data.data])
 
 
     if (data.isError && data.error instanceof Error) {
