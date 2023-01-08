@@ -6,7 +6,7 @@ const guideSkiUploadSchema = z.object({
   category: z.string(),
   year: z.number(),
   specLength: z.number(),
-  summary: z.string().nullish()
+  summary: z.string().nullish(),
 });
 
 export const guideSkiRouter = router({
@@ -50,6 +50,38 @@ export const guideSkiRouter = router({
           specLength: input.specLength,
           summary: input.summary || "",
           skiId: input.ski,
+        },
+      });
+      return newGuideSki;
+    }),
+  update: publicProcedure
+    .input(
+      z.object({
+        guideSkiId: z.string(),
+        summary: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const newGuideSki = await ctx.prisma.guideSki.update({
+        where: {
+          id: input.guideSkiId,
+        },
+        data: {
+          summary: input.summary,
+        },
+      });
+      return newGuideSki;
+    }),
+  delete: publicProcedure
+    .input(
+      z.object({
+        guideSkiId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const newGuideSki = await ctx.prisma.guideSki.delete({
+        where: {
+          id: input.guideSkiId,
         },
       });
       return newGuideSki;

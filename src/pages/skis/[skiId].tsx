@@ -70,6 +70,8 @@ export default function SkiDetail() {
 
   console.log("ski", ski);
 
+  const utils = trpc.useContext();
+
   // const { data: ski, isLoading } = useQuery(['ski', skiId], () => fetchSki(skiId), { enabled: skiId ? true : false });
 
   // const queryClient = useQueryClient();
@@ -90,6 +92,19 @@ export default function SkiDetail() {
   //     }
   // });
 
+  const { mutate: mutateDelete, isLoading: isLoadingDelete } =
+    trpc.guideSki.delete.useMutation({
+      onSuccess: () => {
+        router.push(`/skis`)
+      },
+      onError: (error) => {
+        console.error(error);
+        alert(`there was an error: ${error.message}`);
+      },
+      onSettled: () => {
+        utils.guideSki.getAllByYear.invalidate();
+      },
+    });
   // const { mutate: mutateDelete, isLoading: isLoadingDelete } = useMutation(deleteSki, {
   //     onSuccess: data => {
   //         if (isServiceError(data)) {
@@ -336,11 +351,11 @@ export default function SkiDetail() {
                   {ski ? formatSkiName(ski) : "Model Name Not Found"}
                 </Typography>
                 <Stack direction="column">
-                  {/* <Tooltip title="Edit" placement="right">
+                  <Tooltip title="Edit" placement="right">
                     <IconButton
                       color="primary"
-                      component={RouterLink}
-                      to={`/skis/${skiId}/edit`}
+                      component={Link}
+                      href={`/skis/create/${skiId}`}
                       sx={{
                         "&:hover": {
                           backgroundColor: theme.palette.secondary.light,
@@ -350,7 +365,7 @@ export default function SkiDetail() {
                     >
                       <EditIcon color="inherit" />
                     </IconButton>
-                  </Tooltip> */}
+                  </Tooltip>
                   {/* <Tooltip title="Delete" placement="right">
                     <IconButton
                       color="error"

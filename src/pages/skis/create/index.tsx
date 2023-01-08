@@ -19,35 +19,16 @@ import {
   Alert,
   AlertTitle,
   Dialog,
-  CircularProgress,
   Autocomplete,
 } from "@mui/material";
-// import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
-// import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-// import {
-//   fetchSki,
-//   fetchSkisFull,
-//   postSki,
-//   SkiLegacy,
-//   SkiSpec,
-//   updateSki,
-// } from "../../Services/Skis";
-// import { fetchManufacturers } from "../../Services/Manufacturers";
-// import { isServiceError } from "../../Services/Utils";
-// import { fetchSkiFamilies } from "../../Services/SkiFamilies";
 import AddIcon from "@mui/icons-material/Add";
-// import { CreateManufacturerModal } from "./CreateManufacturerModal";
-// import { postManufacturer } from "../../Services/Manufacturers/Manufacturers";
-// import { postFamily } from "../../Services/SkiFamilies/SkiFamilies";
-// import { CreateFamilyModal } from "./CreateFamilyModal";
-// import { CenterLoader } from "../../Components/CenterLoader";
-import { theme } from "../../legacy/Theme";
+import { theme } from "../../../legacy/Theme";
 import { useRouter } from "next/router";
-import { CenterLoader } from "../../components/CenterLoader";
-import { CreateManufacturerModal } from "../../components/CreateManufacturerModal";
-import { CreateFamilyModal } from "../../components/CreateFamilyModal";
-import { trpc } from "../../utils/trpc";
-import { SkiLegacy, SkiSpec } from "../../legacy/Services/Skis";
+import { CenterLoader } from "../../../components/CenterLoader";
+import { CreateManufacturerModal } from "../../../components/CreateManufacturerModal";
+import { CreateFamilyModal } from "../../../components/CreateFamilyModal";
+import { trpc } from "../../../utils/trpc";
+import { SkiLegacy, SkiSpec } from "../../../legacy/Services/Skis";
 import { Ski } from "@prisma/client";
 
 const validYears = Array.from(Array(10).keys()).map(
@@ -102,27 +83,6 @@ export default function CreateSki() {
       },
     });
 
-  //   const { mutate: mutateCreate, isLoading: isLoadingCreate } = useMutation(
-  //     postSki,
-  //     {
-  //       onSuccess: (data) => {
-  //         setAlertContent(data);
-  //         if (isServiceError(data)) {
-  //           setErrorAlert(true);
-  //         } else {
-  //           setSuccessAlert(true);
-  //           clear();
-  //         }
-  //       },
-  //       onError: () => {
-  //         alert("there was an error");
-  //       },
-  //       onSettled: () => {
-  //         queryClient.invalidateQueries(["skis"]);
-  //       },
-  //     }
-  //   );
-
   const { mutate: mutateUpdate, isLoading: isLoadingUpdate } =
     trpc.ski.update.useMutation({
       onSuccess: (data) => {
@@ -139,28 +99,6 @@ export default function CreateSki() {
         utils.ski.getAll.invalidate();
       },
     });
-
-  //   const { mutate: mutateUpdate, isLoading: isLoadingUpdate } = useMutation(
-  //     updateSki,
-  //     {
-  //       onSuccess: (data) => {
-  //         setAlertContent(data);
-  //         if (isServiceError(data)) {
-  //           setErrorAlert(true);
-  //         } else {
-  //           setSuccessAlert(true);
-  //           clear();
-  //           navigate(`/skis/${skiId}`);
-  //         }
-  //       },
-  //       onError: () => {
-  //         alert("there was an error");
-  //       },
-  //       onSettled: () => {
-  //         queryClient.invalidateQueries([]);
-  //       },
-  //     }
-  //   );
 
   const [manResponse, setManResponse] = useState<any>(undefined);
 
@@ -179,27 +117,6 @@ export default function CreateSki() {
         utils.manufacturer.getAll.invalidate();
       },
     });
-
-  //   const { mutate: mutateMan, isLoading: isLoadingCreateMan } = useMutation(
-  //     postManufacturer,
-  //     {
-  //       onSuccess: (data) => {
-  //         if (isServiceError(data)) {
-  //           setManResponse(data);
-  //         } else {
-  //           setManModalOpen(false);
-  //           setManufacturer(data._id);
-  //           setManResponse(undefined);
-  //         }
-  //       },
-  //       onError: () => {
-  //         alert("there was an error");
-  //       },
-  //       onSettled: () => {
-  //         queryClient.invalidateQueries(["manufacturers"]);
-  //       },
-  //     }
-  //   );
 
   //   const [famResponse, setFamResponse] = useState<any>(undefined);
   //   const { mutate: mutateFam, isLoading: isLoadingCreateFam } = useMutation(
@@ -407,7 +324,11 @@ export default function CreateSki() {
     ]);
   };
 
-  const onSpecChange = (index: number, key: string, value: any) => {
+  const onSpecChange = (
+    index: number,
+    key: string,
+    value: string | number | boolean | (string | undefined)[]
+  ) => {
     const specsCopy = [...specs];
     specsCopy[index] = { ...specsCopy[index], [key]: value } as SkiSpecEdit;
     setSpecs(specsCopy);
@@ -790,7 +711,7 @@ export default function CreateSki() {
                 <FormControl fullWidth>
                   <Autocomplete
                     value={parent}
-                    onChange={(event: any, newValue: Ski | null) => {
+                    onChange={(event: unknown, newValue: Ski | null) => {
                       setParent(newValue);
                     }}
                     id="controllable-states-demo"

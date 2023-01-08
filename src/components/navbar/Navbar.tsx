@@ -19,6 +19,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { AccountCircle } from "@mui/icons-material";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { CenterLoader } from "../CenterLoader";
 
 interface Props {
     children?: ReactNode;
@@ -119,7 +120,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export function Navbar() {
-    const { data: sessionData } = useSession();
+    const { data: sessionData, status } = useSession();
 
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
@@ -189,7 +190,7 @@ export function Navbar() {
                                 </Fade>
                             )}
                         </Popper>
-                        {sessionData ? (
+                        {status === 'loading' ? <CenterLoader/> : sessionData ? (
                             <div>
                                 <IconButton
                                     size="large"

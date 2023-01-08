@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import { Container } from "@mui/system";
-// import { deleteGuideSki, fetchGuideSkisYear, SkiData, useSkisFull } from '../../Services/Skis';
 import {
   Accordion,
   AccordionDetails,
@@ -24,16 +23,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-// import { SkiTable } from '../../Components/SkiTable';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-// import { theme } from '../../Theme';
-// import { Link as RouterLink } from 'react-router-dom';
 import AddIcon from "@mui/icons-material/Add";
-// import { GuideSki, updateGuideSki } from '../../Services/Skis';
-// import { SkiSpecCard } from '../SkiDetails/SkiSpecCard';
-// import { AddGuideSkisModal } from './AddGuideSkisModal';
-// import { isServiceError } from '../../Services/Utils';
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -54,7 +45,6 @@ import { theme } from "../../legacy/Theme";
 import { SkiTable } from "../../components/SkiTable";
 import { Skis } from "../../components/SkiTable/SkiTable";
 import { AddGuideSkisModal } from "../../components/AddGuideSkisModal";
-// import { CenterLoader } from '../../Components/CenterLoader';
 
 export const CATEGORIES = [
   { value: "5050", display: "50/50" },
@@ -72,7 +62,6 @@ export const CATEGORIES = [
 ];
 
 export default function Guide() {
-  // const { isLoading, isError, data: allSkis, error } = useSkisFull()
   const {
     isLoading,
     isError,
@@ -80,18 +69,15 @@ export default function Guide() {
     error,
   } = trpc.ski.getAll.useQuery();
 
-  const currYear = new Date().getFullYear();
+  //const currYear = new Date().getFullYear();
   const [year, setYear] = useState<string>("2023");
 
-  // const { isLoading: isLoadingGuide, isError: isErrorGuide, data: guideSkis, error: guideError } = useQuery(['guideSkis', year], () => fetchGuideSkisYear(year), { enabled: year ? true : false })
   const {
     isLoading: isLoadingGuide,
     isError: isErrorGuide,
     data: guideSkis,
     error: guideError,
   } = trpc.guideSki.getAllByYear.useQuery({ year: year });
-
-  // console.log(guideSkis);
 
   const [availableSkis, setAvailableSkis] = useState(allSkis ? allSkis : []);
   const [availableSkisExpanded, setAvailableSkisExpanded] =
@@ -124,46 +110,42 @@ export default function Guide() {
     }
   }, [filter, allSkis]);
 
-  const [errorAlert, setErrorAlert] = useState<boolean>(false);
+  // const [errorAlert, setErrorAlert] = useState<boolean>(false);
   const [successAlert, setSuccessAlert] = useState<boolean>(false);
-  const [alertContent, setAlertContent] = useState<any>(undefined);
+  // const [alertContent, setAlertContent] = useState<any>(undefined);
   const [lastUpdatedGuideSki, setLastUpdatedGuideSki] = useState<
     string | undefined
   >(undefined);
-  const queryClient = useQueryClient();
-  // const { mutate: mutateUpdate, isLoading: isLoadingUpdate } = useMutation(updateGuideSki, {
-  //     onSuccess: data => {
-  //         setAlertContent(data)
-  //         if (isServiceError(data)) {
-  //             setErrorAlert(true)
-  //         } else {
-  //             setSuccessAlert(true)
-  //         }
-  //     },
-  //     onError: () => {
-  //         alert("there was an error")
-  //     },
-  //     onSettled: () => {
-  //         queryClient.invalidateQueries(['guideSkis']);
-  //     }
-  // })
 
-  // const { mutate: mutateDelete, isLoading: isLoadingDelete } = useMutation(deleteGuideSki, {
-  //     onSuccess: data => {
-  //         setAlertContent(data)
-  //         if (isServiceError(data)) {
-  //             setErrorAlert(true)
-  //         } else {
-  //             setSuccessAlert(true)
-  //         }
-  //     },
-  //     onError: () => {
-  //         alert("there was an error")
-  //     },
-  //     onSettled: () => {
-  //         queryClient.invalidateQueries(['guideSkis']);
-  //     }
-  // })
+  const utils = trpc.useContext();
+
+  const { mutate: mutateUpdate, isLoading: isLoadingUpdate } =
+    trpc.guideSki.update.useMutation({
+      onSuccess: () => {
+        setSuccessAlert(true);
+      },
+      onError: (error) => {
+        console.error(error);
+        alert(`there was an error: ${error.message}`);
+      },
+      onSettled: () => {
+        utils.guideSki.getAllByYear.invalidate();
+      },
+    });
+
+  const { mutate: mutateDelete, isLoading: isLoadingDelete } =
+    trpc.guideSki.delete.useMutation({
+      onSuccess: () => {
+        setSuccessAlert(true);
+      },
+      onError: (error) => {
+        console.error(error);
+        alert(`there was an error: ${error.message}`);
+      },
+      onSettled: () => {
+        utils.guideSki.getAllByYear.invalidate();
+      },
+    });
 
   interface TabPanelProps {
     children?: React.ReactNode;
@@ -181,7 +163,7 @@ export default function Guide() {
   }
 
   function CategoryPanel(props: TabPanelProps) {
-    const { children, value, index, categorySkis, ...other } = props;
+    const { value, index, categorySkis, ...other } = props;
 
     const [selectedSki, setSelectedSki] = useState(
       categorySkis &&
@@ -203,8 +185,9 @@ export default function Guide() {
 
     const saveBlurb = () => {
       setLastUpdatedGuideSki(selectedSki?.id);
-      // TODO: implement update guide ski
-      // mutateUpdate({ guideSkiId: selectedSki.id, guideSkiData: { blurb: blurb } })
+
+      if (selectedSki)
+        mutateUpdate({ guideSkiId: selectedSki.id, summary: blurb });
     };
 
     return (
@@ -219,7 +202,7 @@ export default function Guide() {
           categorySkis &&
           (categorySkis.length > 0 ? (
             <>
-              {false ? ( // isLoadingDelete
+              {isLoadingDelete ? (
                 <CenterLoader />
               ) : (
                 <Grid
@@ -264,7 +247,7 @@ export default function Guide() {
                                     border: 0,
                                   },
                                 }}
-                                onClick={(event) => {
+                                onClick={() => {
                                   setSelectedSki(guideSki);
                                 }}
                                 role="checkbox"
@@ -295,8 +278,7 @@ export default function Guide() {
                                   <IconButton
                                     color="error"
                                     onClick={() => {
-                                      // TODO: implement delete
-                                      // mutateDelete(guideSki._id);
+                                      mutateDelete({ guideSkiId: guideSki.id });
                                     }}
                                   >
                                     <DeleteIcon />
@@ -343,12 +325,12 @@ export default function Guide() {
                       xs={12}
                       md={6}
                     >
-                      <Grid item xs={3} sm={2} lg={1}>
+                      <Grid item xs={3} sm={2}>
                         <Typography variant="body1" align="left">
                           <b>Summary: </b>
                         </Typography>
                       </Grid>
-                      {false ? ( // isLoadingUpdate TODO: implement update
+                      {isLoadingUpdate ? (
                         <CenterLoader />
                       ) : editing ? (
                         <>
@@ -357,10 +339,15 @@ export default function Guide() {
                               <IconButton
                                 color="primary"
                                 onClick={() => setEditing(false)}
+                                className="pt-0"
                               >
                                 <CancelIcon />
                               </IconButton>
-                              <IconButton color="primary" onClick={saveBlurb}>
+                              <IconButton
+                                color="primary"
+                                onClick={saveBlurb}
+                                className="pt-0"
+                              >
                                 <SaveIcon />
                               </IconButton>
                             </Grid>
@@ -382,6 +369,7 @@ export default function Guide() {
                               onClick={() => {
                                 setEditing(true);
                               }}
+                              className="pt-0"
                             >
                               <EditIcon />
                             </IconButton>
@@ -476,7 +464,7 @@ export default function Guide() {
             <Grid item xs={12}>
               <Accordion
                 expanded={availableSkisExpanded}
-                onChange={(e) =>
+                onChange={() =>
                   setAvailableSkisExpanded(!availableSkisExpanded)
                 }
                 disabled={availableSkis.length < 1}

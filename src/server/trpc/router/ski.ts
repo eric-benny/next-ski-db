@@ -123,10 +123,10 @@ export const skiRouter = router({
           deepDive: input.deepDive,
           lengths: {
             create: [
-              ...input.lengths.map(l => ({
-                length: l
-              }))
-            ]
+              ...input.lengths.map((l) => ({
+                length: l,
+              })),
+            ],
           },
           specs: {
             create: [
@@ -369,5 +369,18 @@ export const skiRouter = router({
         }
       }
       return newSki;
+    }),
+  delete: publicProcedure
+    .input(
+      z.object({
+        skiId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      ctx.prisma.ski.delete({
+        where: {
+          id: input.skiId,
+        },
+      });
     }),
 });
