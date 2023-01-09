@@ -333,7 +333,7 @@ export default function SkiDetail() {
                     <StarIcon fontSize="medium" color="secondary" />
                   </IconButton>
                 )} */}
-                <Typography variant="h2">
+                <Typography variant="h2" textAlign="center">
                   {ski ? formatSkiName(ski) : "Model Name Not Found"}
                 </Typography>
                 <Stack direction="column">
