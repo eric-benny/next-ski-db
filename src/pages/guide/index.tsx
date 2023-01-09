@@ -494,7 +494,8 @@ export default function Guide() {
                     </Grid>
                     <Grid item xs={12}>
                       <SkiTable
-                        skis={availableSkis}
+                        skis={allSkis || []}
+                        filteredSkis={availableSkis}
                         skisLoading={isLoading}
                         selectedSkis={skisToAdd}
                         setSelectedSkis={setSkisToAdd}
