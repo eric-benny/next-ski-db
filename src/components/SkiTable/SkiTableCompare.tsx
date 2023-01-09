@@ -29,12 +29,14 @@ type Skis = (Ski & {
 
 interface SkiTableProps {
   skis: Skis;
+  filteredSkis?: Skis;
   skisLoading: boolean;
   height?: string | number;
 }
 
 export const SkiTableCompare = ({
   skis,
+  filteredSkis,
   skisLoading,
   height,
 }: SkiTableProps) => {
@@ -91,6 +93,7 @@ export const SkiTableCompare = ({
         </Grid>
         <SkiTable
           skis={skis}
+          filteredSkis={filteredSkis}
           skisLoading={skisLoading}
           selectedSkis={compareSkis}
           setSelectedSkis={setCompareSkis}

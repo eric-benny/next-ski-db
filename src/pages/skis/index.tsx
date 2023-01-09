@@ -35,7 +35,7 @@ export default function Skis() {
         }
     }, [data.data])
 
-
+    const [filteredSkis, setFilteredSkis] = useState<Skis>([])
     const [filter, setFilter] = useState<string>("")
     useEffect(() => {
         console.log('skis/filter updated');
@@ -44,7 +44,7 @@ export default function Skis() {
             const newSkis = data.data.filter(s => searchTerms.some(t => s.model.toLowerCase().indexOf(t.toLowerCase()) > -1) || searchTerms.some(t => s.manufacturer.name.toLowerCase().indexOf(t.toLowerCase()) > -1))
             console.log(newSkis);
             
-            setSkis(newSkis)
+            setFilteredSkis(newSkis)
         }
     }, [filter, data.data])
 
@@ -86,7 +86,7 @@ export default function Skis() {
                             />
                         </FormControl>
                     </Grid>
-                    <SkiTableCompare skis={skis} skisLoading={data.isLoading} />
+                    <SkiTableCompare skis={skis} filteredSkis={filteredSkis} skisLoading={data.isLoading} />
                 </Grid>
             </Container>
         </>

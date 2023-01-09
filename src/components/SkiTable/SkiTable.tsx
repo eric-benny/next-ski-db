@@ -35,6 +35,7 @@ export type Skis = FullSKi[];
 
 interface SkiTableProps {
   skis: Skis;
+  filteredSkis?: Skis;
   skisLoading: boolean;
   height?: string | number;
   selectedSkis?: Skis;
@@ -44,6 +45,7 @@ interface SkiTableProps {
 
 export const SkiTable = ({
   skis,
+  filteredSkis,
   skisLoading,
   height,
   selectedSkis,
@@ -53,7 +55,7 @@ export const SkiTable = ({
   // MUI data grid
   let rows: GridRowsProp<Ski> = [];
   if (skis) {
-    rows = skis;
+    if (filteredSkis) {rows = filteredSkis} else {rows = skis}
   }
 
   const columns: GridColDef[] = [
@@ -128,13 +130,22 @@ export const SkiTable = ({
   const [selectionModel, setSelectionModel] =
     React.useState<GridSelectionModel>([]);
 
+  console.log(selectedSkis);
+  console.log(selectionModel);
+  
+  
+
   function selectedSkiChange(newSelectionModel: GridSelectionModel) {
-    const compSkis = rows.filter((ski) => newSelectionModel.includes(ski.id));
+    console.log('onselect');
+    
+    const compSkis = skis.filter((ski) => newSelectionModel.includes(ski.id));
     setSelectedSkis(compSkis);
     setSelectionModel(newSelectionModel);
   }
 
   useEffect(() => {
+    console.log('selection changed');
+    
     const newSelectionModel = selectedSkis ? selectedSkis.map((s) => s.id) : [];
     setSelectionModel(newSelectionModel);
   }, [selectedSkis]);
