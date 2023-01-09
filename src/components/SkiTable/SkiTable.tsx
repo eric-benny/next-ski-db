@@ -179,6 +179,7 @@ export const SkiTable = ({
                   onSelectionModelChange={(newSelectionModel) => {
                     selectedSkiChange(newSelectionModel);
                   }}
+                  keepNonExistentRowsSelected
                   selectionModel={selectionModel}
                   loading={skisLoading}
                   disableSelectionOnClick

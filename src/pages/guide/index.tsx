@@ -489,6 +489,7 @@ export default function Guide() {
                         label="Quick Filter"
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
+                        type="search"
                       />
                     </Grid>
                     <Grid item xs={12}>

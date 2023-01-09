@@ -93,7 +93,7 @@ export default function SkiDetail() {
   // });
 
   const { mutate: mutateDelete, isLoading: isLoadingDelete } =
-    trpc.guideSki.delete.useMutation({
+    trpc.ski.delete.useMutation({
       onSuccess: () => {
         router.push(`/skis`)
       },
@@ -102,23 +102,9 @@ export default function SkiDetail() {
         alert(`there was an error: ${error.message}`);
       },
       onSettled: () => {
-        utils.guideSki.getAllByYear.invalidate();
+        utils.ski.getAll.invalidate();
       },
     });
-  // const { mutate: mutateDelete, isLoading: isLoadingDelete } = useMutation(deleteSki, {
-  //     onSuccess: data => {
-  //         if (isServiceError(data)) {
-  //             alert("ski could not be deleted")
-  //         } else {
-  //             navigate(`/skis`)
-  //         }
-  //     },
-  //     onError: () => {
-  //         alert("there was an error deleting the ski")
-  //     },
-  //     onSettled: () => {
-  //     }
-  // });
 
   // const { mutate: mutateFav, isLoading: isLoadingFav } = useMutation(updateUserFavorite, {
   //     onSuccess: data => {
@@ -136,13 +122,13 @@ export default function SkiDetail() {
   //     }
   // });
 
-  // const [deleteAlert, setDeleteAlert] = useState<boolean>(false)
-  // const deleteSkiConfirm = () => {
-  //     setDeleteAlert(false)
-  //     if (skiId) {
-  //         mutateDelete(skiId)
-  //     }
-  // }
+  const [deleteAlert, setDeleteAlert] = useState<boolean>(false)
+  const deleteSkiConfirm = () => {
+      setDeleteAlert(false)
+      if (skiId) {
+          mutateDelete({skiId: skiId as string})
+      }
+  }
 
   // const saveNote = (index: number, note: string, skiDays: number) => {
   //     if (ski) {
@@ -294,7 +280,7 @@ export default function SkiDetail() {
   return (
     <>
       <Container>
-        {/* <Dialog open={deleteAlert} onClose={() => setDeleteAlert(false)}>
+        <Dialog open={deleteAlert} onClose={() => setDeleteAlert(false)}>
           <Alert severity="warning" onClose={() => setDeleteAlert(false)}>
             <AlertTitle>Confirm Delete</AlertTitle>
             Are you sure you wish to delete this ski?
@@ -308,7 +294,7 @@ export default function SkiDetail() {
               CONFIRM
             </Button>
           </Alert>
-        </Dialog> */}
+        </Dialog>
         {res.isLoading || !ski ? (
           <CenterLoader />
         ) : (
@@ -366,14 +352,14 @@ export default function SkiDetail() {
                       <EditIcon color="inherit" />
                     </IconButton>
                   </Tooltip>
-                  {/* <Tooltip title="Delete" placement="right">
+                  <Tooltip title="Delete" placement="right">
                     <IconButton
                       color="error"
                       onClick={() => setDeleteAlert(true)}
                     >
                       <DeleteIcon />
                     </IconButton>
-                  </Tooltip> */}
+                  </Tooltip>
                 </Stack>
               </Stack>
             </Grid>

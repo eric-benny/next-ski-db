@@ -377,7 +377,7 @@ export const skiRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      ctx.prisma.ski.delete({
+      await ctx.prisma.ski.delete({
         where: {
           id: input.skiId,
         },

@@ -82,6 +82,7 @@ export default function Skis() {
                                 label="Quick Filter"
                                 value={filter}
                                 onChange={(e) => setFilter(e.target.value)}
+                                type="search"
                             />
                         </FormControl>
                     </Grid>
