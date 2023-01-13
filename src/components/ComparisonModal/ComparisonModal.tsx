@@ -6,13 +6,9 @@ import { TableBody, TableContainer, Box, Dialog, DialogContent, DialogTitle, For
 import { theme } from '../../legacy/Theme';
 import CloseIcon from '@mui/icons-material/Close';
 import { GuideSki, Manufacturer, Ski, SkiFamily, SkiSpec, SkiLength } from '@prisma/client';
-type Skis = (Ski & {
-    manufacturer: Manufacturer;
-    family: SkiFamily | null;
-    guideInfo: GuideSki[];
-    specs: SkiSpec[];
-    lengths: SkiLength[];
-})[]
+import { RouterOutputs } from '../../utils/api';
+
+type Skis = RouterOutputs['ski']['getAll'];
 
 interface ComparisonModalProps {
     skis: Skis

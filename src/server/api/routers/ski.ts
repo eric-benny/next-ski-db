@@ -1,4 +1,4 @@
-import { router, publicProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 import { z } from "zod";
 
 const skiSpecSchema = z.object({
@@ -54,7 +54,7 @@ const skiUploadSchema = z.object({
   deepDive: z.string().optional(),
 });
 
-export const skiRouter = router({
+export const skiRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.ski.findMany({
       include: {
@@ -63,6 +63,7 @@ export const skiRouter = router({
         guideInfo: true,
         specs: true,
         lengths: true,
+        predecessor: true,
       },
     });
   }),

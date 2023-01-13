@@ -1,4 +1,4 @@
-import { router, publicProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 import { z } from "zod";
 
 const guideSkiUploadSchema = z.object({
@@ -9,7 +9,7 @@ const guideSkiUploadSchema = z.object({
   summary: z.string().nullish(),
 });
 
-export const guideSkiRouter = router({
+export const guideSkiRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.guideSki.findMany({
       include: {

@@ -11,27 +11,11 @@ import React, { useEffect, useState } from "react";
 // import { Link as RouterLink } from 'react-router-dom';
 // import { ComparisonModal } from "../../Pages/Home/ComparisonModal"
 import Link from "next/link";
+import { RouterOutputs } from "../../utils/api";
 
-import {
-  GuideSki,
-  Manufacturer,
-  Ski,
-  SkiFamily,
-  SkiSpec,
-  SkiLength,
-} from "@prisma/client";
-
-// type Skis = RouterOutput['ski']['getAll'];
-
-export type FullSKi = Ski & {
-  manufacturer: Manufacturer;
-  family: SkiFamily | null;
-  guideInfo: GuideSki[];
-  specs: SkiSpec[];
-  lengths: SkiLength[];
-};
-
-export type Skis = FullSKi[];
+type Skis = RouterOutputs["ski"]["getAll"];
+type Ski = Skis[0];
+type SkiLength = Ski['lengths'][0];
 
 interface SkiTableProps {
   skis: Skis;
@@ -55,7 +39,11 @@ export const SkiTable = ({
   // MUI data grid
   let rows: GridRowsProp<Ski> = [];
   if (skis) {
-    if (filteredSkis) {rows = filteredSkis} else {rows = skis}
+    if (filteredSkis) {
+      rows = filteredSkis;
+    } else {
+      rows = skis;
+    }
   }
 
   const columns: GridColDef[] = [
@@ -132,20 +120,18 @@ export const SkiTable = ({
 
   console.log(selectedSkis);
   console.log(selectionModel);
-  
-  
 
   function selectedSkiChange(newSelectionModel: GridSelectionModel) {
-    console.log('onselect');
-    
+    console.log("onselect");
+
     const compSkis = skis.filter((ski) => newSelectionModel.includes(ski.id));
     setSelectedSkis(compSkis);
     setSelectionModel(newSelectionModel);
   }
 
   useEffect(() => {
-    console.log('selection changed');
-    
+    console.log("selection changed");
+
     const newSelectionModel = selectedSkis ? selectedSkis.map((s) => s.id) : [];
     setSelectionModel(newSelectionModel);
   }, [selectedSkis]);

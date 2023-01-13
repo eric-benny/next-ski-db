@@ -30,21 +30,16 @@ import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 
 import DeleteIcon from "@mui/icons-material/Delete";
-import { trpc } from "../../utils/trpc";
-import {
-  GuideSki,
-  Manufacturer,
-  Ski,
-  SkiLength,
-  SkiSpec,
-} from "@prisma/client";
+import { api, RouterOutputs } from "../../utils/api";
 import { CenterLoader } from "../../components/CenterLoader";
 import Link from "next/link";
 import { SkiSpecCard } from "../../components/SkiSpecCard";
 import { theme } from "../../legacy/Theme";
 import { SkiTable } from "../../components/SkiTable";
-import { Skis } from "../../components/SkiTable/SkiTable";
 import { AddGuideSkisModal } from "../../components/AddGuideSkisModal";
+
+type Skis = RouterOutputs["ski"]["getAll"];
+type GuideSkis = RouterOutputs["guideSki"]["getAllByYear"];
 
 export const CATEGORIES = [
   { value: "5050", display: "50/50" },
@@ -67,7 +62,7 @@ export default function Guide() {
     isError,
     data: allSkis,
     error,
-  } = trpc.ski.getAll.useQuery();
+  } = api.ski.getAll.useQuery();
 
   //const currYear = new Date().getFullYear();
   const [year, setYear] = useState<string>("2023");
@@ -77,7 +72,7 @@ export default function Guide() {
     isError: isErrorGuide,
     data: guideSkis,
     error: guideError,
-  } = trpc.guideSki.getAllByYear.useQuery({ year: year });
+  } = api.guideSki.getAllByYear.useQuery({ year: year });
 
   const [availableSkis, setAvailableSkis] = useState(allSkis ? allSkis : []);
   const [availableSkisExpanded, setAvailableSkisExpanded] =
@@ -117,10 +112,10 @@ export default function Guide() {
     string | undefined
   >(undefined);
 
-  const utils = trpc.useContext();
+  const utils = api.useContext();
 
   const { mutate: mutateUpdate, isLoading: isLoadingUpdate } =
-    trpc.guideSki.update.useMutation({
+    api.guideSki.update.useMutation({
       onSuccess: () => {
         setSuccessAlert(true);
       },
@@ -134,7 +129,7 @@ export default function Guide() {
     });
 
   const { mutate: mutateDelete, isLoading: isLoadingDelete } =
-    trpc.guideSki.delete.useMutation({
+    api.guideSki.delete.useMutation({
       onSuccess: () => {
         setSuccessAlert(true);
       },
@@ -151,15 +146,7 @@ export default function Guide() {
     children?: React.ReactNode;
     index: string;
     value: string;
-    categorySkis:
-      | (GuideSki & {
-          ski: Ski & {
-            manufacturer: Manufacturer;
-            lengths: SkiLength[];
-            specs: SkiSpec[];
-          };
-        })[]
-      | undefined;
+    categorySkis: GuideSkis | undefined;
   }
 
   function CategoryPanel(props: TabPanelProps) {

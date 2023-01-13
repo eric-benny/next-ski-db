@@ -13,7 +13,11 @@ import {
 // import { Manufacturer } from '../legacy/Services/Manufacturers';
 import { CenterLoader } from "./CenterLoader";
 import { theme } from "../legacy/Theme";
-import { Manufacturer } from "@prisma/client";
+import { RouterOutputs } from "../utils/api";
+
+type Skis = RouterOutputs["ski"]["getAll"];
+type Ski = Skis[0];
+type Manufacturer = Ski['manufacturer']
 
 interface CreateManufacturerModalProps {
   currentManufacturers: Manufacturer[];

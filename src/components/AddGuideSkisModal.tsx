@@ -13,27 +13,19 @@ import {
   RadioGroup,
   Typography,
 } from "@mui/material";
-import {
-  GuideSki,
-  Manufacturer,
-  Ski,
-  SkiLength,
-  SkiSpec,
-} from "@prisma/client";
-import { trpc } from "../utils/trpc";
+import { api, RouterOutputs } from "../utils/api";
 import { CenterLoader } from "./CenterLoader";
 import { CATEGORIES } from "../pages/guide";
-import { FullSKi, Skis } from "./SkiTable/SkiTable";
+// import { FullSKi } from "./SkiTable/SkiTable";
 import { theme } from "../legacy/Theme";
 
+type Skis = RouterOutputs['ski']['getAll'];
+type FullSki = Skis[0]
+type GuideSkis = RouterOutputs["guideSki"]["getAllByYear"];
+type GuideSki = Omit<GuideSkis[0], 'ski'>
+
 interface AddGuideSkisModalProps {
-  currentGuideSkis: (GuideSki & {
-    ski: Ski & {
-      manufacturer: Manufacturer;
-      lengths: SkiLength[];
-      specs: SkiSpec[];
-    };
-  })[];
+  currentGuideSkis: GuideSkis;
   skisToAdd: Skis;
   year: string;
   open: boolean;
@@ -64,10 +56,10 @@ export function AddGuideSkisModal({
   const [successAlert, setSuccessAlert] = useState<boolean>(false);
   const [alertContent, setAlertContent] = useState<string>("");
 
-  const utils = trpc.useContext();
+  const utils = api.useContext();
 
   const { mutate: mutateCreate, isLoading: isLoadingCreate } =
-    trpc.guideSki.create.useMutation({
+    api.guideSki.create.useMutation({
       onSuccess: () => {
         setSuccessAlert(true);
         handleClose(undefined, undefined, true);
@@ -127,7 +119,7 @@ export function AddGuideSkisModal({
     onClose(onSubmission);
   };
 
-  const formatSkiName = (ski: Ski) => {
+  const formatSkiName = (ski: FullSki) => {
     const prevYear = ski.yearCurrent - 1;
     return `${ski.model} ${prevYear - 2000}/${ski.yearCurrent - 2000}`;
   };
@@ -135,7 +127,7 @@ export function AddGuideSkisModal({
   const addGuideSki = (
     specLength: string | undefined,
     category: string,
-    ski: Ski
+    ski: FullSki
   ) => {
     if (specLength) {
       setGuideSkis([
@@ -155,7 +147,7 @@ export function AddGuideSkisModal({
   const removeGuideSki = (
     specLength: string | undefined,
     category: string,
-    ski: Ski
+    ski: FullSki
   ) => {
     if (specLength) {
       setGuideSkis(
@@ -172,7 +164,7 @@ export function AddGuideSkisModal({
 
   const catDisabled = (
     cat: string,
-    ski: Ski,
+    ski: FullSki,
     specLength: number | undefined
   ) => {
     return currentGuideSkis.some(
@@ -193,7 +185,7 @@ export function AddGuideSkisModal({
           <>
             <DialogContent>
               <Grid container>
-                {skisToAdd.map((ski: FullSKi, index: number) => {
+                {skisToAdd.map((ski: FullSki, index: number) => {
                   return (
                     <Grid key={index} item container xs={12}>
                       <Grid item xs={12}>

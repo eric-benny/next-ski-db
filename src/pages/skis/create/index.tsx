@@ -27,9 +27,11 @@ import { useRouter } from "next/router";
 import { CenterLoader } from "../../../components/CenterLoader";
 import { CreateManufacturerModal } from "../../../components/CreateManufacturerModal";
 import { CreateFamilyModal } from "../../../components/CreateFamilyModal";
-import { trpc } from "../../../utils/trpc";
+import { api, RouterOutputs } from "../../../utils/api";
 import { SkiLegacy, SkiSpec } from "../../../legacy/Services/Skis";
-import { Ski } from "@prisma/client";
+
+type Skis = RouterOutputs["ski"]["getAll"];
+type Ski = Skis[0];
 
 const validYears = Array.from(Array(10).keys()).map(
   (i) => new Date().getFullYear() + 1 - i
@@ -45,30 +47,30 @@ export default function CreateSki() {
     isError: isErrorMan,
     data: dataMan,
     error: errorMan,
-  } = trpc.manufacturer.getAll.useQuery();
+  } = api.manufacturer.getAll.useQuery();
   const {
     isLoading: isLoadingFam,
     isError: isErrorFam,
     data: dataFam,
     error: errorFam,
-  } = trpc.skiFamily.getAll.useQuery();
-  const { data: dataEdit, isLoading: isLoadingEdit } = trpc.ski.getOne.useQuery(
+  } = api.skiFamily.getAll.useQuery();
+  const { data: dataEdit, isLoading: isLoadingEdit } = api.ski.getOne.useQuery(
     { skiId } as {
       skiId: string | undefined;
     },
     { enabled: !!skiId }
   );
 
-  const { data: skis } = trpc.ski.getAll.useQuery();
+  const { data: skis } = api.ski.getAll.useQuery();
 
   const [errorAlert, setErrorAlert] = useState<boolean>(false);
   const [successAlert, setSuccessAlert] = useState<boolean>(false);
   const [alertContent, setAlertContent] = useState<any>(undefined);
 
-  const utils = trpc.useContext();
+  const utils = api.useContext();
 
   const { mutate: mutateCreate, isLoading: isLoadingCreate } =
-    trpc.ski.create.useMutation({
+    api.ski.create.useMutation({
       onSuccess: (data) => {
         setAlertContent(data);
         setSuccessAlert(true);
@@ -84,7 +86,7 @@ export default function CreateSki() {
     });
 
   const { mutate: mutateUpdate, isLoading: isLoadingUpdate } =
-    trpc.ski.update.useMutation({
+    api.ski.update.useMutation({
       onSuccess: (data) => {
         setAlertContent(data);
         setSuccessAlert(true);
@@ -103,7 +105,7 @@ export default function CreateSki() {
   const [manResponse, setManResponse] = useState<any>(undefined);
 
   const { mutate: mutateMan, isLoading: isLoadingCreateMan } =
-    trpc.manufacturer.create.useMutation({
+    api.manufacturer.create.useMutation({
       onSuccess: (data) => {
         setManModalOpen(false);
         setManufacturer(data.id);
