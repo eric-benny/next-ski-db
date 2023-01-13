@@ -202,7 +202,7 @@ export default function CreateSki() {
       model: model,
       lengths: availableLengths,
       specs: newSpecs,
-      url: fullReviewUrl,
+      fullReview: fullReviewUrl,
       flashReview: flashReviewUrl,
       firstLook: firstLookUrl,
       deepDive: deepDiveUrl,
@@ -919,7 +919,7 @@ export default function CreateSki() {
                 </Grid>
                 <Grid item xs={12}>
                   {specs
-                    .sort((a, b) => a.length - b.length)
+                    .sort((a, b) => b.length - a.length)
                     .map((spec, index) => {
                       return (
                         <FormControlLabel
