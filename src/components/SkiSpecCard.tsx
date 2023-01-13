@@ -54,7 +54,7 @@ export function SkiSpecCard({ spec, textVariant }: SkiSpecCardProps) {
                         <b>{`Core: `}</b>{formatSpec(spec?.core)}
                     </Typography>
                     <Typography variant={textVariant} align='left' gutterBottom>
-                        <b>{`Base: `}</b>{formatSpec(undefined)}
+                        <b>{`Base: `}</b>{formatSpec(spec?.base)}
                     </Typography>
                     <Typography variant={textVariant} align='left' gutterBottom>
                         <b>{`Flex: `}</b>
