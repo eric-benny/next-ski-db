@@ -1559,7 +1559,7 @@ export default function CreateSki() {
                                     "mountPointFac",
                                     e.target.value
                                       ? e.target.value.split("\n")
-                                      : ""
+                                      : []
                                   )
                                 }
                                 margin="dense"
@@ -1600,7 +1600,7 @@ export default function CreateSki() {
                                     "mountPointBlist",
                                     e.target.value
                                       ? e.target.value.split("\n")
-                                      : ""
+                                      : []
                                   )
                                 }
                                 margin="dense"

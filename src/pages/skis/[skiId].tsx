@@ -95,7 +95,7 @@ export default function SkiDetail() {
   const { mutate: mutateDelete, isLoading: isLoadingDelete } =
     trpc.ski.delete.useMutation({
       onSuccess: () => {
-        router.push(`/skis`)
+        router.push(`/skis`);
       },
       onError: (error) => {
         console.error(error);
@@ -122,13 +122,13 @@ export default function SkiDetail() {
   //     }
   // });
 
-  const [deleteAlert, setDeleteAlert] = useState<boolean>(false)
+  const [deleteAlert, setDeleteAlert] = useState<boolean>(false);
   const deleteSkiConfirm = () => {
-      setDeleteAlert(false)
-      if (skiId) {
-          mutateDelete({skiId: skiId as string})
-      }
-  }
+    setDeleteAlert(false);
+    if (skiId) {
+      mutateDelete({ skiId: skiId as string });
+    }
+  };
 
   // const saveNote = (index: number, note: string, skiDays: number) => {
   //     if (ski) {
@@ -485,17 +485,19 @@ export default function SkiDetail() {
                   activeIndex={activeIndex}
                   onClickHandler={goToIndex}
                 />
-                {ski?.specs.map((spec, i) => {
-                  return (
-                    <CarouselItem
-                      onExiting={() => setAnimating(true)}
-                      onExited={() => setAnimating(false)}
-                      key={i}
-                    >
-                      <SkiSpecCard textVariant="body1" key={i} spec={spec} />
-                    </CarouselItem>
-                  );
-                })}
+                {ski?.specs
+                  .sort((a, b) => b.length - a.length)
+                  .map((spec, i) => {
+                    return (
+                      <CarouselItem
+                        onExiting={() => setAnimating(true)}
+                        onExited={() => setAnimating(false)}
+                        key={i}
+                      >
+                        <SkiSpecCard textVariant="body1" key={i} spec={spec} />
+                      </CarouselItem>
+                    );
+                  })}
                 {ski.specs.length > 1 && (
                   <>
                     <StyledControl

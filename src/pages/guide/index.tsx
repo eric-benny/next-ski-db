@@ -232,11 +232,11 @@ export default function Guide() {
                           {categorySkis
                             .sort(
                               (a, b) =>
-                                (a.ski.specs[0]?.dimWaist
-                                  ? a.ski.specs[0].dimWaist
+                                (a.ski.specs[0]?.dimWaistMeas
+                                  ? a.ski.specs[0].dimWaistMeas
                                   : 100) -
-                                (b.ski.specs[0]?.dimWaist
-                                  ? b.ski.specs[0].dimWaist
+                                (b.ski.specs[0]?.dimWaistMeas
+                                  ? b.ski.specs[0].dimWaistMeas
                                   : 100)
                             )
                             .map((guideSki) => (
