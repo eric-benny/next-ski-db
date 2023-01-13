@@ -64,7 +64,6 @@ const MyApp2: React.FunctionComponent<
 
 const AuthShowcase: React.FC = () => {
   const router = useRouter();
-  const { data: secretMessage } = api.auth.getSecretMessage.useQuery();
 
   const { data: sessionData } = useSession();
 
