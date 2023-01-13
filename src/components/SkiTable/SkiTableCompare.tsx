@@ -7,25 +7,10 @@ import { theme } from "../../legacy/Theme";
 import { SkiTable } from ".";
 import { ComparisonModal } from "../ComparisonModal";
 import { GridRowId } from "@mui/x-data-grid";
+import { RouterOutputs } from "../../utils/api";
 
-import {
-  GuideSki,
-  Manufacturer,
-  Ski,
-  SkiFamily,
-  SkiSpec,
-  SkiLength,
-} from "@prisma/client";
-
-// type Skis = RouterOutput['ski']['getAll'];
-
-type Skis = (Ski & {
-  manufacturer: Manufacturer;
-  family: SkiFamily | null;
-  guideInfo: GuideSki[];
-  specs: SkiSpec[];
-  lengths: SkiLength[];
-})[];
+type Skis = RouterOutputs["ski"]["getAll"];
+type Ski = Skis[0];
 
 interface SkiTableProps {
   skis: Skis;

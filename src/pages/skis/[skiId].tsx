@@ -19,7 +19,6 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 //import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 //import { deleteSki, fetchSki, NoteUpload, Ski } from '../../Services/Skis';
@@ -49,12 +48,15 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
 import InfoIcon from "@mui/icons-material/Info";
 import { useRouter } from "next/router";
-import { trpc } from "../../utils/trpc";
+import { api, RouterOutputs } from "../../utils/api";
 import { CenterLoader } from "../../components/CenterLoader";
-import { Ski, SkiLength } from "@prisma/client";
 import { SkiSpecCard } from "../../components/SkiSpecCard";
 import Link from "next/link";
 import "bootstrap/dist/css/bootstrap.min.css";
+
+type Skis = RouterOutputs["ski"]["getAll"];
+type Ski = Skis[0];
+type SkiLength = Ski['lengths'][0];
 
 const StyledControl = styled(CarouselControl)({});
 
@@ -64,13 +66,13 @@ export default function SkiDetail() {
   const router = useRouter();
   const { skiId } = router.query;
 
-  const { data: ski, ...res } = trpc.ski.getOne.useQuery({ skiId } as {
+  const { data: ski, ...res } = api.ski.getOne.useQuery({ skiId } as {
     skiId: string | undefined;
   });
 
   console.log("ski", ski);
 
-  const utils = trpc.useContext();
+  const utils = api.useContext();
 
   // const { data: ski, isLoading } = useQuery(['ski', skiId], () => fetchSki(skiId), { enabled: skiId ? true : false });
 
@@ -93,7 +95,7 @@ export default function SkiDetail() {
   // });
 
   const { mutate: mutateDelete, isLoading: isLoadingDelete } =
-    trpc.ski.delete.useMutation({
+    api.ski.delete.useMutation({
       onSuccess: () => {
         router.push(`/skis`);
       },
@@ -158,7 +160,7 @@ export default function SkiDetail() {
   //     }
   // }
 
-  const formatSkiName = (ski: Ski) => {
+  const formatSkiName = (ski: Ski | Omit<Ski, 'manufacturer' | 'predecessor' | 'family' | 'specs' | 'lengths' | 'guideInfo'>) => {
     const prevYear = ski.yearCurrent - 1;
     return `${prevYear - 2000}/${ski.yearCurrent - 2000} ${ski.model}`;
   };

@@ -3,7 +3,7 @@ import "../styles/globals.css";
 import { SessionProvider, useSession, signIn, signOut } from "next-auth/react";
 import type { Session } from "next-auth";
 import type { AppProps, AppType } from "next/app";
-import { trpc } from "../utils/trpc";
+import { api } from "../utils/api";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "../utils/theme";
 import createEmotionCache from "../utils/createEmotionCache";
@@ -64,7 +64,7 @@ const MyApp2: React.FunctionComponent<
 
 const AuthShowcase: React.FC = () => {
   const router = useRouter();
-  const { data: secretMessage } = trpc.auth.getSecretMessage.useQuery();
+  const { data: secretMessage } = api.auth.getSecretMessage.useQuery();
 
   const { data: sessionData } = useSession();
 
@@ -112,4 +112,4 @@ const AuthShowcase: React.FC = () => {
 //   );
 // };
 
-export default trpc.withTRPC(MyApp);
+export default api.withTRPC(MyApp);

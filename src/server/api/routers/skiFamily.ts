@@ -1,7 +1,7 @@
-import { router, publicProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 // import { z } from "zod";
 
-export const skiFamilyRouter = router({
+export const skiFamilyRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.skiFamily.findMany({
         include: {
