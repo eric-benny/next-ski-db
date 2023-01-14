@@ -8,8 +8,6 @@ import {
   GridRowParams,
 } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
-// import { Link as RouterLink } from 'react-router-dom';
-// import { ComparisonModal } from "../../Pages/Home/ComparisonModal"
 import Link from "next/link";
 import { RouterOutputs } from "../../utils/api";
 

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button, Chip, Container, Grid } from "@mui/material";
-import { SkiData, useSkisFull } from "../../legacy/Services/Skis";
 // import { Link as RouterLink } from 'react-router-dom';
 import AddIcon from "@mui/icons-material/Add";
 import { theme } from "../../legacy/Theme";
