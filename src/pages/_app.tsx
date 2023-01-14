@@ -79,7 +79,7 @@ const AuthShowcase: React.FC = () => {
         </p>
       )}
       <button
-        className="rounded-md border border-black bg-violet-50 px-4 py-2 text-xl shadow-lg hover:bg-violet-100"
+        className="rounded-md border border-red-500 bg-gray-50 px-3 py-1 text-xl shadow-lg hover:bg-red-50 hover:cursor-pointer"
         onClick={sessionData ? () => signOut() : () => signIn()}
       >
         {sessionData ? "Sign out" : "Sign in"}
