@@ -14,8 +14,11 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
+  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
+import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
@@ -49,6 +52,8 @@ export const SkiTableNew = ({
       data = skis;
     }
   }
+
+  const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const columnHelper = createColumnHelper<Ski>();
 
@@ -102,7 +107,12 @@ export const SkiTableNew = ({
   const table = useReactTable({
     data,
     columns,
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
 
   // const [selectionModel, setSelectionModel] =
@@ -147,7 +157,7 @@ export const SkiTableNew = ({
             >
               <div
                 style={{ flexGrow: 1 }}
-                className="mt-2 overflow-scroll rounded-md border-solid border-opacity-40 border-gray-400"
+                className="mt-2 overflow-scroll rounded-md border-solid border-gray-400 border-opacity-40"
               >
                 <table className="border-collapse">
                   <thead className="border-0 border-b border-solid border-gray-400">
@@ -157,18 +167,46 @@ export const SkiTableNew = ({
                           <th
                             key={header.id}
                             className={`
-                              ${headerGroup.headers.length - 1 === index
-                                ? " bg-gray-100 px-2 "
-                                : "border-0 border-r border-solid border-gray-400 border-opacity-30 bg-gray-100 px-2 "}
-                              text-sm py-2
+                              ${
+                                headerGroup.headers.length - 1 === index
+                                  ? "bg-gray-100 px-2"
+                                  : "border-0 border-r border-solid border-gray-400 border-opacity-30 bg-gray-100 px-2"
+                              }
+                              ${
+                                header.column.getCanSort()
+                                  ? "cursor-pointer select-none"
+                                  : ""
+                              }
+                              group py-2 text-sm
                             `}
+                            onClick={header.column.getToggleSortingHandler()}
                           >
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(
+                            {header.isPlaceholder ? null : (
+                              <div className="pl-2 flex">
+                                {flexRender(
                                   header.column.columnDef.header,
                                   header.getContext()
                                 )}
+                                {!header.column.getIsSorted() && (
+                                  <div className="h-4 w-4">
+                                    <ArrowUpIcon className="hidden h-4 w-4 align-middle text-black opacity-50 group-hover:inline" />
+                                  </div>
+                                )}
+                                {{
+                                  asc: (
+                                    <div className="h-4 w-4">
+                                      <ArrowUpIcon className="inline h-4 w-4 align-middle text-black" />
+                                    </div>
+                                  ),
+                                  desc: (
+                                    <div className="h-4 w-4">
+                                      <ArrowDownIcon className="inline h-4 w-4 align-middle text-black" />
+                                    </div>
+                                  ),
+                                }[header.column.getIsSorted() as string] ??
+                                  null}
+                              </div>
+                            )}
                           </th>
                         ))}
                       </tr>
