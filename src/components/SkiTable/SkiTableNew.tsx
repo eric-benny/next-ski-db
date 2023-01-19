@@ -190,18 +190,18 @@ export const SkiTableNew = ({
                                 header.getContext()
                               )}
                               {!header.column.getIsSorted() && (
-                                <div className="h-4 w-4">
-                                  <ArrowUpIcon className="hidden h-4 w-4 align-middle text-black opacity-50 group-hover:inline" />
+                                <div className="h-4 w-4 pl-1">
+                                  <ArrowUpIcon className="hidden h-4 w-4 align-middle text-gray-500 opacity-60 group-hover:inline" />
                                 </div>
                               )}
                               {{
                                 asc: (
-                                  <div className="h-4 w-4">
+                                  <div className="h-4 w-4 pl-1">
                                     <ArrowUpIcon className="inline h-4 w-4 align-middle text-black" />
                                   </div>
                                 ),
                                 desc: (
-                                  <div className="h-4 w-4">
+                                  <div className="h-4 w-4 pl-1">
                                     <ArrowDownIcon className="inline h-4 w-4 align-middle text-black" />
                                   </div>
                                 ),
