@@ -63,7 +63,7 @@ export default function Favorites() {
           spacing={2}
           rowSpacing={2}
         >
-          <Grid item xs={12} sm={6} lg={3}>
+          {/* <Grid item xs={12} sm={6} lg={3}>
             <FormControl fullWidth>
               <TextField
                 id="filter"
@@ -73,16 +73,19 @@ export default function Favorites() {
                 type="search"
               />
             </FormControl>
-          </Grid>
+          </Grid> */}
           <SkiTableNew
             skis={skis || []}
-            filteredSkis={filteredSkis}
+            // filteredSkis={filteredSkis}
             skisLoading={data.isLoading}
             selectedSkis={selectedSkis}
             setSelectedSkis={setSelectedSkis}
             height={window.innerHeight / 1.75}
           />
         </Grid>
+        <ul>
+          {selectedSkis.map(s => <li key={s.id}>{s.model}</li>)}
+        </ul>
       </Container>
     </>
   );
