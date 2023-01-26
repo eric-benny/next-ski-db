@@ -14,6 +14,8 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  OnChangeFn,
+  RowSelectionState,
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
@@ -85,10 +87,9 @@ type SkiLength = Ski["lengths"][0];
 
 interface SkiTableProps {
   skis: Skis;
-  filteredSkis?: Skis;
   skisLoading: boolean;
   height?: string | number;
-  selectedSkis?: Skis;
+  selectedSkis?: Array<Ski & { index: string }>;
   setSelectedSkis?: any;
   selectionLimit?: number;
 }
@@ -110,7 +111,7 @@ function IndeterminateCheckbox({
     <input
       type="checkbox"
       ref={ref}
-      className={className + " cursor-pointer"}
+      className={className + " w-4 h-4 accent-red-600 cursor-pointer disabled:cursor-default"}
       {...rest}
     />
   );
@@ -152,7 +153,6 @@ function DebouncedInput({
 
 export const SkiTableNew = ({
   skis,
-  filteredSkis,
   skisLoading,
   height,
   selectedSkis,
@@ -162,15 +162,16 @@ export const SkiTableNew = ({
   // MUI data grid
   let data: Skis = [];
   if (skis) {
-    if (filteredSkis) {
-      data = filteredSkis;
-    } else {
-      data = skis;
-    }
+    data = skis;
   }
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
+  // const selectedSkiChange: OnChangeFn<RowSelectionState> = (
+  //   newSelectionModel
+  // ) => {
+  //   setRowSelection(newSelectionModel);
+  // };
   // const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
   //   []
   // )
@@ -195,9 +196,27 @@ export const SkiTableNew = ({
           <div className="px-1">
             <IndeterminateCheckbox
               {...{
+                disabled:
+                  selectionLimit && selectedSkis && !row.getIsSelected()
+                    ? selectedSkis.length >= selectionLimit
+                    : false,
                 checked: row.getIsSelected(),
                 indeterminate: row.getIsSomeSelected(),
-                onChange: row.getToggleSelectedHandler(),
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                  if (e.target.checked) {
+                    const newSelected = selectedSkis
+                      ? [...selectedSkis, { ...row.original, index: row.id }]
+                      : [{ ...row.original, index: row.id }];
+                    setSelectedSkis(newSelected);
+                  } else {
+                    const newSelected = selectedSkis?.filter(
+                      (ski) => ski.id !== row.original.id
+                    );
+                    setSelectedSkis(newSelected);
+                  }
+                  const func = row.getToggleSelectedHandler();
+                  func(e);
+                },
               }}
             />
           </div>
@@ -259,7 +278,7 @@ export const SkiTableNew = ({
         }
       ),
     ],
-    []
+    [selectedSkis]
   );
 
   const table = useReactTable({
@@ -292,12 +311,18 @@ export const SkiTableNew = ({
   });
 
   const flat = table.getSelectedRowModel().flatRows;
+  console.log("flat", flat);
+  console.log("row sel", rowSelection);
 
-  useEffect(() => {
-    setSelectedSkis(flat.map((f) => f.original));
-  }, [flat, setSelectedSkis]);
+  // useEffect(() => {
+  //   setSelectedSkis(flat.map((f) => ({...f.original} )));
+  // }, [flat, setSelectedSkis]);
 
-  console.log("sel skis", table.getSelectedRowModel());
+  // useEffect(() => {
+  //   setRowSelection({})
+  // }, [selectedSkis]);
+
+  console.log("sel skis", selectedSkis);
 
   // const [selectionModel, setSelectionModel] =
   //   React.useState<GridSelectionModel>([]);
@@ -305,20 +330,17 @@ export const SkiTableNew = ({
   // console.log(selectedSkis);
   // console.log(selectionModel);
 
-  // function selectedSkiChange(newSelectionModel: GridSelectionModel) {
-  //   console.log("onselect");
+  useEffect(() => {
+    console.log("selection changed");
 
-  //   const compSkis = skis.filter((ski) => newSelectionModel.includes(ski.id));
-  //   setSelectedSkis(compSkis);
-  //   setSelectionModel(newSelectionModel);
-  // }
-
-  // useEffect(() => {
-  //   console.log("selection changed");
-
-  //   const newSelectionModel = selectedSkis ? selectedSkis.map((s) => s.id) : [];
-  //   setSelectionModel(newSelectionModel);
-  // }, [selectedSkis]);
+    const newSelectionModel: RowSelectionState = {};
+    if (selectedSkis) {
+      for (const ski of selectedSkis) {
+        newSelectionModel[parseInt(ski.index)] = true;
+      }
+    }
+    setRowSelection(newSelectionModel);
+  }, [selectedSkis]);
 
   const [tableHeight, setTableHeight] = useState("500px");
 
@@ -329,12 +351,12 @@ export const SkiTableNew = ({
   return (
     <>
       <div className="flex min-w-0 flex-wrap">
-        <div className="m-2">
+        <div className="mx-2 mb-2">
           <DebouncedInput
             value={globalFilter ?? ""}
             onChange={(value) => setGlobalFilter(String(value))}
-            className="font-lg border-block border p-2 shadow"
-            placeholder="Search all columns..."
+            className="font-lg border-block rounded-md border border-black p-2 shadow focus:border-red-500 focus:outline-none focus-visible:rounded-md"
+            placeholder="Quick Search..."
           />
         </div>
         <div
@@ -420,7 +442,7 @@ export const SkiTableNew = ({
             </div>
             <div className="flex items-center gap-2 border-0 border-t-2 border-solid border-gray-400 border-opacity-50 p-3">
               <button
-                className="cursor-pointer rounded border-0 p-1 hover:bg-gray-300 disabled:cursor-default disabled:bg-gray-50"
+                className=" hidden cursor-pointer rounded border-0 p-1 hover:bg-gray-300 disabled:cursor-default disabled:bg-gray-50 sm:inline-block"
                 onClick={() => table.setPageIndex(0)}
                 disabled={!table.getCanPreviousPage()}
               >
@@ -441,7 +463,7 @@ export const SkiTableNew = ({
                 <ChevronRightIcon className="h-5 w-5 align-middle" />
               </button>
               <button
-                className="cursor-pointer rounded border-0 p-1 hover:bg-gray-300 disabled:cursor-default disabled:bg-gray-50"
+                className=" hidden cursor-pointer rounded border-0 p-1 hover:bg-gray-300 disabled:cursor-default disabled:bg-gray-50 sm:inline-block"
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 disabled={!table.getCanNextPage()}
               >

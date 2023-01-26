@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { SkiTableNew } from "../../components/SkiTable";
 
 type Skis = RouterOutputs["ski"]["getAll"];
+type Ski = Skis[0];
 
 export default function Favorites() {
   const router = useRouter();
@@ -48,7 +49,7 @@ export default function Favorites() {
     }
   }, [filter, data.data]);
 
-  const [selectedSkis, setSelectedSkis] = useState<Skis>([]);
+  const [selectedSkis, setSelectedSkis] = useState<Array<Ski & {index: string}>>([]);
 
   if (data.isError && data.error instanceof Error) {
     return <span>Error: {data.error.message}</span>;
