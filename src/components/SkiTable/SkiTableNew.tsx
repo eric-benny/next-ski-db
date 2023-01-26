@@ -111,7 +111,10 @@ function IndeterminateCheckbox({
     <input
       type="checkbox"
       ref={ref}
-      className={className + " w-4 h-4 accent-red-600 cursor-pointer disabled:cursor-default"}
+      className={
+        className +
+        " h-4 w-4 cursor-pointer accent-red-600 disabled:cursor-default"
+      }
       {...rest}
     />
   );
@@ -183,17 +186,21 @@ export const SkiTableNew = ({
     () => [
       {
         id: "select",
-        // header: ({ table }) => (
-        //   <IndeterminateCheckbox
-        //     {...{
-        //       checked: table.getIsAllRowsSelected(),
-        //       indeterminate: table.getIsSomeRowsSelected(),
-        //       onChange: table.getToggleAllRowsSelectedHandler(),
-        //     }}
-        //   />
-        // ),
+        header: ({ table }) => (
+          <button
+            className="rounded-md border-0 bg-gray-500  px-2 text-white shadow-md hover:cursor-pointer hover:ring-1 hover:ring-red-600 disabled:cursor-default disabled:bg-gray-300 disabled:text-gray-500 disabled:shadow-none disabled:ring-0 "
+            disabled={!Object.keys(rowSelection).length}
+            onClick={() => {
+              setRowSelection({});
+              setSelectedSkis([]);
+            }}
+          >
+            clear
+          </button>
+        ),
+        enableSorting: false,
         cell: ({ row }) => (
-          <div className="px-1">
+          <div className="px-1 flex justify-center">
             <IndeterminateCheckbox
               {...{
                 disabled:
@@ -395,11 +402,12 @@ export const SkiTableNew = ({
                                   header.column.columnDef.header,
                                   header.getContext()
                                 )}
-                                {!header.column.getIsSorted() && (
-                                  <div className="h-4 w-4 pl-1">
-                                    <ArrowUpIcon className="hidden h-4 w-4 align-middle text-gray-500 opacity-60 group-hover:inline" />
-                                  </div>
-                                )}
+                                {header.column.getCanSort() &&
+                                  !header.column.getIsSorted() && (
+                                    <div className="h-4 w-4 pl-1">
+                                      <ArrowUpIcon className="hidden h-4 w-4 align-middle text-gray-500 opacity-60 group-hover:inline" />
+                                    </div>
+                                  )}
                                 {{
                                   asc: (
                                     <div className="h-4 w-4 pl-1">
