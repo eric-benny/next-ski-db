@@ -235,8 +235,8 @@ export function Navbar() {
               </div>
             ) : (
               <button
-                className="rounded-md border border-red-500 bg-gray-50 px-3 py-1 text-xl shadow-lg hover:cursor-pointer hover:bg-red-50"
-                onClick={() => signIn()}
+              className="rounded-md border-solid border-red-500 bg-gray-50 px-3 py-1 text-xl hover:cursor-pointer hover:bg-red-50 hover:ring-2 hover:ring-red-200 hover:ring-opacity-50"
+              onClick={() => signIn()}
               >
                 Sign in
               </button>

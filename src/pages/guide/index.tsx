@@ -35,10 +35,11 @@ import { CenterLoader } from "../../components/CenterLoader";
 import Link from "next/link";
 import { SkiSpecCard } from "../../components/SkiSpecCard";
 import { theme } from "../../legacy/Theme";
-import { SkiTable } from "../../components/SkiTable";
+import { SkiTable, SkiTableNew } from "../../components/SkiTable";
 import { AddGuideSkisModal } from "../../components/AddGuideSkisModal";
 
 type Skis = RouterOutputs["ski"]["getAll"];
+type Ski = Skis[0];
 type GuideSkis = RouterOutputs["guideSki"]["getAllByYear"];
 
 export const CATEGORIES = [
@@ -393,7 +394,9 @@ export default function Guide() {
     );
   }
 
-  const [skisToAdd, setSkisToAdd] = useState<Skis>([]);
+  const [skisToAdd, setSkisToAdd] = useState<Array<Ski & { index: string }>>(
+    []
+  );
 
   // Tab Control
   const [selectedTab, setSelectedTab] = React.useState("5050");
@@ -418,9 +421,9 @@ export default function Guide() {
     <>
       <Container>
         <Grid container item justifyContent="space-between" xs={12}>
-          <Grid item xs={4} sm={2}>
-            <FormControl fullWidth required>
-              <InputLabel id="year-select-label">Year</InputLabel>
+          <Grid item xs={4} sm={2} className="flex">
+            <FormControl fullWidth required className="justify-center">
+              <InputLabel id="year-select-label" className="pt-3">Year</InputLabel>
               <Select
                 labelId="year-select"
                 id="year-select"
@@ -435,7 +438,7 @@ export default function Guide() {
             </FormControl>
           </Grid>
           <Grid item xs={8}>
-            <Typography variant="h2">Guide</Typography>
+            <Typography className="ml-2" variant="h2">Guide</Typography>
           </Grid>
           <Grid item xs={2} />
         </Grid>
@@ -470,19 +473,9 @@ export default function Guide() {
                 </AccordionSummary>
                 <AccordionDetails>
                   <Grid container rowSpacing={1}>
-                    <Grid item xs={12} container justifyContent="flex-start">
-                      <TextField
-                        id="filter"
-                        label="Quick Filter"
-                        value={filter}
-                        onChange={(e) => setFilter(e.target.value)}
-                        type="search"
-                      />
-                    </Grid>
                     <Grid item xs={12}>
-                      <SkiTable
+                      <SkiTableNew
                         skis={allSkis || []}
-                        filteredSkis={availableSkis}
                         skisLoading={isLoading}
                         selectedSkis={skisToAdd}
                         setSelectedSkis={setSkisToAdd}
@@ -490,23 +483,28 @@ export default function Guide() {
                       />
                     </Grid>
                     <Grid item>
-                      <Button
-                        color="primary"
-                        sx={{
-                          "&:hover": {
-                            backgroundColor: theme.palette.secondary.main,
-                            color: "white",
-                          },
-                        }}
-                        variant="contained"
-                        startIcon={<AddIcon />}
-                        onClick={() => {
-                          setAddModalOpen(true);
-                        }}
-                        disabled={skisToAdd.length < 1}
-                      >
-                        Add Selected Skis
-                      </Button>
+                      <div className="flex">
+                        <Button
+                          color="primary"
+                          sx={{
+                            "&:hover": {
+                              backgroundColor: theme.palette.secondary.main,
+                              color: "white",
+                            },
+                          }}
+                          variant="contained"
+                          startIcon={<AddIcon />}
+                          onClick={() => {
+                            setAddModalOpen(true);
+                          }}
+                          disabled={skisToAdd.length < 1}
+                        >
+                          Add Selected Skis
+                        </Button>
+                        <div className="flex p-2">
+                          <span className="text-lg">{skisToAdd.length} Skis Selected</span>
+                        </div>
+                      </div>
                     </Grid>
                   </Grid>
                 </AccordionDetails>

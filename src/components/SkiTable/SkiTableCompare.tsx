@@ -1,12 +1,9 @@
 import React, { useState } from "react";
-import { Button, Chip, Container, Grid } from "@mui/material";
-import { SkiData, useSkisFull } from "../../legacy/Services/Skis";
+import { Button, Chip, Grid } from "@mui/material";
 // import { Link as RouterLink } from 'react-router-dom';
-import AddIcon from "@mui/icons-material/Add";
 import { theme } from "../../legacy/Theme";
-import { SkiTable } from ".";
+import { SkiTableNew } from ".";
 import { ComparisonModal } from "../ComparisonModal";
-import { GridRowId } from "@mui/x-data-grid";
 import { RouterOutputs } from "../../utils/api";
 
 type Skis = RouterOutputs["ski"]["getAll"];
@@ -14,20 +11,18 @@ type Ski = Skis[0];
 
 interface SkiTableProps {
   skis: Skis;
-  filteredSkis?: Skis;
   skisLoading: boolean;
   height?: string | number;
 }
 
 export const SkiTableCompare = ({
   skis,
-  filteredSkis,
   skisLoading,
   height,
 }: SkiTableProps) => {
   // const { isLoading, isError, data, error } = useSkisFull()
 
-  const [compareSkis, setCompareSkis] = useState<Skis>([]);
+  const [compareSkis, setCompareSkis] = useState<Array<Ski & {index: string}>>([]);
 
   function removeCompareSki(idToRemove: string) {
     const newCompareSkis = compareSkis.filter(
@@ -48,7 +43,7 @@ export const SkiTableCompare = ({
   return (
     <>
       <Grid item xs={12}>
-        <Grid item xs={12} marginBottom={2}>
+        {/* <Grid item xs={12} marginBottom={2}>
           <Grid container alignItems="flex-end">
             <Grid item xs={9} md={11}>
               <Grid
@@ -75,18 +70,18 @@ export const SkiTableCompare = ({
               </Grid>
             </Grid>
           </Grid>
-        </Grid>
-        <SkiTable
+        </Grid> */}
+        <SkiTableNew
           skis={skis}
-          filteredSkis={filteredSkis}
           skisLoading={skisLoading}
           selectedSkis={compareSkis}
           setSelectedSkis={setCompareSkis}
           selectionLimit={4}
+          height={height}
         />
         <Grid item xs={12} marginTop={2}>
           <Grid container spacing={2}>
-            <Grid item xs={3}>
+            <Grid item xs={4}>
               <Button
                 color="primary"
                 sx={{
@@ -104,11 +99,11 @@ export const SkiTableCompare = ({
             <Grid
               item
               xs
-              sx={{
-                [theme.breakpoints.down("sm")]: {
-                  display: "none",
-                },
-              }}
+              // sx={{
+              //   [theme.breakpoints.down("sm")]: {
+              //     display: "none",
+              //   },
+              // }}
             >
               <Grid container spacing={2}>
                 {compareSkis.map((ski) => (
