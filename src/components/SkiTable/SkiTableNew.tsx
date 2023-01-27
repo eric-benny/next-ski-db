@@ -200,7 +200,7 @@ export const SkiTableNew = ({
         ),
         enableSorting: false,
         cell: ({ row }) => (
-          <div className="px-1 flex justify-center">
+          <div className="flex justify-center px-1">
             <IndeterminateCheckbox
               {...{
                 disabled:
@@ -317,9 +317,9 @@ export const SkiTableNew = ({
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  const flat = table.getSelectedRowModel().flatRows;
-  console.log("flat", flat);
-  console.log("row sel", rowSelection);
+  // const flat = table.getSelectedRowModel().flatRows;
+  // console.log("flat", flat);
+  // console.log("row sel", rowSelection);
 
   // useEffect(() => {
   //   setSelectedSkis(flat.map((f) => ({...f.original} )));
@@ -329,7 +329,7 @@ export const SkiTableNew = ({
   //   setRowSelection({})
   // }, [selectedSkis]);
 
-  console.log("sel skis", selectedSkis);
+  // console.log("sel skis", selectedSkis);
 
   // const [selectionModel, setSelectionModel] =
   //   React.useState<GridSelectionModel>([]);
@@ -338,7 +338,7 @@ export const SkiTableNew = ({
   // console.log(selectionModel);
 
   useEffect(() => {
-    console.log("selection changed");
+    // console.log("selection changed");
 
     const newSelectionModel: RowSelectionState = {};
     if (selectedSkis) {
@@ -374,9 +374,9 @@ export const SkiTableNew = ({
           className="m-2 flex w-full overflow-x-scroll"
         >
           <div className="flex w-full flex-col flex-wrap rounded-md border-solid border-gray-400 border-opacity-40">
-            <div className="h-5/6 w-full flex-auto overflow-scroll">
+            <div className="h-5/6 w-full flex-auto overflow-scroll rounded-md">
               <table className="w-full border-collapse">
-                <thead className="border-0 border-b border-solid border-gray-400 ">
+                <thead className="rounded-md border-0 border-b border-solid border-gray-400">
                   {table.getHeaderGroups().map((headerGroup) => (
                     <tr key={headerGroup.id} className="sticky top-0">
                       {headerGroup.headers.map((header, index) => (
