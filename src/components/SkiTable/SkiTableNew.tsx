@@ -3,18 +3,13 @@ import Link from "next/link";
 import { RouterOutputs } from "../../utils/api";
 import {
   ColumnDef,
-  ColumnFiltersState,
   createColumnHelper,
   FilterFn,
   flexRender,
   getCoreRowModel,
-  getFacetedMinMaxValues,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  OnChangeFn,
   RowSelectionState,
   SortingState,
   useReactTable,
@@ -30,8 +25,6 @@ import {
 
 import {
   RankingInfo,
-  rankItem,
-  compareItems,
 } from "@tanstack/match-sorter-utils";
 
 declare module "@tanstack/table-core" {
@@ -43,7 +36,7 @@ declare module "@tanstack/table-core" {
   }
 }
 
-const fuzzyFilter: FilterFn<Ski> = (row, columnId, value: string, addMeta) => {
+const fuzzyFilter: FilterFn<Ski> = (row, columnId, value: string) => {
   // Rank the item
   // const itemRank = rankItem(row.getValue(columnId), value);
 
@@ -56,18 +49,6 @@ const fuzzyFilter: FilterFn<Ski> = (row, columnId, value: string, addMeta) => {
   // return itemRank.passed;
 
   const searchTerms = value.split(" ");
-  console.log(row.original.model);
-  console.log(
-    searchTerms.some(
-      (t) => row.original.model.toLowerCase().indexOf(t.toLowerCase()) > -1
-    ) ||
-      searchTerms.some(
-        (t) =>
-          row.original.manufacturer.name
-            .toLowerCase()
-            .indexOf(t.toLowerCase()) > -1
-      )
-  );
 
   return (
     searchTerms.some(
@@ -90,7 +71,7 @@ interface SkiTableProps {
   skisLoading: boolean;
   height?: string | number;
   selectedSkis?: Array<Ski & { index: string }>;
-  setSelectedSkis?: any;
+  setSelectedSkis?: React.Dispatch<React.SetStateAction<Array<Ski & { index: string }>>>;
   selectionLimit?: number;
 }
 
@@ -99,13 +80,14 @@ function IndeterminateCheckbox({
   className = "",
   ...rest
 }: { indeterminate?: boolean } & HTMLProps<HTMLInputElement>) {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const ref = React.useRef<HTMLInputElement>(null!);
 
   React.useEffect(() => {
     if (typeof indeterminate === "boolean") {
       ref.current.indeterminate = !rest.checked && indeterminate;
     }
-  }, [ref, indeterminate]);
+  }, [ref, indeterminate, rest.checked]);
 
   return (
     <input
@@ -142,7 +124,7 @@ function DebouncedInput({
     }, debounce);
 
     return () => clearTimeout(timeout);
-  }, [value]);
+  }, [debounce, onChange, value]);
 
   return (
     <input
@@ -162,7 +144,6 @@ export const SkiTableNew = ({
   setSelectedSkis,
   selectionLimit,
 }: SkiTableProps) => {
-  // MUI data grid
   let data: Skis = [];
   if (skis) {
     data = skis;
@@ -170,29 +151,22 @@ export const SkiTableNew = ({
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
-  // const selectedSkiChange: OnChangeFn<RowSelectionState> = (
-  //   newSelectionModel
-  // ) => {
-  //   setRowSelection(newSelectionModel);
-  // };
-  // const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-  //   []
-  // )
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const columnHelper = createColumnHelper<Ski>();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const columns = React.useMemo<ColumnDef<Ski>[] | any[]>(
     () => [
       {
         id: "select",
-        header: ({ table }) => (
+        header: () => (
           <button
             className="rounded-md border-0 bg-gray-500  px-2 text-white shadow-md hover:cursor-pointer hover:ring-1 hover:ring-red-600 disabled:cursor-default disabled:bg-gray-300 disabled:text-gray-500 disabled:shadow-none disabled:ring-0 "
             disabled={!Object.keys(rowSelection).length}
             onClick={() => {
               setRowSelection({});
-              setSelectedSkis([]);
+              setSelectedSkis?.([]);
             }}
           >
             clear
@@ -214,12 +188,12 @@ export const SkiTableNew = ({
                     const newSelected = selectedSkis
                       ? [...selectedSkis, { ...row.original, index: row.id }]
                       : [{ ...row.original, index: row.id }];
-                    setSelectedSkis(newSelected);
+                    setSelectedSkis?.(newSelected);
                   } else {
                     const newSelected = selectedSkis?.filter(
                       (ski) => ski.id !== row.original.id
                     );
-                    setSelectedSkis(newSelected);
+                    setSelectedSkis?.(newSelected ? newSelected : []);
                   }
                   const func = row.getToggleSelectedHandler();
                   func(e);
@@ -261,11 +235,6 @@ export const SkiTableNew = ({
             }, "")}`;
         },
       }),
-      // {
-      //   id: "tip",
-      //   header: "Tip",
-      //   accessorFn: row => row.specs[0]?.dimTip
-      // },
       columnHelper.accessor(
         (row) => row.specs[0]?.dimTipMeas || row.specs[0]?.dimTip,
         {
@@ -285,7 +254,7 @@ export const SkiTableNew = ({
         }
       ),
     ],
-    [selectedSkis]
+    [columnHelper, rowSelection, selectedSkis, selectionLimit, setSelectedSkis]
   );
 
   const table = useReactTable({
@@ -303,10 +272,8 @@ export const SkiTableNew = ({
     state: {
       sorting,
       rowSelection,
-      // columnFilters,
       globalFilter,
     },
-    // onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: fuzzyFilter,
     getFilteredRowModel: getFilteredRowModel(),
@@ -317,29 +284,7 @@ export const SkiTableNew = ({
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  // const flat = table.getSelectedRowModel().flatRows;
-  // console.log("flat", flat);
-  // console.log("row sel", rowSelection);
-
-  // useEffect(() => {
-  //   setSelectedSkis(flat.map((f) => ({...f.original} )));
-  // }, [flat, setSelectedSkis]);
-
-  // useEffect(() => {
-  //   setRowSelection({})
-  // }, [selectedSkis]);
-
-  // console.log("sel skis", selectedSkis);
-
-  // const [selectionModel, setSelectionModel] =
-  //   React.useState<GridSelectionModel>([]);
-
-  // console.log(selectedSkis);
-  // console.log(selectionModel);
-
   useEffect(() => {
-    // console.log("selection changed");
-
     const newSelectionModel: RowSelectionState = {};
     if (selectedSkis) {
       for (const ski of selectedSkis) {
@@ -352,8 +297,6 @@ export const SkiTableNew = ({
   const [tableHeight, setTableHeight] = useState("500px");
 
   useEffect(() => setTableHeight(`${window.innerHeight / 1.5}px`), []);
-
-  // console.log(tableHeight);
 
   return (
     <>
@@ -379,7 +322,7 @@ export const SkiTableNew = ({
                 <thead className="rounded-md border-0 border-b border-solid border-gray-400">
                   {table.getHeaderGroups().map((headerGroup) => (
                     <tr key={headerGroup.id} className="sticky top-0">
-                      {headerGroup.headers.map((header, index) => (
+                      {headerGroup.headers.map((header) => (
                         <th
                           key={header.id}
                           className={`
@@ -477,19 +420,6 @@ export const SkiTableNew = ({
               >
                 <ChevronDoubleRightIcon className="h-5 w-5 align-middle" />
               </button>
-
-              {/* <span className="flex items-center gap-1">
-              | Go to page:
-              <input
-                type="number"
-                defaultValue={table.getState().pagination.pageIndex + 1}
-                onChange={(e) => {
-                  const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                  table.setPageIndex(page);
-                }}
-                className="w-16 rounded border p-1"
-              />
-            </span> */}
               <select
                 className="rounded-md border p-1 text-sm hover:cursor-pointer hover:bg-gray-100"
                 value={table.getState().pagination.pageSize}

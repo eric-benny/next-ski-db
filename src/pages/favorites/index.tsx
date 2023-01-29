@@ -1,55 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Button, Container, FormControl, Grid, TextField } from "@mui/material";
-// import { Link as RouterLink } from 'react-router-dom';
-import AddIcon from "@mui/icons-material/Add";
-import { theme } from "../../legacy/Theme";
 import { SkiTableCompare } from "../../components/SkiTable/SkiTableCompare";
-import { api, RouterOutputs } from "../../utils/api";
-import { useRouter } from "next/router";
-import { SkiTableNew } from "../../components/SkiTable";
-
-type Skis = RouterOutputs["ski"]["getAll"];
-type Ski = Skis[0];
+import { api } from "../../utils/api";
 
 export default function Favorites() {
-  const router = useRouter();
+  const data = api.user.getFavorites.useQuery();
+  const skis = data?.data;
+  console.log(skis);
+  
+  const [height, setHeight] = useState(window.innerHeight / 1.5);
 
-  const data = api.ski.getAll.useQuery();
-
-  // const { isLoading, isError, data, error } = useSkisFull()
-
-  const [skis, setSkis] = useState<Skis>([]);
   useEffect(() => {
-    console.log("data updated");
-
-    if (data.data && data.data.length > 0) {
-      setSkis(data.data);
-    }
-  }, [data.data]);
-
-  const [filteredSkis, setFilteredSkis] = useState<Skis>([]);
-  const [filter, setFilter] = useState<string>("");
-  useEffect(() => {
-    console.log("skis/filter updated");
-    if (data.data && data.data.length > 0 && data.data) {
-      const searchTerms = filter.split(" ");
-      const newSkis = data.data.filter(
-        (s) =>
-          searchTerms.some(
-            (t) => s.model.toLowerCase().indexOf(t.toLowerCase()) > -1
-          ) ||
-          searchTerms.some(
-            (t) =>
-              s.manufacturer.name.toLowerCase().indexOf(t.toLowerCase()) > -1
-          )
-      );
-      console.log(newSkis);
-
-      setFilteredSkis(newSkis);
-    }
-  }, [filter, data.data]);
-
-  const [selectedSkis, setSelectedSkis] = useState<Array<Ski & {index: string}>>([]);
+    const updateWindowDimensions = () => {
+      const newHeight = window.innerHeight / 1.5;
+      setHeight(newHeight);
+    };
+    window.addEventListener("resize", updateWindowDimensions);
+    return () => window.removeEventListener("resize", updateWindowDimensions);
+  }, []);
 
   if (data.isError && data.error instanceof Error) {
     return <span>Error: {data.error.message}</span>;
@@ -57,37 +24,14 @@ export default function Favorites() {
 
   return (
     <>
-      <Container>
-        <Grid
-          container
-          justifyContent="space-between"
-          spacing={2}
-          rowSpacing={2}
-        >
-          {/* <Grid item xs={12} sm={6} lg={3}>
-            <FormControl fullWidth>
-              <TextField
-                id="filter"
-                label="Quick Filter"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                type="search"
-              />
-            </FormControl>
-          </Grid> */}
-          <SkiTableNew
-            skis={skis || []}
-            // filteredSkis={filteredSkis}
-            skisLoading={data.isLoading}
-            selectedSkis={selectedSkis}
-            setSelectedSkis={setSelectedSkis}
-            height={window.innerHeight / 1.75}
-          />
-        </Grid>
-        <ul>
-          {selectedSkis.map(s => <li key={s.id}>{s.model}</li>)}
-        </ul>
-      </Container>
+      <div className="sm:px-4 transition-all duration-75 ease-linear xl:ml-16">
+        <h1 className="my-0 w-full text-center">Favorites</h1>
+        <SkiTableCompare
+          skis={skis || []}
+          skisLoading={data.isLoading}
+          height={height}
+        />
+      </div>
     </>
   );
 }

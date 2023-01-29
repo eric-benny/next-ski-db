@@ -1,6 +1,5 @@
 import {
   Button,
-  CircularProgress,
   Container,
   Divider,
   Grid,
@@ -11,40 +10,23 @@ import {
   Alert,
   AlertTitle,
   styled,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
 } from "@mui/material";
 import React, { useState } from "react";
-//import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
-//import { deleteSki, fetchSki, NoteUpload, Ski } from '../../Services/Skis';
-//import { SkiSpecCard } from './SkiSpecCard';
 import { theme } from "../../legacy/Theme";
 //import { NoteComponent } from './NoteComponent';
-import AddIcon from "@mui/icons-material/Add";
 //import { ComparisonTable } from './ComparisonTable';
 //import { Guide } from './Guide';
-//import { useAuth } from '../../Hooks/Auth';
 //import { isServiceError } from '../../Services/Utils';
 //import { updateSki } from '../../Services/Skis';
 // import { CreateSkiCompModal } from './CreateSkiCompModal';
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import StarIcon from "@mui/icons-material/StarTwoTone";
-//import { updateUserFavorite } from '../../Services/Users';
 import {
   Carousel,
   CarouselItem,
   CarouselControl,
   CarouselIndicators,
 } from "reactstrap";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import RemoveIcon from "@mui/icons-material/Remove";
 import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
 import InfoIcon from "@mui/icons-material/Info";
 import { useRouter } from "next/router";
@@ -52,11 +34,13 @@ import { api, RouterOutputs } from "../../utils/api";
 import { CenterLoader } from "../../components/CenterLoader";
 import { SkiSpecCard } from "../../components/SkiSpecCard";
 import Link from "next/link";
+import { EllipsisHorizontalIcon, StarIcon } from "@heroicons/react/20/solid";
+import { StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
-type SkiLength = Ski['lengths'][0];
+type SkiLength = Ski["lengths"][0];
 
 const StyledControl = styled(CarouselControl)({});
 
@@ -74,27 +58,7 @@ export default function SkiDetail() {
 
   const utils = api.useContext();
 
-  // const { data: ski, isLoading } = useQuery(['ski', skiId], () => fetchSki(skiId), { enabled: skiId ? true : false });
-
-  // const queryClient = useQueryClient();
-  // const { mutate, isLoading: isLoadingUpdate } = useMutation(updateSki, {
-  //     onSuccess: data => {
-  //         if (isServiceError(data)) {
-  //             // setErrorAlert(true)
-  //         } else {
-  //             // setSuccessAlert(true)
-  //             // clear()
-  //         }
-  //     },
-  //     onError: () => {
-  //         alert("there was an error")
-  //     },
-  //     onSettled: () => {
-  //         queryClient.invalidateQueries(['ski']);
-  //     }
-  // });
-
-  const { mutate: mutateDelete, isLoading: isLoadingDelete } =
+  const { mutate: mutateDelete } =
     api.ski.delete.useMutation({
       onSuccess: () => {
         router.push(`/skis`);
@@ -108,21 +72,32 @@ export default function SkiDetail() {
       },
     });
 
-  // const { mutate: mutateFav, isLoading: isLoadingFav } = useMutation(updateUserFavorite, {
-  //     onSuccess: data => {
-  //         if (isServiceError(data)) {
-  //             alert("favorite could not be added")
-  //         } else {
+  const {
+    data: data,
+    isLoading: isLoadingFav,
+    isRefetching,
+  } = api.user.getFavorites.useQuery();
+  const favorites = data;
 
-  //         }
-  //     },
-  //     onError: () => {
-  //         alert("there was an error updating the favorite")
-  //     },
-  //     onSettled: () => {
-  //         queryClient.invalidateQueries(['user']);
-  //     }
-  // });
+  const { mutate: addFav, isLoading: isLoadingAddFav } =
+    api.user.addFavorite.useMutation({
+      onError: (err) => {
+        alert(`there was an error updating the favorite: ${err}`);
+      },
+      onSettled: () => {
+        utils.user.getFavorites.invalidate();
+      },
+    });
+
+  const { mutate: deleteFav, isLoading: isLoadingDelFav } =
+    api.user.deleteFavorite.useMutation({
+      onError: (err) => {
+        alert(`there was an error updating the favorite: ${err}`);
+      },
+      onSettled: () => {
+        utils.user.getFavorites.invalidate();
+      },
+    });
 
   const [deleteAlert, setDeleteAlert] = useState<boolean>(false);
   const deleteSkiConfirm = () => {
@@ -160,7 +135,19 @@ export default function SkiDetail() {
   //     }
   // }
 
-  const formatSkiName = (ski: Ski | Omit<Ski, 'manufacturer' | 'predecessor' | 'family' | 'specs' | 'lengths' | 'guideInfo'>) => {
+  const formatSkiName = (
+    ski:
+      | Ski
+      | Omit<
+          Ski,
+          | "manufacturer"
+          | "predecessor"
+          | "family"
+          | "specs"
+          | "lengths"
+          | "guideInfo"
+        >
+  ) => {
     const prevYear = ski.yearCurrent - 1;
     return `${prevYear - 2000}/${ski.yearCurrent - 2000} ${ski.model}`;
   };
@@ -308,33 +295,30 @@ export default function SkiDetail() {
           >
             <Grid container item justifyContent="center" xs={12}>
               <Stack direction="row" alignItems="center">
-                {/* {isLoadingFav ? (
-                  <CircularProgress />
-                ) : !fullUser?.favorites.find((f) => f === ski._id) ? (
-                  <IconButton
+                {isLoadingAddFav ||
+                isLoadingDelFav ||
+                isLoadingFav ||
+                isRefetching ? (
+                  <EllipsisHorizontalIcon className="m-2 h-7 w-7 animate-pulse text-gray-500 " />
+                ) : !favorites?.find((f) => f.id === ski.id) ? (
+                  <StarIconOutline
                     onClick={() => {
-                      mutateFav({
-                        userId: fullUser?._id ? fullUser._id : "",
-                        skiId: ski._id ? ski._id : "",
-                        action: "POST",
+                      addFav({
+                        skiId: ski.id ? ski.id : "",
                       });
                     }}
-                  >
-                    <StarIcon fontSize="medium" color="primary" />
-                  </IconButton>
+                    className="m-2 h-7 w-7 hover:cursor-pointer text-gray-500"
+                  />
                 ) : (
-                  <IconButton
+                  <StarIcon
                     onClick={() => {
-                      mutateFav({
-                        userId: fullUser?._id ? fullUser._id : "",
-                        skiId: ski._id ? ski._id : "",
-                        action: "DELETE",
+                      deleteFav({
+                        skiId: ski.id ? ski.id : "",
                       });
                     }}
-                  >
-                    <StarIcon fontSize="medium" color="secondary" />
-                  </IconButton>
-                )} */}
+                    className="m-2 h-7 w-7 hover:cursor-pointer text-yellow-500"
+                  />
+                )}
                 <Typography variant="h2" textAlign="center">
                   {ski ? formatSkiName(ski) : "Model Name Not Found"}
                 </Typography>

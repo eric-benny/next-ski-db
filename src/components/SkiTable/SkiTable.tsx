@@ -13,7 +13,7 @@ import { RouterOutputs } from "../../utils/api";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
-type SkiLength = Ski['lengths'][0];
+type SkiLength = Ski["lengths"][0];
 
 interface SkiTableProps {
   skis: Skis;
@@ -116,20 +116,13 @@ export const SkiTable = ({
   const [selectionModel, setSelectionModel] =
     React.useState<GridSelectionModel>([]);
 
-  console.log(selectedSkis);
-  console.log(selectionModel);
-
   function selectedSkiChange(newSelectionModel: GridSelectionModel) {
-    console.log("onselect");
-
     const compSkis = skis.filter((ski) => newSelectionModel.includes(ski.id));
     setSelectedSkis(compSkis);
     setSelectionModel(newSelectionModel);
   }
 
   useEffect(() => {
-    console.log("selection changed");
-
     const newSelectionModel = selectedSkis ? selectedSkis.map((s) => s.id) : [];
     setSelectionModel(newSelectionModel);
   }, [selectedSkis]);
@@ -137,8 +130,6 @@ export const SkiTable = ({
   const [tableHeight, setTableHeight] = useState("500px");
 
   useEffect(() => setTableHeight(`${window.innerHeight / 1.5}px`), []);
-
-  // console.log(tableHeight);
 
   return (
     <>

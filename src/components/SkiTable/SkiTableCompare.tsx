@@ -81,7 +81,7 @@ export const SkiTableCompare = ({
         />
         <Grid item xs={12} marginTop={2}>
           <Grid container spacing={2}>
-            <Grid item xs={4}>
+            <Grid item xs={4} className="pl-6">
               <Button
                 color="primary"
                 sx={{
