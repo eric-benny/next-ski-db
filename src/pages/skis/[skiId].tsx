@@ -21,6 +21,7 @@ import { theme } from "../../legacy/Theme";
 // import { CreateSkiCompModal } from './CreateSkiCompModal';
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
 import {
   Carousel,
   CarouselItem,
@@ -37,16 +38,19 @@ import Link from "next/link";
 import { EllipsisHorizontalIcon, StarIcon } from "@heroicons/react/20/solid";
 import { StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { NoteComponent } from "../../components/NoteComponent";
+import { useSession } from "next-auth/react";
+import { Guide } from "../../components/Guide";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
 type SkiLength = Ski["lengths"][0];
+type Note = Ski['notes'][0]
 
 const StyledControl = styled(CarouselControl)({});
 
 export default function SkiDetail() {
-  //const navigate = useNavigate();
-  //const { fullUser } = useAuth();
+  const { data: sessionData, status } = useSession();
   const router = useRouter();
   const { skiId } = router.query;
 
@@ -54,23 +58,22 @@ export default function SkiDetail() {
     skiId: string | undefined;
   });
 
-  console.log("ski", ski);
+  // console.log("ski", ski);
 
   const utils = api.useContext();
 
-  const { mutate: mutateDelete } =
-    api.ski.delete.useMutation({
-      onSuccess: () => {
-        router.push(`/skis`);
-      },
-      onError: (error) => {
-        console.error(error);
-        alert(`there was an error: ${error.message}`);
-      },
-      onSettled: () => {
-        utils.ski.getAll.invalidate();
-      },
-    });
+  const { mutate: mutateDelete } = api.ski.delete.useMutation({
+    onSuccess: () => {
+      router.push(`/skis`);
+    },
+    onError: (error) => {
+      console.error(error);
+      alert(`there was an error: ${error.message}`);
+    },
+    onSettled: () => {
+      utils.ski.getAll.invalidate();
+    },
+  });
 
   const {
     data: data,
@@ -107,33 +110,51 @@ export default function SkiDetail() {
     }
   };
 
-  // const saveNote = (index: number, note: string, skiDays: number) => {
-  //     if (ski) {
-  //         const newNote = ski.notes[index]
-  //         newNote.note = note
-  //         newNote.skiDays = skiDays
-  //         newNote.lastUpdated = new Date(Date.now())
-  //         const notes = ski.notes
-  //         notes[index] = newNote
-  //         const newNotes = [...notes.map(note => ({ ...note, user: note.user._id }))]
-  //         mutate({ skiId: skiId, skiData: { notes: newNotes } })
-  //     }
-  // }
+  const { mutate: addNote, isLoading: isLoadingAddNote } =
+    api.note.create.useMutation({
+      onError: (err) => {
+        alert(`there was an error adding the note: ${err}`);
+      },
+      onSettled: () => {
+        utils.ski.getOne.invalidate();
+      },
+    });
 
-  // const newNote = () => {
-  //     if (fullUser && ski) {
-  //         const newNote: NoteUpload = {
-  //             user: fullUser._id,
-  //             note: "",
-  //             lastUpdated: new Date(Date.now()),
-  //             skiDays: 0
-  //         }
-  //         const newSki = ski
-  //         const notes = [...newSki.notes.map(note => ({ ...note, user: note.user._id })), newNote]
+  const { mutate: updateNote, isLoading: isLoadingUpdateNote } =
+    api.note.update.useMutation({
+      onError: (err) => {
+        alert(`there was an error updating the note: ${err}`);
+      },
+      onSettled: () => {
+        utils.ski.getOne.invalidate();
+      },
+    });
 
-  //         mutate({ skiId: skiId, skiData: { notes: notes } })
-  //     }
-  // }
+  const saveNote = (note: Note, noteText: string, skiDays: number) => {
+    if (ski) {
+      const newNote = {
+        user: note.userId,
+        note: noteText,
+        lastUpdated: new Date(Date.now()),
+        skiDays: skiDays,
+        skiId: note.skiId,
+      }
+      updateNote({noteId: note.id, note: newNote})
+    }
+  };
+
+  const newNote = () => {
+    if (sessionData?.user && ski) {
+      const newNote = {
+        user: sessionData.user.id,
+        note: "",
+        lastUpdated: new Date(Date.now()),
+        skiDays: 0,
+        skiId: ski.id,
+      };
+      addNote(newNote);
+    }
+  };
 
   const formatSkiName = (
     ski:
@@ -146,6 +167,7 @@ export default function SkiDetail() {
           | "specs"
           | "lengths"
           | "guideInfo"
+          | "notes"
         >
   ) => {
     const prevYear = ski.yearCurrent - 1;
@@ -307,7 +329,7 @@ export default function SkiDetail() {
                         skiId: ski.id ? ski.id : "",
                       });
                     }}
-                    className="m-2 h-7 w-7 hover:cursor-pointer text-gray-500"
+                    className="m-2 h-7 w-7 text-gray-500 hover:cursor-pointer"
                   />
                 ) : (
                   <StarIcon
@@ -316,7 +338,7 @@ export default function SkiDetail() {
                         skiId: ski.id ? ski.id : "",
                       });
                     }}
-                    className="m-2 h-7 w-7 hover:cursor-pointer text-yellow-500"
+                    className="m-2 h-7 w-7 text-yellow-500 hover:cursor-pointer"
                   />
                 )}
                 <Typography variant="h2" textAlign="center">
@@ -454,11 +476,6 @@ export default function SkiDetail() {
             </Grid>
 
             <Grid item xs={12} md={8}>
-              {/* <Carousel animation='fade' cycleNavigation autoPlay={false} navButtonsAlwaysInvisible={ski?.specs && ski.specs.length < 2}>
-                              {
-                                  ski?.specs.map((spec, i) => <SkiSpecCard key={i} spec={spec} />)
-                              }
-                          </Carousel> */}
               <Carousel
                 activeIndex={activeIndex}
                 next={next}
@@ -609,7 +626,7 @@ export default function SkiDetail() {
                               </Grid>
                           </Stack> */}
             </Grid>
-            {/* <Grid item xs={12} marginTop={4}>
+            <Grid item xs={12} marginTop={4}>
               <Grid
                 container
                 justifyContent="flex-start"
@@ -630,7 +647,7 @@ export default function SkiDetail() {
                     }}
                     disabled={
                       !!ski.notes.find(
-                        (note) => note.user._id === fullUser?._id
+                        (note) => note.user.id === sessionData?.user?.id
                       )
                     }
                     variant="contained"
@@ -645,7 +662,7 @@ export default function SkiDetail() {
                       <Grid key={index} item xs={12}>
                         <NoteComponent
                           index={index}
-                          currentUserId={fullUser?._id}
+                          currentUserId={sessionData?.user?.id}
                           saveNote={saveNote}
                           note={note}
                         />
@@ -660,7 +677,7 @@ export default function SkiDetail() {
                   </Grid>
                 )}
               </Grid>
-            </Grid> */}
+            </Grid>
             {/* <Grid item xs={12} marginTop={4}>
               <Grid
                 container
@@ -704,21 +721,22 @@ export default function SkiDetail() {
                 )}
               </Grid>
             </Grid> */}
-            {/* <Grid item xs={12} marginTop={4}>
+            <Grid item xs={12} marginTop={4}>
               <Grid
                 container
                 justifyContent="flex-start"
                 spacing={2}
                 rowSpacing={2}
               >
-                <Typography variant="h3">Buyer's Guide</Typography>
+                <Typography variant="h3">{"Buyer's Guide"}</Typography>
                 <Grid item xs={12}>
-                  <Guide skiId={skiId} />
+                  <Guide skiId={skiId as string} />
                 </Grid>
               </Grid>
-            </Grid> */}
+            </Grid>
           </Grid>
         )}
+        <div className="m-4"></div>
         {/* {ski && (
           <CreateSkiCompModal
             currentComps={ski.skiComps}

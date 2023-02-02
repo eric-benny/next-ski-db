@@ -40,6 +40,23 @@ export const guideSkiRouter = createTRPCRouter({
         },
       });
     }),
+  getBySki: publicProcedure
+    .input(z.object({ skiId: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.guideSki.findMany({
+        where: {
+          skiId: input.skiId,
+        },
+        include: {
+          ski: {
+            include: {
+              lengths: true,
+              specs: true,
+            },
+          },
+        },
+      });
+    }),
   create: publicProcedure
     .input(guideSkiUploadSchema)
     .mutation(async ({ ctx, input }) => {

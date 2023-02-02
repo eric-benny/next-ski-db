@@ -229,8 +229,8 @@ export function Navbar() {
               </div>
             ) : (
               <button
-              className="rounded-md border-solid border-red-500 bg-gray-50 px-3 py-1 text-xl hover:cursor-pointer hover:bg-red-50 hover:ring-2 hover:ring-red-200 hover:ring-opacity-50"
-              onClick={() => signIn('auth0')}
+                className="rounded-md border-solid border-red-500 bg-gray-50 px-3 py-1 text-xl hover:cursor-pointer hover:bg-red-50 hover:ring-2 hover:ring-red-200 hover:ring-opacity-50"
+                onClick={() => signIn("auth0")}
               >
                 Sign in
               </button>
@@ -254,38 +254,36 @@ export function Navbar() {
               { name: "Favorites", link: "/favorites", icon: <StarIcon /> },
               { name: "Buyer's Guide", link: "/guide", icon: <MenuBookIcon /> },
             ].map((navItem, index) => (
-              <>
-                <ListItem key={navItem.link}>
-                  <ListItemButton
-                    onClick={() => {
-                      handleDrawerClose();
-                      router.push(navItem.link);
-                    }}
+              <ListItem key={navItem.link}>
+                <ListItemButton
+                  onClick={() => {
+                    handleDrawerClose();
+                    router.push(navItem.link);
+                  }}
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
                     sx={{
-                      minHeight: 48,
-                      justifyContent: open ? "initial" : "center",
-                      px: 2.5,
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
                     }}
                   >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : "auto",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {navItem.icon}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={navItem.name}
-                      primaryTypographyProps={{
-                        color: "inherit",
-                      }}
-                      sx={{ opacity: open ? 1 : 0 }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              </>
+                    {navItem.icon}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={navItem.name}
+                    primaryTypographyProps={{
+                      color: "inherit",
+                    }}
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
             ))}
           </List>
         </Drawer>

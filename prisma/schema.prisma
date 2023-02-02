@@ -53,12 +53,18 @@ model Session {
   @@index([userId])
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?       @unique
   emailVerified DateTime?
   image         String?
+  role          Role          @default(USER)
   accounts      Account[]
   sessions      Session[]
   notes         Note[]
@@ -74,11 +80,11 @@ model VerificationToken {
 }
 
 model SkiFavorite {
-  id          String  @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: NoAction)
-  skiId       String
-  ski         Ski      @relation(fields: [skiId], references: [id], onDelete: NoAction)
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: NoAction)
+  skiId  String
+  ski    Ski    @relation(fields: [skiId], references: [id], onDelete: NoAction)
 
   @@unique([userId, skiId])
   @@index([skiId])
@@ -213,18 +219,18 @@ model SkiSpec {
 }
 
 model Ski {
-  id                String       @id @default(cuid())
+  id                String        @id @default(cuid())
   yearCurrent       Int
   yearReleased      Int
-  retired           Boolean      @default(false)
+  retired           Boolean       @default(false)
   manufacturerId    String
-  manufacturer      Manufacturer @relation(fields: [manufacturerId], references: [id], onDelete: NoAction)
+  manufacturer      Manufacturer  @relation(fields: [manufacturerId], references: [id], onDelete: NoAction)
   model             String
-  predecessorId     String?      @unique
-  predecessor       Ski?         @relation("SkiSuccession", fields: [predecessorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  successor         Ski?         @relation("SkiSuccession")
+  predecessorId     String?       @unique
+  predecessor       Ski?          @relation("SkiSuccession", fields: [predecessorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  successor         Ski?          @relation("SkiSuccession")
   familyId          String?
-  family            SkiFamily?   @relation(fields: [familyId], references: [id], onDelete: SetNull)
+  family            SkiFamily?    @relation(fields: [familyId], references: [id], onDelete: SetNull)
   lengths           SkiLength[]
   specs             SkiSpec[]
   guideInfo         GuideSki[]
@@ -234,8 +240,8 @@ model Ski {
   firstLook         String?
   flashReview       String?
   deepDive          String?
-  primarySkiComps   SkiComp[]    @relation("PrimarySki")
-  secondarySkiComps SkiComp[]    @relation("SecondarySki")
+  primarySkiComps   SkiComp[]     @relation("PrimarySki")
+  secondarySkiComps SkiComp[]     @relation("SecondarySki")
 
   @@unique([model, manufacturerId, yearReleased], name: "unique_ski")
   @@index([manufacturerId])
