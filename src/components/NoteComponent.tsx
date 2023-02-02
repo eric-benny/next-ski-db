@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Box, FormControl, Grid, IconButton, Stack, TextField, Typography } from '@mui/material';
 import { theme } from '../legacy/Theme';
 // import { Note } from '../../Services/Skis';
-import ReactQuill from 'react-quill';
+import dynamic from "next/dynamic";
+const ReactQuill = dynamic(import('react-quill'), { ssr: false })
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
