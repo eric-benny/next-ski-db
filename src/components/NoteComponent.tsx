@@ -10,8 +10,7 @@ import 'react-quill/dist/quill.snow.css';
 import 'react-quill/dist/quill.bubble.css';
 import { RouterOutputs } from '../utils/api';
 
-type Skis = RouterOutputs["ski"]["getAll"];
-type Ski = Skis[0];
+type Ski = NonNullable<RouterOutputs["ski"]["getOne"]>;
 type Note = Ski['notes'][0]
 
 interface NoteProps {

@@ -64,11 +64,6 @@ export const skiRouter = createTRPCRouter({
         specs: true,
         lengths: true,
         predecessor: true,
-        notes: {
-          include: {
-            user: true,
-          }
-        }
       },
     });
   }),

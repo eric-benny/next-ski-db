@@ -45,7 +45,7 @@ import { Guide } from "../../components/Guide";
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
 type SkiLength = Ski["lengths"][0];
-type Note = Ski['notes'][0]
+type Note = NonNullable<RouterOutputs["ski"]["getOne"]>['notes'][0]
 
 const StyledControl = styled(CarouselControl)({});
 

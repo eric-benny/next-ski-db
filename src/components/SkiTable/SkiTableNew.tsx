@@ -63,11 +63,11 @@ const fuzzyFilter: FilterFn<Ski> = (row, columnId, value: string) => {
 };
 
 type Skis = RouterOutputs["ski"]["getAll"];
-type Ski = Skis[0];
+type Ski = Omit<Skis[0], 'notes'>;
 type SkiLength = Ski["lengths"][0];
 
 interface SkiTableProps {
-  skis: Skis;
+  skis: Ski[];
   skisLoading: boolean;
   height?: string | number;
   selectedSkis?: Array<Ski & { index: string }>;
@@ -144,7 +144,7 @@ export const SkiTableNew = ({
   setSelectedSkis,
   selectionLimit,
 }: SkiTableProps) => {
-  let data: Skis = [];
+  let data: Ski[] = [];
   if (skis) {
     data = skis;
   }
