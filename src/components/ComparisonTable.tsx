@@ -11,7 +11,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { IconButton, Typography, Stack, Skeleton } from "@mui/material";
 // import { deleteSkiComp, Ski, SkiComp } from '../../Services/Skis';
-import { CreateSkiCompModal } from "./CreateSkiCompModal";
+// import { CreateSkiCompModal } from "./CreateSkiCompModal";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 // import { Link as RouterLink } from 'react-router-dom';
