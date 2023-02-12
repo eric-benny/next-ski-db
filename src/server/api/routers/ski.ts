@@ -91,7 +91,9 @@ export const skiRouter = createTRPCRouter({
               include: {
                 user: true,
               }
-            }
+            },
+            primarySkiComps: true,
+            secondarySkiComps: true,
           },
         });
       }

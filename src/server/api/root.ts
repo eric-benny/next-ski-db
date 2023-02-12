@@ -6,6 +6,7 @@ import { skiFamilyRouter } from "./routers/skiFamily";
 import { guideSkiRouter } from "./routers/guideSki";
 import { userRouter } from "./routers/user";
 import { noteRouter } from "./routers/note";
+import { skiCompRouter } from "./routers/skiComp";
 
 /**
  * This is the primary router for your server.
@@ -19,6 +20,7 @@ export const appRouter = createTRPCRouter({
   guideSki: guideSkiRouter,
   user: userRouter,
   note: noteRouter,
+  skiComp: skiCompRouter,
   example: exampleRouter,
 });
 

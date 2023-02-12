@@ -10,6 +10,13 @@ import {
   Alert,
   AlertTitle,
   styled,
+  Paper,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@mui/material";
 import React, { useState } from "react";
 import { theme } from "../../legacy/Theme";
@@ -22,6 +29,9 @@ import { theme } from "../../legacy/Theme";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import RemoveIcon from "@mui/icons-material/Remove";
 import {
   Carousel,
   CarouselItem,
@@ -41,6 +51,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { NoteComponent } from "../../components/NoteComponent";
 import { useSession } from "next-auth/react";
 import { Guide } from "../../components/Guide";
+import { ComparisonTable } from "../../components/ComparisonTable";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
@@ -176,10 +187,10 @@ export default function SkiDetail() {
 
   // const [template, setTemplate] = useState<string>("")
 
-  // const [compModalOpen, setCompModalOpen] = useState<boolean>(false)
-  // const onCompModalClose = () => {
-  //     setCompModalOpen(false)
-  // }
+  const [compModalOpen, setCompModalOpen] = useState<boolean>(false)
+  const onCompModalClose = () => {
+      setCompModalOpen(false)
+  }
 
   // console.log(fullUser);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -287,6 +298,95 @@ export default function SkiDetail() {
   if (res.isError && res.error instanceof Error) {
     return <span>Error: {res.error.message}</span>;
   }
+
+  const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))({
+    [`& .${tooltipClasses.tooltip}`]: {
+      maxWidth: 500,
+    },
+  });
+
+  const CompExample = () => {
+    return (
+      <Paper sx={{ minWidth: 400, padding: 1 }}>
+        <Typography variant="h6">Comparison Example</Typography>
+        <Typography variant="body2" component="p">
+          If viewing the detail page for the Bent Chetler 100, the comparison
+          below is showing that the Sick Day is less stable, has silimar edge
+          hold, and better float compared to the Bent Chetler
+        </Typography>
+        <TableContainer>
+          <Table sx={{ maxWidth: 400 }} size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>Model</TableCell>
+                <TableCell>Stability</TableCell>
+                <TableCell>Edge Hold</TableCell>
+                <TableCell>Float</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <>
+                  <TableCell component="th" scope="row">
+                    <Typography variant="body2" color="secondary">
+                      Sick Day 104
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="center">
+                    <ArrowDropDownIcon color="error" fontSize="small" />
+                  </TableCell>
+                  <TableCell align="center">
+                    <RemoveIcon fontSize="small" />
+                  </TableCell>
+                  <TableCell align="center">
+                    <ArrowDropUpIcon color="success" fontSize="small" />
+                  </TableCell>
+                </>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Typography marginTop={2} variant="body2" component="p">
+          Comparisons are bi-directional, so when viewing the detail page for
+          the Sick Day, the below comparison would be shown
+        </Typography>
+        <TableContainer>
+          <Table sx={{ maxWidth: 400 }} size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>Model</TableCell>
+                <TableCell>Stability</TableCell>
+                <TableCell>Edge Hold</TableCell>
+                <TableCell>Float</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <>
+                  <TableCell component="th" scope="row">
+                    <Typography variant="body2" color="secondary">
+                      Bent Chetler 100
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="center">
+                    <ArrowDropUpIcon color="success" fontSize="small" />
+                  </TableCell>
+                  <TableCell align="center">
+                    <RemoveIcon fontSize="small" />
+                  </TableCell>
+                  <TableCell align="center">
+                    <ArrowDropDownIcon color="error" fontSize="small" />
+                  </TableCell>
+                </>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
+    );
+  };
 
   return (
     <>
@@ -678,7 +778,7 @@ export default function SkiDetail() {
                 )}
               </Grid>
             </Grid>
-            {/* <Grid item xs={12} marginTop={4}>
+            <Grid item xs={12} marginTop={4}>
               <Grid
                 container
                 justifyContent="flex-start"
@@ -688,7 +788,7 @@ export default function SkiDetail() {
                 <Grid>
                   <Typography variant="h3">Comparisons</Typography>
                 </Grid>
-                <Grid item>
+                {/* <Grid item>
                   <Button
                     onClick={() => setCompModalOpen(true)}
                     color="primary"
@@ -702,7 +802,7 @@ export default function SkiDetail() {
                   >
                     New
                   </Button>
-                </Grid>
+                </Grid> */}
                 <Grid item sx={{ display: { xs: "none", sm: "flex" } }}>
                   <CustomWidthTooltip title={<CompExample />} placement="top">
                     <InfoIcon color="info" />
@@ -711,7 +811,6 @@ export default function SkiDetail() {
                 {ski && (
                   <Grid item xs={12}>
                     <ComparisonTable
-                      comparisons={ski.skiComps}
                       currSki={ski}
                       modalOpen={compModalOpen}
                       setModalOpen={setCompModalOpen}
@@ -720,7 +819,7 @@ export default function SkiDetail() {
                   </Grid>
                 )}
               </Grid>
-            </Grid> */}
+            </Grid>
             <Grid item xs={12} marginTop={4}>
               <Grid
                 container
