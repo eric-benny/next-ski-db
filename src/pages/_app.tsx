@@ -26,7 +26,11 @@ interface MyAppProps extends AppProps {
 }
 
 const clientSideEmotionCache = createEmotionCache();
-const publicPages: Array<string> = ["/sign-in", "/sign-up"];
+
+const publicPages: Array<string> = [
+  "/sign-in/[[...index]]",
+  "/sign-up/[[...index]]",
+];
 
 const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
@@ -57,7 +61,6 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
     </ClerkProvider>
   );
 };
-
 
 // export async function getServerSideProps({ req, res }: {req: any, res: any}) {
 //   return {
