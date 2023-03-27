@@ -49,9 +49,9 @@ import { EllipsisHorizontalIcon, StarIcon } from "@heroicons/react/20/solid";
 import { StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { NoteComponent } from "../../components/NoteComponent";
-import { useSession } from "next-auth/react";
 import { Guide } from "../../components/Guide";
 import { ComparisonTable } from "../../components/ComparisonTable";
+import { useUser } from "@clerk/nextjs";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
@@ -61,7 +61,7 @@ type Note = NonNullable<RouterOutputs["ski"]["getOne"]>['notes'][0]
 const StyledControl = styled(CarouselControl)({});
 
 export default function SkiDetail() {
-  const { data: sessionData, status } = useSession();
+  const {user} = useUser();
   const router = useRouter();
   const { skiId } = router.query;
 
@@ -155,9 +155,9 @@ export default function SkiDetail() {
   };
 
   const newNote = () => {
-    if (sessionData?.user && ski) {
+    if (user?.id && ski) {
       const newNote = {
-        user: sessionData.user.id,
+        user: user.id,
         note: "",
         lastUpdated: new Date(Date.now()),
         skiDays: 0,
@@ -747,7 +747,7 @@ export default function SkiDetail() {
                     }}
                     disabled={
                       !!ski.notes.find(
-                        (note) => note.user.id === sessionData?.user?.id
+                        (note) => note.userId === user?.id
                       )
                     }
                     variant="contained"
@@ -762,7 +762,7 @@ export default function SkiDetail() {
                       <Grid key={index} item xs={12}>
                         <NoteComponent
                           index={index}
-                          currentUserId={sessionData?.user?.id}
+                          currentUserId={user?.id}
                           saveNote={saveNote}
                           note={note}
                         />

@@ -4,36 +4,35 @@ import { TRPCError } from "@trpc/server";
 
 export const userRouter = createTRPCRouter({
   getFavorites: publicProcedure.query(async ({ ctx }) => {
-    const user = await ctx.prisma.user.findFirst({
-      where: {
-        id: ctx.session?.user?.id,
-      },
-      include: {
-        favorites: {
-          include: {
-            ski: {
-              include: {
-                manufacturer: true,
-                family: true,
-                guideInfo: true,
-                specs: true,
-                lengths: true,
-                predecessor: true,
-              },
-            }
+    if (ctx.userId) {
+      const favorites = await ctx.prisma.skiFavorite.findMany({
+        where: {
+          userId: ctx.userId,
+        },
+        include: {
+          ski: {
+            include: {
+              manufacturer: true,
+              family: true,
+              guideInfo: true,
+              specs: true,
+              lengths: true,
+              predecessor: true,
+            },
           },
         },
-      },
-    });
-    return user ? user.favorites.map((f) => f.ski) : [];
+      });
+      return favorites.map((f) => f.ski);
+    }
+    return [];
   }),
   addFavorite: publicProcedure
     .input(z.object({ skiId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      if (ctx.session && ctx.session.user) {
+      if (ctx.userId) {
         await ctx.prisma.skiFavorite.create({
           data: {
-            userId: ctx.session.user.id,
+            userId: ctx.userId,
             skiId: input.skiId,
           },
         });
@@ -48,11 +47,11 @@ export const userRouter = createTRPCRouter({
   deleteFavorite: publicProcedure
     .input(z.object({ skiId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      if (ctx.session && ctx.session.user) {
+      if (ctx.userId) {
         await ctx.prisma.skiFavorite.delete({
           where: {
             userId_skiId: {
-              userId: ctx.session.user.id,
+              userId: ctx.userId,
               skiId: input.skiId,
             },
           },

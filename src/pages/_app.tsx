@@ -1,16 +1,11 @@
 // src/pages/_app.tsx
 import "../styles/globals.css";
-import { SessionProvider, useSession, signIn, signOut } from "next-auth/react";
-import type { Session } from "next-auth";
-import type { AppProps, AppType } from "next/app";
+import type { AppProps } from "next/app";
 import { api } from "../utils/api";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "../utils/theme";
 import createEmotionCache from "../utils/createEmotionCache";
 import { CacheProvider, EmotionCache } from "@emotion/react";
-
-import { unstable_getServerSession } from "next-auth/next";
-import { authOptions } from "./api/auth/[...nextauth]";
 
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
@@ -20,73 +15,49 @@ import "@fontsource/roboto/700.css";
 import "../styles/globals.css";
 import { Navbar } from "../components/navbar";
 import { useRouter } from "next/router";
-import { CenterLoader } from "../components/CenterLoader";
+import {
+  ClerkProvider,
+  RedirectToSignIn,
+  SignedIn,
+  SignedOut,
+} from "@clerk/nextjs";
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
-  session: Session | null;
 }
 
 const clientSideEmotionCache = createEmotionCache();
+const publicPages: Array<string> = ["/sign-in", "/sign-up"];
 
 const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
-  const {
-    Component,
-    emotionCache = clientSideEmotionCache,
-    session,
-    pageProps,
-  } = props;
+  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+
+  const { pathname } = useRouter();
+
+  const isPublicPage = publicPages.includes(pathname);
 
   return (
-    <SessionProvider session={session}>
+    <ClerkProvider {...pageProps}>
       <CacheProvider value={emotionCache}>
         <ThemeProvider theme={theme}>
           <Navbar />
-          <MyApp2 pageProps={pageProps} Component={Component} />
+          {isPublicPage ? (
+            <Component {...pageProps} />
+          ) : (
+            <>
+              <SignedIn>
+                <Component {...pageProps} />
+              </SignedIn>
+              <SignedOut>
+                <RedirectToSignIn />
+              </SignedOut>
+            </>
+          )}
         </ThemeProvider>
       </CacheProvider>
-    </SessionProvider>
+    </ClerkProvider>
   );
 };
 
-const MyApp2: React.FunctionComponent<
-  Pick<AppProps, "Component" | "pageProps">
-> = (props) => {
-  const { Component, pageProps } = props;
-
-  const { data: sessionData, status } = useSession();
-
-  if (status === "loading") {
-    return <CenterLoader />;
-  }
-
-  return <>{sessionData ? <Component {...pageProps} /> : <AuthShowcase />}</>;
-};
-
-const AuthShowcase: React.FC = () => {
-  const router = useRouter();
-
-  const { data: sessionData } = useSession();
-
-  // if (sessionData) {
-  //   router.push("/skis");
-  // }
-
-  return (
-    <div className="flex flex-col items-center justify-center gap-2">
-      {sessionData && (
-        <p className="text-2xl text-blue-500">
-          Logged in as {sessionData?.user?.name}
-        </p>
-      )}
-      <button
-        className="rounded-md border-solid border-red-500 bg-gray-50 px-3 py-1 text-xl hover:cursor-pointer hover:bg-red-50 hover:ring-2 hover:ring-red-200"
-        onClick={sessionData ? () => signOut() : () => signIn('auth0')}
-      >
-        {sessionData ? "Sign out" : "Sign in"}
-      </button>
-    </div>
-  );
-};
 
 // export async function getServerSideProps({ req, res }: {req: any, res: any}) {
 //   return {

@@ -29,9 +29,9 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { AccountCircle } from "@mui/icons-material";
-import { signIn, signOut, useSession } from "next-auth/react";
 import { CenterLoader } from "../CenterLoader";
 import { useRouter } from "next/router";
+import { SignIn, SignOutButton, useAuth, useUser } from "@clerk/nextjs";
 
 interface Props {
   children?: ReactNode;
@@ -125,7 +125,7 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export function Navbar() {
-  const { data: sessionData, status } = useSession();
+  const user = useUser();
 
   const router = useRouter();
 
@@ -149,6 +149,8 @@ export function Navbar() {
     setAnchorEl(event.currentTarget);
     setAccountOpen((prev) => !prev);
   };
+
+  const { isLoaded, signOut } = useAuth();
 
   return (
     <ClickAwayListener onClickAway={handleDrawerClose}>
@@ -194,27 +196,29 @@ export function Navbar() {
                         Account
                       </Typography>
                       <Typography variant="h5" component="div">
-                        {sessionData?.user?.name}
+                        {user?.user?.fullName}
                       </Typography>
                       <Typography color="secondary.light">
-                        {sessionData?.user?.email}
+                        {user?.user?.primaryEmailAddress?.emailAddress}
                       </Typography>
                     </CardContent>
                     <CardActions>
                       <button
                         className="rounded-md border border-red-500 bg-gray-50 px-3 py-1 text-xl shadow-lg hover:cursor-pointer hover:bg-red-50"
-                        onClick={() => signOut()}
+                        onClick={() => {
+                          setAccountOpen(false);
+                          signOut();
+                        }}
                       >
                         Sign out
                       </button>
+                      {/* <SignOutButton signOutCallback={() => setAccountOpen(false)} /> */}
                     </CardActions>
                   </Card>
                 </Fade>
               )}
             </Popper>
-            {status === "loading" ? (
-              <CenterLoader />
-            ) : sessionData ? (
+            {user.isSignedIn ? (
               <div>
                 <IconButton
                   size="large"
@@ -228,12 +232,14 @@ export function Navbar() {
                 </IconButton>
               </div>
             ) : (
-              <button
-                className="rounded-md border-solid border-red-500 bg-gray-50 px-3 py-1 text-xl hover:cursor-pointer hover:bg-red-50 hover:ring-2 hover:ring-red-200 hover:ring-opacity-50"
-                onClick={() => signIn("auth0")}
-              >
-                Sign in
-              </button>
+              <></>
+              // <SignIn path="/sign-in" routing="path" signUpUrl="/sign-up" />
+              // <button
+              //   className="rounded-md border-solid border-red-500 bg-gray-50 px-3 py-1 text-xl hover:cursor-pointer hover:bg-red-50 hover:ring-2 hover:ring-red-200 hover:ring-opacity-50"
+              //   onClick={() => signIn("auth0")}
+              // >
+              //   Sign in
+              // </button>
             )}
           </Toolbar>
         </AppBar>

@@ -56,7 +56,9 @@ export function NoteComponent({ index, currentUserId, saveNote, note }: NoteProp
             <Grid item xs={12} sm={12} md={3} lg={2}>
                 <Stack direction={{ xs: 'row', md: 'column' }}>
                     <Grid item xs={4} sm={12}>
-                        <Typography width="100%" component="div" variant='overline' color="secondary" noWrap align='left' paddingRight={2}>{note.user.email ? note.user.email.length > 150 ? `${note.user.email.substring(0, 16)}...` : note.user.email : note.user.id}</Typography>
+                        {/* <Typography width="100%" component="div" variant='overline' color="secondary" noWrap align='left' paddingRight={2}>{note.user.email ? note.user.email.length > 150 ? `${note.user.email.substring(0, 16)}...` : note.user.email : note.user.id}</Typography> */}
+                        <Typography width="100%" component="div" variant='overline' color="secondary" noWrap align='left' paddingRight={2}>{note.userId}</Typography>
+                    
                     </Grid>
                     {editing ?
                         <Grid item xs={8} sm={10}>
@@ -81,7 +83,7 @@ export function NoteComponent({ index, currentUserId, saveNote, note }: NoteProp
                         </Grid> :
                         <Grid item xs={8} sm={10}>
                             <Typography variant='overline' align='left' paddingRight={2}>Ski Days: {skiDays}</Typography>
-                            {note.user.id === currentUserId &&
+                            {note.userId === currentUserId &&
                                 <IconButton color="primary" onClick={handleEdit}>
                                     <EditIcon />
                                 </IconButton>

@@ -87,11 +87,7 @@ export const skiRouter = createTRPCRouter({
             },
             lengths: true,
             predecessor: true,
-            notes: {
-              include: {
-                user: true,
-              }
-            },
+            notes: true,
             primarySkiComps: true,
             secondarySkiComps: true,
           },
@@ -110,11 +106,7 @@ export const skiRouter = createTRPCRouter({
           },
           lengths: true,
           predecessor: true,
-          notes: {
-            include: {
-              user: true,
-            }
-          }
+          notes: true,
         },
       });
     }),
