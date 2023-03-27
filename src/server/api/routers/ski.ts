@@ -56,6 +56,8 @@ const skiUploadSchema = z.object({
 
 export const skiRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
+    console.log('getting all skis in trpc endpoint');
+    
     return ctx.prisma.ski.findMany({
       include: {
         manufacturer: true,
