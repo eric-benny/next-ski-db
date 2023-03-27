@@ -19,17 +19,22 @@
     *
     * @see https://github.com/vercel/next.js/issues/41980
     */
-   i18n: {
-     locales: ["en"],
-     defaultLocale: "en",
-   },
  
-   typescript: {
-     ignoreBuildErrors: true,
-   },
-   eslint: {
-     ignoreDuringBuilds: true,
-   },
+  //  typescript: {
+  //    ignoreBuildErrors: true,
+  //  },
+  //  eslint: {
+  //    ignoreDuringBuilds: true,
+  //  },
    swcMinify: true,
+   async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/skis',
+        permanent: false,
+      }
+    ]
+  }
  };
  export default config;
