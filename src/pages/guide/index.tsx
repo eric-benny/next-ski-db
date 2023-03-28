@@ -35,7 +35,7 @@ import { CenterLoader } from "../../components/CenterLoader";
 import Link from "next/link";
 import { SkiSpecCard } from "../../components/SkiSpecCard";
 import { theme } from "../../legacy/Theme";
-import { SkiTable, SkiTableNew } from "../../components/SkiTable";
+import { SkiTableNew } from "../../components/SkiTable";
 import { AddGuideSkisModal } from "../../components/AddGuideSkisModal";
 
 type Skis = RouterOutputs["ski"]["getAll"];
