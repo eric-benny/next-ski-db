@@ -40,26 +40,25 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
   const isPublicPage = publicPages.includes(pathname);
 
   return (
-    // <ClerkProvider {...pageProps}>
-    //   <CacheProvider value={emotionCache}>
-    //     <ThemeProvider theme={theme}>
-    //       <Navbar />
-    //       {isPublicPage ? (
-    //         <Component {...pageProps} />
-    //       ) : (
-    //         <>
-    //           <SignedIn>
-    //             <Component {...pageProps} />
-    //           </SignedIn>
-    //           <SignedOut>
-    //             <RedirectToSignIn />
-    //           </SignedOut>
-    //         </>
-    //       )}
-    //     </ThemeProvider>
-    //   </CacheProvider>
-    // </ClerkProvider>
-    <Component {...pageProps} />
+    <ClerkProvider {...pageProps}>
+      <CacheProvider value={emotionCache}>
+        <ThemeProvider theme={theme}>
+          <Navbar />
+          {isPublicPage ? (
+            <Component {...pageProps} />
+          ) : (
+            <>
+              <SignedIn>
+                <Component {...pageProps} />
+              </SignedIn>
+              <SignedOut>
+                <RedirectToSignIn />
+              </SignedOut>
+            </>
+          )}
+        </ThemeProvider>
+      </CacheProvider>
+    </ClerkProvider>
   );
 };
 
