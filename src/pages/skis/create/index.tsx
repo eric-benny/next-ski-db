@@ -29,6 +29,7 @@ import { CreateManufacturerModal } from "../../../components/CreateManufacturerM
 import { CreateFamilyModal } from "../../../components/CreateFamilyModal";
 import { api, RouterOutputs } from "../../../utils/api";
 import { SkiLegacy, SkiSpec } from "../../../legacy/Services/Skis";
+import { Navbar } from "~/components/navbar";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
@@ -543,6 +544,7 @@ export default function CreateSki() {
 
   return (
     <>
+      <Navbar />
       <Container>
         <Dialog open={errorAlert} onClose={() => setErrorAlert(false)}>
           <Alert severity="error">

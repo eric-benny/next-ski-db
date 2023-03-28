@@ -31,7 +31,7 @@ import ListItemText from "@mui/material/ListItemText";
 import { AccountCircle } from "@mui/icons-material";
 import { CenterLoader } from "../CenterLoader";
 import { useRouter } from "next/router";
-// import { SignIn, SignOutButton, useAuth, useUser } from "@clerk/nextjs";
+import { SignIn, SignOutButton, useAuth, useUser } from "@clerk/nextjs";
 
 interface Props {
   children?: ReactNode;
@@ -125,7 +125,7 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export function Navbar() {
-  // const user = useUser();
+  const user = useUser();
 
   const router = useRouter();
 
@@ -150,7 +150,7 @@ export function Navbar() {
     setAccountOpen((prev) => !prev);
   };
 
-  // const { isLoaded, signOut } = useAuth();
+  const { isLoaded, signOut } = useAuth();
 
   return (
     <ClickAwayListener onClickAway={handleDrawerClose}>
@@ -178,8 +178,47 @@ export function Navbar() {
             >
               THE SKI DB
             </Typography>
-            
-            {/* {user.isSignedIn ? (
+            <Popper
+              open={accountOpen}
+              anchorEl={anchorEl}
+              placement="bottom-end"
+              transition
+            >
+              {({ TransitionProps }) => (
+                <Fade {...TransitionProps} timeout={350}>
+                  <Card sx={{ minWidth: 250 }}>
+                    <CardContent>
+                      <Typography
+                        sx={{ fontSize: 14 }}
+                        color="text.secondary"
+                        gutterBottom
+                      >
+                        Account
+                      </Typography>
+                      <Typography variant="h5" component="div">
+                        {user?.user?.fullName}
+                      </Typography>
+                      <Typography color="secondary.light">
+                        {user?.user?.primaryEmailAddress?.emailAddress}
+                      </Typography>
+                    </CardContent>
+                    <CardActions>
+                      <button
+                        className="rounded-md border border-red-500 bg-gray-50 px-3 py-1 text-xl shadow-lg hover:cursor-pointer hover:bg-red-50"
+                        onClick={() => {
+                          setAccountOpen(false)
+                          signOut();
+                        }}
+                      >
+                        Sign out
+                      </button>
+                      {/* <SignOutButton signOutCallback={() => setAccountOpen(false)} /> */}
+                    </CardActions>
+                  </Card>
+                </Fade>
+              )}
+            </Popper>
+            {user.isSignedIn ? (
               <div>
                 <IconButton
                   size="large"
@@ -201,7 +240,7 @@ export function Navbar() {
               // >
               //   Sign in
               // </button>
-            )} */}
+            )}
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
@@ -261,45 +300,3 @@ export function Navbar() {
     </ClickAwayListener>
   );
 }
-
-
-// <Popper
-//               open={accountOpen}
-//               anchorEl={anchorEl}
-//               placement="bottom-end"
-//               transition
-//             >
-//               {({ TransitionProps }) => (
-//                 <Fade {...TransitionProps} timeout={350}>
-//                   <Card sx={{ minWidth: 250 }}>
-//                     <CardContent>
-//                       <Typography
-//                         sx={{ fontSize: 14 }}
-//                         color="text.secondary"
-//                         gutterBottom
-//                       >
-//                         Account
-//                       </Typography>
-//                       <Typography variant="h5" component="div">
-//                         {user?.user?.fullName}
-//                       </Typography>
-//                       <Typography color="secondary.light">
-//                         {user?.user?.primaryEmailAddress?.emailAddress}
-//                       </Typography>
-//                     </CardContent>
-//                     <CardActions>
-//                       <button
-//                         className="rounded-md border border-red-500 bg-gray-50 px-3 py-1 text-xl shadow-lg hover:cursor-pointer hover:bg-red-50"
-//                         onClick={() => {
-//                           setAccountOpen(false);
-//                           signOut();
-//                         }}
-//                       >
-//                         Sign out
-//                       </button>
-//                       {/* <SignOutButton signOutCallback={() => setAccountOpen(false)} /> */}
-//                     </CardActions>
-//                   </Card>
-//                 </Fade>
-//               )}
-//             </Popper>

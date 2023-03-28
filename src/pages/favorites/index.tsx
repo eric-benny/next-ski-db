@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Navbar } from "~/components/navbar";
 import { SkiTableCompare } from "../../components/SkiTable/SkiTableCompare";
 import { api } from "../../utils/api";
 
@@ -6,7 +7,7 @@ export default function Favorites() {
   const data = api.user.getFavorites.useQuery();
   const skis = data?.data;
   console.log(skis);
-  
+
   const [height, setHeight] = useState(window.innerHeight / 1.5);
 
   useEffect(() => {
@@ -24,7 +25,8 @@ export default function Favorites() {
 
   return (
     <>
-      <div className="sm:px-4 transition-all duration-75 ease-linear xl:ml-16">
+      <Navbar />
+      <div className="transition-all duration-75 ease-linear sm:px-4 xl:ml-16">
         <h1 className="my-0 w-full text-center">Favorites</h1>
         <SkiTableCompare
           skis={skis || []}

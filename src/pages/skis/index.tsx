@@ -6,6 +6,7 @@ import { theme } from "../../legacy/Theme";
 import { SkiTableCompare } from "../../components/SkiTable/SkiTableCompare";
 import { api, RouterOutputs } from "../../utils/api";
 import { useRouter } from "next/router";
+import { Navbar } from "~/components/navbar";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 
@@ -31,6 +32,7 @@ export default function Skis() {
 
   return (
     <>
+      <Navbar />
       <Container>
         <Grid
           container
@@ -40,21 +42,21 @@ export default function Skis() {
         >
           <div className="flex w-full">
             <div className="ml-auto p-2">
-          <Button
-            onClick={() => router.push("/skis/create")}
-            color="primary"
-            sx={{
-              "&:hover": {
-                backgroundColor: theme.palette.secondary.main,
-                color: "white",
-              },
-            }}
-            variant="contained"
-            startIcon={<AddIcon />}
-          >
-            Ski
-          </Button>
-          </div>
+              <Button
+                onClick={() => router.push("/skis/create")}
+                color="primary"
+                sx={{
+                  "&:hover": {
+                    backgroundColor: theme.palette.secondary.main,
+                    color: "white",
+                  },
+                }}
+                variant="contained"
+                startIcon={<AddIcon />}
+              >
+                Ski
+              </Button>
+            </div>
           </div>
           <SkiTableCompare skis={skis} skisLoading={data.isLoading} />
         </Grid>

@@ -37,6 +37,7 @@ import { SkiSpecCard } from "../../components/SkiSpecCard";
 import { theme } from "../../legacy/Theme";
 import { SkiTableNew } from "../../components/SkiTable";
 import { AddGuideSkisModal } from "../../components/AddGuideSkisModal";
+import { Navbar } from "~/components/navbar";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
@@ -419,11 +420,14 @@ export default function Guide() {
 
   return (
     <>
+      <Navbar />
       <Container>
         <Grid container item justifyContent="space-between" xs={12}>
           <Grid item xs={4} sm={2} className="flex">
             <FormControl fullWidth required className="justify-center">
-              <InputLabel id="year-select-label" className="pt-3">Year</InputLabel>
+              <InputLabel id="year-select-label" className="pt-3">
+                Year
+              </InputLabel>
               <Select
                 labelId="year-select"
                 id="year-select"
@@ -438,7 +442,9 @@ export default function Guide() {
             </FormControl>
           </Grid>
           <Grid item xs={8}>
-            <Typography className="ml-2" variant="h2">Guide</Typography>
+            <Typography className="ml-2" variant="h2">
+              Guide
+            </Typography>
           </Grid>
           <Grid item xs={2} />
         </Grid>
@@ -502,7 +508,9 @@ export default function Guide() {
                           Add Selected Skis
                         </Button>
                         <div className="flex p-2">
-                          <span className="text-lg">{skisToAdd.length} Skis Selected</span>
+                          <span className="text-lg">
+                            {skisToAdd.length} Skis Selected
+                          </span>
                         </div>
                       </div>
                     </Grid>

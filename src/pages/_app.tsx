@@ -33,11 +33,11 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider {...pageProps}>
       <ThemeProvider theme={theme}>
-        <Navbar />
         {isPublicPage ? (
           <Component {...pageProps} />
         ) : (
           <>
+            <Navbar />
             <SignedIn>
               <Component {...pageProps} />
             </SignedIn>

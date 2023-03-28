@@ -52,16 +52,17 @@ import { NoteComponent } from "../../components/NoteComponent";
 import { Guide } from "../../components/Guide";
 import { ComparisonTable } from "../../components/ComparisonTable";
 import { useUser } from "@clerk/nextjs";
+import { Navbar } from "~/components/navbar";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
 type SkiLength = Ski["lengths"][0];
-type Note = NonNullable<RouterOutputs["ski"]["getOne"]>['notes'][0]
+type Note = NonNullable<RouterOutputs["ski"]["getOne"]>["notes"][0];
 
 const StyledControl = styled(CarouselControl)({});
 
 export default function SkiDetail() {
-  const {user} = useUser();
+  const { user } = useUser();
   const router = useRouter();
   const { skiId } = router.query;
 
@@ -149,8 +150,8 @@ export default function SkiDetail() {
         lastUpdated: new Date(Date.now()),
         skiDays: skiDays,
         skiId: note.skiId,
-      }
-      updateNote({noteId: note.id, note: newNote})
+      };
+      updateNote({ noteId: note.id, note: newNote });
     }
   };
 
@@ -187,10 +188,10 @@ export default function SkiDetail() {
 
   // const [template, setTemplate] = useState<string>("")
 
-  const [compModalOpen, setCompModalOpen] = useState<boolean>(false)
+  const [compModalOpen, setCompModalOpen] = useState<boolean>(false);
   const onCompModalClose = () => {
-      setCompModalOpen(false)
-  }
+    setCompModalOpen(false);
+  };
 
   // console.log(fullUser);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -390,6 +391,7 @@ export default function SkiDetail() {
 
   return (
     <>
+      <Navbar />
       <Container>
         <Dialog open={deleteAlert} onClose={() => setDeleteAlert(false)}>
           <Alert severity="warning" onClose={() => setDeleteAlert(false)}>
@@ -746,9 +748,7 @@ export default function SkiDetail() {
                       },
                     }}
                     disabled={
-                      !!ski.notes.find(
-                        (note) => note.userId === user?.id
-                      )
+                      !!ski.notes.find((note) => note.userId === user?.id)
                     }
                     variant="contained"
                     startIcon={<AddIcon />}
