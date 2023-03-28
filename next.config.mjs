@@ -26,7 +26,6 @@
   //  eslint: {
   //    ignoreDuringBuilds: true,
   //  },
-   swcMinify: true,
    async redirects() {
     return [
       {
