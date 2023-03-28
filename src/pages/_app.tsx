@@ -37,7 +37,6 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           <Component {...pageProps} />
         ) : (
           <>
-            <Navbar />
             <SignedIn>
               <Component {...pageProps} />
             </SignedIn>
