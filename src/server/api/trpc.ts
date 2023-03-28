@@ -16,7 +16,8 @@
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 
-import { prisma } from "../db";
+import { prisma } from "~/server/db";
+import { getAuth } from "@clerk/nextjs/server";
 
 /**
  * This is the actual context you will use in your router. It will be used to process every request
@@ -43,7 +44,6 @@ export const createTRPCContext = (opts: CreateNextContextOptions) => {
  */
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
-import { getAuth } from "@clerk/nextjs/server";
 import { ZodError } from "zod";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
