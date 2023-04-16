@@ -5,7 +5,8 @@ const SignUpPage = () => (
   <>
     <Navbar />
     <div className="flex justify-center">
-      <SignUp
+      Signups not available
+      {/* <SignUp
         path="/sign-up"
         routing="path"
         signInUrl="/sign-in"
@@ -16,7 +17,7 @@ const SignUpPage = () => (
             fontFamily: "Roboto",
           },
         }}
-      />
+      /> */}
     </div>
   </>
 );
