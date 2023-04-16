@@ -5,7 +5,7 @@ const SignUpPage = () => (
   <>
     <Navbar />
     <div className="flex justify-center">
-      Signups not available
+      Sign up not available
       {/* <SignUp
         path="/sign-up"
         routing="path"
