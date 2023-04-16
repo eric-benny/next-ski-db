@@ -1,11 +1,11 @@
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, privateProcedure, publicProcedure } from "../trpc";
 import { z } from "zod";
 
 export const manufacturerRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.manufacturer.findMany({});
   }),
-  create: publicProcedure
+  create: privateProcedure
     .input(z.object({ name: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const newManufacturer = await ctx.prisma.manufacturer.create({

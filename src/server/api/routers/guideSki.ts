@@ -1,4 +1,4 @@
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, privateProcedure, publicProcedure } from "../trpc";
 import { z } from "zod";
 
 const guideSkiUploadSchema = z.object({
@@ -71,7 +71,7 @@ export const guideSkiRouter = createTRPCRouter({
       });
       return newGuideSki;
     }),
-  update: publicProcedure
+  update: privateProcedure
     .input(
       z.object({
         guideSkiId: z.string(),
@@ -89,7 +89,7 @@ export const guideSkiRouter = createTRPCRouter({
       });
       return newGuideSki;
     }),
-  delete: publicProcedure
+  delete: privateProcedure
     .input(
       z.object({
         guideSkiId: z.string(),

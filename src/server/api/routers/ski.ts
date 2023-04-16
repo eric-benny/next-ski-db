@@ -1,4 +1,4 @@
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, privateProcedure, publicProcedure } from "../trpc";
 import { z } from "zod";
 
 const skiSpecSchema = z.object({
@@ -112,7 +112,7 @@ export const skiRouter = createTRPCRouter({
         },
       });
     }),
-  create: publicProcedure
+  create: privateProcedure
     .input(skiUploadSchema)
     .mutation(async ({ ctx, input }) => {
       const newSki = await ctx.prisma.ski.create({
@@ -242,7 +242,7 @@ export const skiRouter = createTRPCRouter({
       // }
       return newSki;
     }),
-  update: publicProcedure
+  update: privateProcedure
     .input(
       z.object({
         skiId: z.string(),
@@ -377,7 +377,7 @@ export const skiRouter = createTRPCRouter({
       }
       return newSki;
     }),
-  delete: publicProcedure
+  delete: privateProcedure
     .input(
       z.object({
         skiId: z.string(),
