@@ -1,4 +1,4 @@
-# Database
+# Database.
 
 pscale connect next-ski-db ski-db-dev --port 3309
 
