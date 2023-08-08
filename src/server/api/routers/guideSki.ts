@@ -1,4 +1,9 @@
-import { createTRPCRouter, privateProcedure, publicProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  privateProcedure,
+  publicProcedure,
+  reviewerProcedure,
+} from "../trpc";
 import { z } from "zod";
 
 const guideSkiUploadSchema = z.object({
@@ -9,9 +14,11 @@ const guideSkiUploadSchema = z.object({
   summary: z.string().nullish(),
 });
 
+const sampleSummary = "Sample buyer's guide description about the ski";
+
 export const guideSkiRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.guideSki.findMany({
+  getAll: publicProcedure.query(async ({ ctx }) => {
+    const data = await ctx.prisma.guideSki.findMany({
       include: {
         ski: {
           include: {
@@ -21,11 +28,18 @@ export const guideSkiRouter = createTRPCRouter({
         },
       },
     });
+    if (!ctx.userId) {
+      const samples = data.map((s) => {
+        return { ...s, summary: sampleSummary };
+      });
+      return samples;
+    }
+    return data;
   }),
   getAllByYear: publicProcedure
     .input(z.object({ year: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.prisma.guideSki.findMany({
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.prisma.guideSki.findMany({
         where: {
           year: parseInt(input.year),
         },
@@ -39,11 +53,18 @@ export const guideSkiRouter = createTRPCRouter({
           },
         },
       });
+      if (!ctx.userId) {
+        const samples = data.map((s) => {
+          return { ...s, summary: sampleSummary };
+        });
+        return samples;
+      }
+      return data;
     }),
   getBySki: publicProcedure
     .input(z.object({ skiId: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.prisma.guideSki.findMany({
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.prisma.guideSki.findMany({
         where: {
           skiId: input.skiId,
         },
@@ -56,8 +77,15 @@ export const guideSkiRouter = createTRPCRouter({
           },
         },
       });
+      if (!ctx.userId) {
+        const samples = data.map((s) => {
+          return { ...s, summary: sampleSummary };
+        });
+        return samples;
+      }
+      return data;
     }),
-  create: publicProcedure
+  create: reviewerProcedure
     .input(guideSkiUploadSchema)
     .mutation(async ({ ctx, input }) => {
       const newGuideSki = await ctx.prisma.guideSki.create({
@@ -71,7 +99,7 @@ export const guideSkiRouter = createTRPCRouter({
       });
       return newGuideSki;
     }),
-  update: privateProcedure
+  update: reviewerProcedure
     .input(
       z.object({
         guideSkiId: z.string(),
@@ -89,7 +117,7 @@ export const guideSkiRouter = createTRPCRouter({
       });
       return newGuideSki;
     }),
-  delete: privateProcedure
+  delete: reviewerProcedure
     .input(
       z.object({
         guideSkiId: z.string(),

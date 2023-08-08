@@ -51,8 +51,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { NoteComponent } from "../../components/NoteComponent";
 import { Guide } from "../../components/Guide";
 import { ComparisonTable } from "../../components/ComparisonTable";
-import { useUser } from "@clerk/nextjs";
+import { SignedOut, useUser } from "@clerk/nextjs";
 import { Navbar } from "~/components/navbar";
+import { ReviewerContent } from "~/components/AuthUtils/ReviewerContent";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
@@ -409,7 +410,13 @@ export default function SkiDetail() {
           </Alert>
         </Dialog>
         {res.isLoading || !ski ? (
-          <CenterLoader />
+          <>
+            {!ski && !res.isLoading ? (
+              <h3 className="text-center font-light italic">Ski not found</h3>
+            ) : (
+              <CenterLoader />
+            )}
+          </>
         ) : (
           <Grid
             container
@@ -446,31 +453,33 @@ export default function SkiDetail() {
                 <Typography variant="h2" textAlign="center">
                   {ski ? formatSkiName(ski) : "Model Name Not Found"}
                 </Typography>
-                <Stack direction="column">
-                  <Tooltip title="Edit" placement="right">
-                    <IconButton
-                      color="primary"
-                      component={Link}
-                      href={`/skis/create/${skiId}`}
-                      sx={{
-                        "&:hover": {
-                          backgroundColor: theme.palette.secondary.light,
-                          color: "white",
-                        },
-                      }}
-                    >
-                      <EditIcon color="inherit" />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Delete" placement="right">
-                    <IconButton
-                      color="error"
-                      onClick={() => setDeleteAlert(true)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Tooltip>
-                </Stack>
+                <ReviewerContent>
+                  <Stack direction="column">
+                    <Tooltip title="Edit" placement="right">
+                      <IconButton
+                        color="primary"
+                        component={Link}
+                        href={`/skis/create/${skiId}`}
+                        sx={{
+                          "&:hover": {
+                            backgroundColor: theme.palette.secondary.light,
+                            color: "white",
+                          },
+                        }}
+                      >
+                        <EditIcon color="inherit" />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete" placement="right">
+                      <IconButton
+                        color="error"
+                        onClick={() => setDeleteAlert(true)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Stack>
+                </ReviewerContent>
               </Stack>
             </Grid>
             <Grid item xs={12}>
@@ -739,22 +748,32 @@ export default function SkiDetail() {
                   <Typography variant="h3">Review Notes</Typography>
                 </Grid>
                 <Grid item>
-                  <Button
-                    onClick={newNote}
-                    color="primary"
-                    sx={{
-                      "&:hover": {
-                        backgroundColor: theme.palette.secondary.main,
-                      },
-                    }}
-                    disabled={
-                      !!ski.notes.find((note) => note.userId === user?.id)
-                    }
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                  >
-                    New
-                  </Button>
+                  <ReviewerContent>
+                    <Button
+                      onClick={newNote}
+                      color="primary"
+                      sx={{
+                        "&:hover": {
+                          backgroundColor: theme.palette.secondary.main,
+                        },
+                      }}
+                      disabled={
+                        !!ski.notes.find((note) => note.userId === user?.id)
+                      }
+                      variant="contained"
+                      startIcon={<AddIcon />}
+                    >
+                      New
+                    </Button>
+                  </ReviewerContent>
+                </Grid>
+                <Grid item xs={12} style={{ paddingTop: "5px" }}>
+                  <SignedOut>
+                    <span className="text-sm font-light italic">
+                      * Sample data for display purposes, sign in to view real
+                      data
+                    </span>
+                  </SignedOut>
                 </Grid>
                 {ski.notes.length > 0 ? (
                   ski.notes.map((note, index) => {
@@ -808,6 +827,14 @@ export default function SkiDetail() {
                     <InfoIcon color="info" />
                   </CustomWidthTooltip>
                 </Grid>
+                <Grid item xs={12} style={{ paddingTop: "5px" }}>
+                  <SignedOut>
+                    <span className="text-sm font-light italic">
+                      * Sample data for display purposes, sign in to view real
+                      data
+                    </span>
+                  </SignedOut>
+                </Grid>
                 {ski && (
                   <Grid item xs={12}>
                     <ComparisonTable
@@ -828,6 +855,14 @@ export default function SkiDetail() {
                 rowSpacing={2}
               >
                 <Typography variant="h3">{"Buyer's Guide"}</Typography>
+                <Grid item xs={12} style={{ paddingTop: "5px" }}>
+                  <SignedOut>
+                    <span className="text-sm font-light italic">
+                      * Sample data for display purposes, sign in to view real
+                      data
+                    </span>
+                  </SignedOut>
+                </Grid>
                 <Grid item xs={12}>
                   <Guide skiId={skiId as string} />
                 </Grid>

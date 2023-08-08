@@ -47,11 +47,15 @@ export const createTRPCContext = (_opts: CreateNextContextOptions) => {
   const { req } = _opts;
   const sesh = getAuth(req);
 
+  console.log(sesh);
+
+  const isAdmin = sesh.sessionClaims?.admin ?? false;
   const userId = sesh.userId;
 
   return {
     prisma,
     userId,
+    isAdmin,
   };
 };
 
@@ -104,7 +108,7 @@ export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
 
 const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
-  if (!ctx.userId || ctx.userId !== 'user_2NYsCI4nW2vmIZwF09w2eXH7SXI') {
+  if (!ctx.userId) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
     });
@@ -113,8 +117,46 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
   return next({
     ctx: {
       userId: ctx.userId,
+      admin: false,
+      reviewer: false
     },
   });
 });
 
 export const privateProcedure = t.procedure.use(enforceUserIsAuthed);
+
+const enforceUserIsAdmin = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.userId || !ctx.isAdmin) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+    });
+  }
+
+  return next({
+    ctx: {
+      userId: ctx.userId,
+      admin: true,
+      reviewer: true
+    },
+  });
+});
+
+export const adminProcedure = t.procedure.use(enforceUserIsAdmin);
+
+const enforceUserIsReviewer = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.userId || !ctx.isAdmin) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+    });
+  }
+
+  return next({
+    ctx: {
+      userId: ctx.userId,
+      admin: false,
+      reviewer: true
+    },
+  });
+});
+
+export const reviewerProcedure = t.procedure.use(enforceUserIsReviewer);

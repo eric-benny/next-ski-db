@@ -30,6 +30,8 @@ import { CreateFamilyModal } from "../../../components/CreateFamilyModal";
 import { api, RouterOutputs } from "../../../utils/api";
 import { SkiLegacy, SkiSpec } from "../../../legacy/Services/Skis";
 import { Navbar } from "~/components/navbar";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { RestrictedContent } from "~/components/AuthUtils";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
@@ -545,1146 +547,1160 @@ export default function CreateSki() {
   return (
     <>
       <Navbar />
-      <Container>
-        <Dialog open={errorAlert} onClose={() => setErrorAlert(false)}>
-          <Alert severity="error">
-            <AlertTitle>Error</AlertTitle>
-            {JSON.stringify(alertContent)}
-          </Alert>
-        </Dialog>
-        <Dialog open={successAlert} onClose={() => setSuccessAlert(false)}>
-          <Alert severity="success">
-            <AlertTitle>Success</AlertTitle>
-            View New Ski
-            {alertContent && alertContent.id && (
-              <Button
-                onClick={() => router.push(`/skis/${alertContent.id}`)}
-                color="primary"
-              >
-                Go!
-              </Button>
-            )}
-          </Alert>
-        </Dialog>
-        <Grid
-          container
-          justifyContent="space-between"
-          spacing={2}
-          rowSpacing={2}
-        >
-          <Grid item xs={12}>
-            <Typography variant="h2">
-              {skiId ? "Edit Ski" : "Create New Ski"}
-            </Typography>
-          </Grid>
-          {isLoadingCreate || isLoadingUpdate ? (
-            <CenterLoader />
-          ) : (
-            <>
-              <Grid item xs={12}>
-                <Typography variant="h4" align="left">
-                  Ski Info:
-                </Typography>
-              </Grid>
-              {/* Model */}
-              <Grid item xs={12} sm={6} lg={3}>
-                <FormControl fullWidth>
-                  <TextField
-                    required
-                    id="model"
-                    label="Model"
-                    value={model}
-                    onChange={(e) => setModel(e.target.value)}
-                  />
-                </FormControl>
-              </Grid>
-              {/* Manufacturer */}
-              <Grid item xs={12} sm={6} lg={3}>
-                <Grid container justifyContent="center" spacing={1}>
-                  <Grid item xs={8}>
-                    <FormControl fullWidth required>
-                      <InputLabel id="manufacturer-select-label">
-                        Manufacturer
-                      </InputLabel>
-                      <Select
-                        labelId="manufacturer-select-label"
-                        id="manufacturer-select"
-                        value={
-                          dataMan &&
-                          !!dataMan.find((m) => m.id === manufacturer)
-                            ? manufacturer
-                            : ""
-                        }
-                        label="Manufacturer"
-                        onChange={(e) => setManufacturer(e.target.value)}
-                      >
-                        {!isLoadingMan &&
-                          dataMan?.map((manufacturer) => {
-                            return (
-                              <MenuItem
-                                key={manufacturer.id}
-                                value={manufacturer.id}
-                              >
-                                {manufacturer.name}
-                              </MenuItem>
-                            );
-                          })}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={4} alignSelf="center">
-                    <Button
-                      onClick={() => setManModalOpen(true)}
-                      color="primary"
-                      sx={{
-                        "&:hover": {
-                          backgroundColor: theme.palette.secondary.main,
-                        },
-                      }}
-                      variant="contained"
-                      startIcon={<AddIcon />}
-                    >
-                      New
-                    </Button>
-                  </Grid>
+      <SignedOut>
+        <RestrictedContent header="Sign in to create skis"/>
+      </SignedOut>
+      <SignedIn>
+        <Container>
+          <Dialog open={errorAlert} onClose={() => setErrorAlert(false)}>
+            <Alert severity="error">
+              <AlertTitle>Error</AlertTitle>
+              {JSON.stringify(alertContent)}
+            </Alert>
+          </Dialog>
+          <Dialog open={successAlert} onClose={() => setSuccessAlert(false)}>
+            <Alert severity="success">
+              <AlertTitle>Success</AlertTitle>
+              View New Ski
+              {alertContent && alertContent.id && (
+                <Button
+                  onClick={() => router.push(`/skis/${alertContent.id}`)}
+                  color="primary"
+                >
+                  Go!
+                </Button>
+              )}
+            </Alert>
+          </Dialog>
+          <Grid
+            container
+            justifyContent="space-between"
+            spacing={2}
+            rowSpacing={2}
+          >
+            <Grid item xs={12}>
+              <Typography variant="h2">
+                {skiId ? "Edit Ski" : "Create New Ski"}
+              </Typography>
+            </Grid>
+            {isLoadingCreate || isLoadingUpdate ? (
+              <CenterLoader />
+            ) : (
+              <>
+                <Grid item xs={12}>
+                  <Typography variant="h4" align="left">
+                    Ski Info:
+                  </Typography>
                 </Grid>
-              </Grid>
-              {/* Family */}
-              <Grid item xs={12} sm={6} lg={3}>
-                <Grid container justifyContent="center" spacing={1}>
-                  <Grid item xs={8}>
-                    <FormControl fullWidth>
-                      <InputLabel id="family-select-label">Family</InputLabel>
-                      <Select
-                        labelId="family-select-label"
-                        id="family-select"
-                        value={
-                          dataFam &&
-                          !!dataFam.find(
-                            (f) =>
-                              f.id === skiFamily &&
-                              (manufacturer
-                                ? f.manufacturer.id === manufacturer
-                                : true)
-                          )
-                            ? skiFamily
-                            : ""
-                        }
-                        label="Ski Family"
-                        onChange={(e) => setSkiFamily(e.target.value)}
-                      >
-                        <MenuItem value={""}>
-                          <em>None</em>
-                        </MenuItem>
-                        {!isLoadingFam &&
-                          dataFam
-                            ?.filter((fam) =>
-                              manufacturer
-                                ? manufacturer === fam.manufacturer.id
-                                : true
-                            )
-                            .map((family) => {
+                {/* Model */}
+                <Grid item xs={12} sm={6} lg={3}>
+                  <FormControl fullWidth>
+                    <TextField
+                      required
+                      id="model"
+                      label="Model"
+                      value={model}
+                      onChange={(e) => setModel(e.target.value)}
+                    />
+                  </FormControl>
+                </Grid>
+                {/* Manufacturer */}
+                <Grid item xs={12} sm={6} lg={3}>
+                  <Grid container justifyContent="center" spacing={1}>
+                    <Grid item xs={8}>
+                      <FormControl fullWidth required>
+                        <InputLabel id="manufacturer-select-label">
+                          Manufacturer
+                        </InputLabel>
+                        <Select
+                          labelId="manufacturer-select-label"
+                          id="manufacturer-select"
+                          value={
+                            dataMan &&
+                            !!dataMan.find((m) => m.id === manufacturer)
+                              ? manufacturer
+                              : ""
+                          }
+                          label="Manufacturer"
+                          onChange={(e) => setManufacturer(e.target.value)}
+                        >
+                          {!isLoadingMan &&
+                            dataMan?.map((manufacturer) => {
                               return (
-                                <MenuItem key={family.id} value={family.id}>
-                                  {family.name}
+                                <MenuItem
+                                  key={manufacturer.id}
+                                  value={manufacturer.id}
+                                >
+                                  {manufacturer.name}
                                 </MenuItem>
                               );
                             })}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={4} alignSelf="center">
-                    <Button
-                      onClick={() => setFamModalOpen(true)}
-                      color="primary"
-                      sx={{
-                        "&:hover": {
-                          backgroundColor: theme.palette.secondary.main,
-                        },
-                      }}
-                      variant="contained"
-                      startIcon={<AddIcon />}
-                    >
-                      New
-                    </Button>
-                  </Grid>
-                </Grid>
-              </Grid>
-              {/* Parent */}
-              <Grid item xs={12} sm={6} lg={3}>
-                <FormControl fullWidth>
-                  <Autocomplete
-                    value={parent}
-                    onChange={(event: unknown, newValue: Ski | null) => {
-                      setParent(newValue);
-                    }}
-                    id="controllable-states-demo"
-                    getOptionLabel={(option) => formatSkiName(option)}
-                    options={parentOptions}
-                    sx={{ width: 300 }}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Parent" />
-                    )}
-                  />
-                </FormControl>
-              </Grid>
-              {/* Year Current */}
-              <Grid item xs={12} sm={6} lg={3}>
-                <FormControl fullWidth required>
-                  <InputLabel id="year-current-select-label">
-                    Current Year
-                  </InputLabel>
-                  <Select
-                    labelId="year-current-select-label"
-                    id="year-current-select"
-                    value={yearCurrent ? yearCurrent : ""}
-                    label="Current Year"
-                    onChange={(e) => setYearCurrent(e.target.value as number)}
-                  >
-                    {validYearsCurrent.map((year) => {
-                      return (
-                        <MenuItem key={year} value={year}>
-                          {year}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
-              </Grid>
-              {/* Year Released */}
-              <Grid item xs={12} sm={6} lg={3}>
-                <FormControl fullWidth required>
-                  <InputLabel id="year-released-select-label">
-                    Released Year
-                  </InputLabel>
-                  <Select
-                    labelId="year-released-select-label"
-                    id="year-released-select"
-                    value={yearReleased ? yearReleased : ""}
-                    label="Released Year"
-                    onChange={(e) => setYearReleased(e.target.value as number)}
-                  >
-                    {validYearsRelease.map((year) => {
-                      return (
-                        <MenuItem key={year} value={year}>
-                          {year}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
-              </Grid>
-              {/* Available Lengths */}
-              <Grid item xs={12} sm={6} lg={6}>
-                <Grid container spacing={2}>
-                  <Grid item xs={9}>
-                    <FormControl fullWidth required>
-                      <TextField
-                        id="availableLength"
-                        label="Length"
-                        value={availableLengthInput}
-                        type="number"
-                        onChange={(e) =>
-                          setAvailableLengthInput(e.target.value)
-                        }
-                        onKeyPress={(ev) => {
-                          if (ev.key === "Enter") {
-                            if (!lengthInvalid(availableLengthInput)) {
-                              addAvailableLength();
-                            }
-                            ev.preventDefault();
-                          }
-                        }}
-                        helperText={
-                          <Typography component={"span"}>
-                            {`Available Lengths: ${availableLengths.reduce(
-                              (allLengths: string, length: number) => {
-                                return allLengths
-                                  ? `${allLengths}, ${length.toString()}`
-                                  : length.toString();
-                              },
-                              ""
-                            )}`}
-                          </Typography>
-                        }
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment position="end">cm</InputAdornment>
-                          ),
-                        }}
-                      />
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Stack alignItems="center">
-                      <Tooltip title="Add Length" placement="top">
-                        <span>
-                          <IconButton
-                            color="primary"
-                            onClick={addAvailableLength}
-                            disabled={lengthInvalid(availableLengthInput)}
-                          >
-                            <AddIcon />
-                          </IconButton>
-                        </span>
-                      </Tooltip>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={4} alignSelf="center">
                       <Button
-                        onClick={() => {
-                          setAvailableLengths([]);
-                          setSpecs([]);
-                        }}
+                        onClick={() => setManModalOpen(true)}
                         color="primary"
-                        disabled={availableLengths.length < 1}
+                        sx={{
+                          "&:hover": {
+                            backgroundColor: theme.palette.secondary.main,
+                          },
+                        }}
+                        variant="contained"
+                        startIcon={<AddIcon />}
                       >
-                        Clear
+                        New
                       </Button>
-                    </Stack>
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
-              {/* Reviews */}
-              <Grid item xs={12}>
-                <Stack spacing={2} direction={{ xs: "column", md: "row" }}>
-                  <InputLabel>Reviews</InputLabel>
-                  <Tooltip
-                    title={fullReviewUrl}
-                    disableHoverListener={!fullReviewUrl}
-                  >
-                    <FormControl>
-                      <TextField
-                        id="fullReview"
-                        label="Full Review"
-                        type="url"
-                        value={fullReviewUrl}
-                        onChange={(e) => setFullReviewUrl(e.target.value)}
-                      />
-                    </FormControl>
-                  </Tooltip>
-                  <Tooltip
-                    title={firstLookUrl}
-                    disableHoverListener={!firstLookUrl}
-                  >
-                    <FormControl>
-                      <TextField
-                        id="firstLook"
-                        label="First Look"
-                        type="url"
-                        value={firstLookUrl}
-                        onChange={(e) => setFirstLookUrl(e.target.value)}
-                      />
-                    </FormControl>
-                  </Tooltip>
-                  <Tooltip
-                    title={flashReviewUrl}
-                    disableHoverListener={!flashReviewUrl}
-                  >
-                    <FormControl>
-                      <TextField
-                        id="flash"
-                        label="Flash Review"
-                        type="url"
-                        value={flashReviewUrl}
-                        onChange={(e) => setFlashReviewUrl(e.target.value)}
-                      />
-                    </FormControl>
-                  </Tooltip>
-                  <Tooltip
-                    title={deepDiveUrl}
-                    disableHoverListener={!deepDiveUrl}
-                  >
-                    <FormControl>
-                      <TextField
-                        id="deep"
-                        label="Deep Dive"
-                        type="url"
-                        value={deepDiveUrl}
-                        onChange={(e) => setDeepDiveUrl(e.target.value)}
-                      />
-                    </FormControl>
-                  </Tooltip>
-                </Stack>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant="h4" align="left">
-                  Ski Specs:
-                </Typography>
-                <Grid item xs={12}>
-                  {availableLengths.length < 1 ? (
-                    <Typography align="center">
-                      <em>
-                        Add an available length to create a spec (*required)
-                      </em>
-                    </Typography>
-                  ) : (
-                    <Typography align="center">
-                      <em>Select available lengths to define specs</em>
-                    </Typography>
-                  )}
-                </Grid>
-                <Grid item xs={12}>
-                  {specs
-                    .sort((a, b) => b.length - a.length)
-                    .map((spec, index) => {
-                      return (
-                        <FormControlLabel
-                          key={index}
-                          control={
-                            <Checkbox
-                              checked={spec.active}
-                              onChange={() =>
-                                onSpecChange(index, "active", !spec.active)
-                              }
-                            />
+                {/* Family */}
+                <Grid item xs={12} sm={6} lg={3}>
+                  <Grid container justifyContent="center" spacing={1}>
+                    <Grid item xs={8}>
+                      <FormControl fullWidth>
+                        <InputLabel id="family-select-label">Family</InputLabel>
+                        <Select
+                          labelId="family-select-label"
+                          id="family-select"
+                          value={
+                            dataFam &&
+                            !!dataFam.find(
+                              (f) =>
+                                f.id === skiFamily &&
+                                (manufacturer
+                                  ? f.manufacturer.id === manufacturer
+                                  : true)
+                            )
+                              ? skiFamily
+                              : ""
                           }
-                          label={`${spec.length} CM`}
-                        />
-                      );
-                    })}
-                </Grid>
-              </Grid>
-              {/* <Container> */}
-              <Grid
-                container
-                justifyContent="flex-start"
-                spacing={2}
-                rowSpacing={2}
-                margin={2}
-              >
-                {/* <Grid item xs={12}> */}
-                {specs.map((spec, index) => {
-                  if (spec.active) {
-                    return (
-                      <div key={index}>
-                        <Grid
-                          container
-                          justifyContent="flex-start"
-                          spacing={2}
-                          margin={2}
-                          paddingRight={2}
+                          label="Ski Family"
+                          onChange={(e) => setSkiFamily(e.target.value)}
                         >
-                          <Divider style={{ width: "100%" }} />
-                          <Grid item xs={12}>
-                            <Typography
-                              variant="h4"
-                              color="secondary"
-                              align="left"
-                            >{`${spec.length} CM`}</Typography>
-                          </Grid>
-                          {/* Measured Length */}
-                          <Grid item xs={12} sm={6} lg={4}>
-                            <FormControl fullWidth>
-                              <TextField
-                                required
-                                id="measuredLength"
-                                label="Measured Length"
-                                type="number"
-                                value={
-                                  spec.measuredLength ? spec.measuredLength : ""
+                          <MenuItem value={""}>
+                            <em>None</em>
+                          </MenuItem>
+                          {!isLoadingFam &&
+                            dataFam
+                              ?.filter((fam) =>
+                                manufacturer
+                                  ? manufacturer === fam.manufacturer.id
+                                  : true
+                              )
+                              .map((family) => {
+                                return (
+                                  <MenuItem key={family.id} value={family.id}>
+                                    {family.name}
+                                  </MenuItem>
+                                );
+                              })}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={4} alignSelf="center">
+                      <Button
+                        onClick={() => setFamModalOpen(true)}
+                        color="primary"
+                        sx={{
+                          "&:hover": {
+                            backgroundColor: theme.palette.secondary.main,
+                          },
+                        }}
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                      >
+                        New
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                {/* Parent */}
+                <Grid item xs={12} sm={6} lg={3}>
+                  <FormControl fullWidth>
+                    <Autocomplete
+                      value={parent}
+                      onChange={(event: unknown, newValue: Ski | null) => {
+                        setParent(newValue);
+                      }}
+                      id="controllable-states-demo"
+                      getOptionLabel={(option) => formatSkiName(option)}
+                      options={parentOptions}
+                      sx={{ width: 300 }}
+                      renderInput={(params) => (
+                        <TextField {...params} label="Parent" />
+                      )}
+                    />
+                  </FormControl>
+                </Grid>
+                {/* Year Current */}
+                <Grid item xs={12} sm={6} lg={3}>
+                  <FormControl fullWidth required>
+                    <InputLabel id="year-current-select-label">
+                      Current Year
+                    </InputLabel>
+                    <Select
+                      labelId="year-current-select-label"
+                      id="year-current-select"
+                      value={yearCurrent ? yearCurrent : ""}
+                      label="Current Year"
+                      onChange={(e) => setYearCurrent(e.target.value as number)}
+                    >
+                      {validYearsCurrent.map((year) => {
+                        return (
+                          <MenuItem key={year} value={year}>
+                            {year}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                {/* Year Released */}
+                <Grid item xs={12} sm={6} lg={3}>
+                  <FormControl fullWidth required>
+                    <InputLabel id="year-released-select-label">
+                      Released Year
+                    </InputLabel>
+                    <Select
+                      labelId="year-released-select-label"
+                      id="year-released-select"
+                      value={yearReleased ? yearReleased : ""}
+                      label="Released Year"
+                      onChange={(e) =>
+                        setYearReleased(e.target.value as number)
+                      }
+                    >
+                      {validYearsRelease.map((year) => {
+                        return (
+                          <MenuItem key={year} value={year}>
+                            {year}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                {/* Available Lengths */}
+                <Grid item xs={12} sm={6} lg={6}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={9}>
+                      <FormControl fullWidth required>
+                        <TextField
+                          id="availableLength"
+                          label="Length"
+                          value={availableLengthInput}
+                          type="number"
+                          onChange={(e) =>
+                            setAvailableLengthInput(e.target.value)
+                          }
+                          onKeyPress={(ev) => {
+                            if (ev.key === "Enter") {
+                              if (!lengthInvalid(availableLengthInput)) {
+                                addAvailableLength();
+                              }
+                              ev.preventDefault();
+                            }
+                          }}
+                          helperText={
+                            <Typography component={"span"}>
+                              {`Available Lengths: ${availableLengths.reduce(
+                                (allLengths: string, length: number) => {
+                                  return allLengths
+                                    ? `${allLengths}, ${length.toString()}`
+                                    : length.toString();
+                                },
+                                ""
+                              )}`}
+                            </Typography>
+                          }
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">cm</InputAdornment>
+                            ),
+                          }}
+                        />
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Stack alignItems="center">
+                        <Tooltip title="Add Length" placement="top">
+                          <span>
+                            <IconButton
+                              color="primary"
+                              onClick={addAvailableLength}
+                              disabled={lengthInvalid(availableLengthInput)}
+                            >
+                              <AddIcon />
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                        <Button
+                          onClick={() => {
+                            setAvailableLengths([]);
+                            setSpecs([]);
+                          }}
+                          color="primary"
+                          disabled={availableLengths.length < 1}
+                        >
+                          Clear
+                        </Button>
+                      </Stack>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                {/* Reviews */}
+                <Grid item xs={12}>
+                  <Stack spacing={2} direction={{ xs: "column", md: "row" }}>
+                    <InputLabel>Reviews</InputLabel>
+                    <Tooltip
+                      title={fullReviewUrl}
+                      disableHoverListener={!fullReviewUrl}
+                    >
+                      <FormControl>
+                        <TextField
+                          id="fullReview"
+                          label="Full Review"
+                          type="url"
+                          value={fullReviewUrl}
+                          onChange={(e) => setFullReviewUrl(e.target.value)}
+                        />
+                      </FormControl>
+                    </Tooltip>
+                    <Tooltip
+                      title={firstLookUrl}
+                      disableHoverListener={!firstLookUrl}
+                    >
+                      <FormControl>
+                        <TextField
+                          id="firstLook"
+                          label="First Look"
+                          type="url"
+                          value={firstLookUrl}
+                          onChange={(e) => setFirstLookUrl(e.target.value)}
+                        />
+                      </FormControl>
+                    </Tooltip>
+                    <Tooltip
+                      title={flashReviewUrl}
+                      disableHoverListener={!flashReviewUrl}
+                    >
+                      <FormControl>
+                        <TextField
+                          id="flash"
+                          label="Flash Review"
+                          type="url"
+                          value={flashReviewUrl}
+                          onChange={(e) => setFlashReviewUrl(e.target.value)}
+                        />
+                      </FormControl>
+                    </Tooltip>
+                    <Tooltip
+                      title={deepDiveUrl}
+                      disableHoverListener={!deepDiveUrl}
+                    >
+                      <FormControl>
+                        <TextField
+                          id="deep"
+                          label="Deep Dive"
+                          type="url"
+                          value={deepDiveUrl}
+                          onChange={(e) => setDeepDiveUrl(e.target.value)}
+                        />
+                      </FormControl>
+                    </Tooltip>
+                  </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="h4" align="left">
+                    Ski Specs:
+                  </Typography>
+                  <Grid item xs={12}>
+                    {availableLengths.length < 1 ? (
+                      <Typography align="center">
+                        <em>
+                          Add an available length to create a spec (*required)
+                        </em>
+                      </Typography>
+                    ) : (
+                      <Typography align="center">
+                        <em>Select available lengths to define specs</em>
+                      </Typography>
+                    )}
+                  </Grid>
+                  <Grid item xs={12}>
+                    {specs
+                      .sort((a, b) => b.length - a.length)
+                      .map((spec, index) => {
+                        return (
+                          <FormControlLabel
+                            key={index}
+                            control={
+                              <Checkbox
+                                checked={spec.active}
+                                onChange={() =>
+                                  onSpecChange(index, "active", !spec.active)
                                 }
-                                onChange={(e) =>
-                                  onSpecChange(
-                                    index,
-                                    "measuredLength",
-                                    e.target.value
-                                  )
-                                }
-                                InputProps={{
-                                  endAdornment: (
-                                    <InputAdornment position="end">
-                                      cm
-                                    </InputAdornment>
-                                  ),
-                                }}
-                                margin="dense"
                               />
-                            </FormControl>
-                          </Grid>
-                          {/* Stated Sidecut */}
-                          <Grid item xs={12} sm={6} lg={4}>
-                            <FormControl fullWidth>
-                              <TextField
-                                id="sidcutStated"
-                                label="Stated Sidecut"
-                                type="number"
-                                value={
-                                  spec.sidcutStated ? spec.sidcutStated : ""
-                                }
-                                onChange={(e) =>
-                                  onSpecChange(
-                                    index,
-                                    "sidcutStated",
-                                    e.target.value
-                                  )
-                                }
-                                InputProps={{
-                                  endAdornment: (
-                                    <InputAdornment position="end">
-                                      m
-                                    </InputAdornment>
-                                  ),
-                                }}
-                                margin="dense"
-                              />
-                            </FormControl>
-                          </Grid>
-                          {/* Core */}
-                          <Grid item xs={12} sm={6} lg={4}>
-                            <FormControl fullWidth>
-                              <TextField
-                                id="core"
-                                label="Core"
-                                value={spec.core ? spec.core : ""}
-                                onChange={(e) =>
-                                  onSpecChange(index, "core", e.target.value)
-                                }
-                                margin="dense"
-                              />
-                            </FormControl>
-                          </Grid>
-                          {/* Base */}
-                          <Grid item xs={12} sm={6} lg={4}>
-                            <FormControl fullWidth>
-                              <TextField
-                                id="base"
-                                label="Base"
-                                value={spec.base ? spec.base : ""}
-                                onChange={(e) =>
-                                  onSpecChange(index, "base", e.target.value)
-                                }
-                                margin="dense"
-                              />
-                            </FormControl>
-                          </Grid>
-                          {/* Weight */}
-                          <Grid item xs={12} sm={6} lg={4}>
-                            <Stack>
-                              <InputLabel>Weight</InputLabel>
-                              <FormControl>
+                            }
+                            label={`${spec.length} CM`}
+                          />
+                        );
+                      })}
+                  </Grid>
+                </Grid>
+                {/* <Container> */}
+                <Grid
+                  container
+                  justifyContent="flex-start"
+                  spacing={2}
+                  rowSpacing={2}
+                  margin={2}
+                >
+                  {/* <Grid item xs={12}> */}
+                  {specs.map((spec, index) => {
+                    if (spec.active) {
+                      return (
+                        <div key={index}>
+                          <Grid
+                            container
+                            justifyContent="flex-start"
+                            spacing={2}
+                            margin={2}
+                            paddingRight={2}
+                          >
+                            <Divider style={{ width: "100%" }} />
+                            <Grid item xs={12}>
+                              <Typography
+                                variant="h4"
+                                color="secondary"
+                                align="left"
+                              >{`${spec.length} CM`}</Typography>
+                            </Grid>
+                            {/* Measured Length */}
+                            <Grid item xs={12} sm={6} lg={4}>
+                              <FormControl fullWidth>
                                 <TextField
-                                  id="weightStated"
-                                  label="Stated Weight"
+                                  required
+                                  id="measuredLength"
+                                  label="Measured Length"
                                   type="number"
                                   value={
-                                    spec.weightStated ? spec.weightStated : ""
+                                    spec.measuredLength
+                                      ? spec.measuredLength
+                                      : ""
                                   }
                                   onChange={(e) =>
                                     onSpecChange(
                                       index,
-                                      "weightStated",
+                                      "measuredLength",
                                       e.target.value
                                     )
                                   }
                                   InputProps={{
                                     endAdornment: (
                                       <InputAdornment position="end">
-                                        g
+                                        cm
                                       </InputAdornment>
                                     ),
                                   }}
-                                  size="small"
-                                  variant="standard"
+                                  margin="dense"
                                 />
                               </FormControl>
-                              <FormControl>
+                            </Grid>
+                            {/* Stated Sidecut */}
+                            <Grid item xs={12} sm={6} lg={4}>
+                              <FormControl fullWidth>
                                 <TextField
-                                  required
-                                  id="weightMeas1"
-                                  label="Measured 1"
+                                  id="sidcutStated"
+                                  label="Stated Sidecut"
                                   type="number"
                                   value={
-                                    spec.weightMeas &&
-                                    spec.weightMeas.length > 0
-                                      ? spec.weightMeas[0]
-                                      : ""
+                                    spec.sidcutStated ? spec.sidcutStated : ""
                                   }
                                   onChange={(e) =>
-                                    onSpecChange(index, "weightMeas", [
-                                      e.target.value,
-                                      spec.weightMeas &&
-                                      spec.weightMeas.length > 1
-                                        ? spec.weightMeas[1]
-                                        : "",
-                                    ])
+                                    onSpecChange(
+                                      index,
+                                      "sidcutStated",
+                                      e.target.value
+                                    )
                                   }
                                   InputProps={{
                                     endAdornment: (
                                       <InputAdornment position="end">
-                                        g
+                                        m
                                       </InputAdornment>
                                     ),
                                   }}
-                                  size="small"
-                                  variant="standard"
+                                  margin="dense"
                                 />
                               </FormControl>
-                              <FormControl>
+                            </Grid>
+                            {/* Core */}
+                            <Grid item xs={12} sm={6} lg={4}>
+                              <FormControl fullWidth>
                                 <TextField
-                                  required
-                                  id="weightMeas2"
-                                  label="Measured 2"
-                                  type="number"
-                                  value={
-                                    spec.weightMeas &&
-                                    spec.weightMeas.length > 1
-                                      ? spec.weightMeas[1]
-                                      : ""
-                                  }
+                                  id="core"
+                                  label="Core"
+                                  value={spec.core ? spec.core : ""}
                                   onChange={(e) =>
-                                    onSpecChange(index, "weightMeas", [
+                                    onSpecChange(index, "core", e.target.value)
+                                  }
+                                  margin="dense"
+                                />
+                              </FormControl>
+                            </Grid>
+                            {/* Base */}
+                            <Grid item xs={12} sm={6} lg={4}>
+                              <FormControl fullWidth>
+                                <TextField
+                                  id="base"
+                                  label="Base"
+                                  value={spec.base ? spec.base : ""}
+                                  onChange={(e) =>
+                                    onSpecChange(index, "base", e.target.value)
+                                  }
+                                  margin="dense"
+                                />
+                              </FormControl>
+                            </Grid>
+                            {/* Weight */}
+                            <Grid item xs={12} sm={6} lg={4}>
+                              <Stack>
+                                <InputLabel>Weight</InputLabel>
+                                <FormControl>
+                                  <TextField
+                                    id="weightStated"
+                                    label="Stated Weight"
+                                    type="number"
+                                    value={
+                                      spec.weightStated ? spec.weightStated : ""
+                                    }
+                                    onChange={(e) =>
+                                      onSpecChange(
+                                        index,
+                                        "weightStated",
+                                        e.target.value
+                                      )
+                                    }
+                                    InputProps={{
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          g
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                    size="small"
+                                    variant="standard"
+                                  />
+                                </FormControl>
+                                <FormControl>
+                                  <TextField
+                                    required
+                                    id="weightMeas1"
+                                    label="Measured 1"
+                                    type="number"
+                                    value={
                                       spec.weightMeas &&
                                       spec.weightMeas.length > 0
                                         ? spec.weightMeas[0]
-                                        : "",
-                                      e.target.value,
-                                    ])
-                                  }
-                                  InputProps={{
-                                    endAdornment: (
-                                      <InputAdornment position="end">
-                                        g
-                                      </InputAdornment>
-                                    ),
-                                  }}
-                                  size="small"
-                                  variant="standard"
-                                />
-                              </FormControl>
-                            </Stack>
-                          </Grid>
-                          {/* Stated Dim */}
-                          <Grid item xs={12} sm={6} lg={4}>
-                            <Stack>
-                              <InputLabel>Dimensions</InputLabel>
-                              <FormControl>
-                                <TextField
-                                  required
-                                  id="dimTip"
-                                  label="Tip"
-                                  type="number"
-                                  value={spec.dimTip ? spec.dimTip : ""}
-                                  onChange={(e) =>
-                                    onSpecChange(
-                                      index,
-                                      "dimTip",
-                                      e.target.value
-                                    )
-                                  }
-                                  InputProps={{
-                                    endAdornment: (
-                                      <InputAdornment position="end">
-                                        mm
-                                      </InputAdornment>
-                                    ),
-                                  }}
-                                  size="small"
-                                  variant="standard"
-                                />
-                              </FormControl>
-                              <FormControl>
-                                <TextField
-                                  required
-                                  id="dimWaist"
-                                  label="Waist"
-                                  type="number"
-                                  value={spec.dimWaist ? spec.dimWaist : ""}
-                                  onChange={(e) =>
-                                    onSpecChange(
-                                      index,
-                                      "dimWaist",
-                                      e.target.value
-                                    )
-                                  }
-                                  InputProps={{
-                                    endAdornment: (
-                                      <InputAdornment position="end">
-                                        mm
-                                      </InputAdornment>
-                                    ),
-                                  }}
-                                  size="small"
-                                  variant="standard"
-                                />
-                              </FormControl>
-                              <FormControl>
-                                <TextField
-                                  required
-                                  id="dimTail"
-                                  label="Tail"
-                                  type="number"
-                                  value={spec.dimTail ? spec.dimTail : ""}
-                                  onChange={(e) =>
-                                    onSpecChange(
-                                      index,
-                                      "dimTail",
-                                      e.target.value
-                                    )
-                                  }
-                                  InputProps={{
-                                    endAdornment: (
-                                      <InputAdornment position="end">
-                                        mm
-                                      </InputAdornment>
-                                    ),
-                                  }}
-                                  size="small"
-                                  variant="standard"
-                                />
-                              </FormControl>
-                            </Stack>
-                          </Grid>
-                          {/* Measured Dim */}
-                          <Grid item xs={12} sm={6} lg={4}>
-                            <Stack>
-                              <InputLabel>Dimensions (Measured)</InputLabel>
-                              <FormControl>
-                                <TextField
-                                  required
-                                  id="dimTipMeas"
-                                  label="Tip"
-                                  type="number"
-                                  value={spec.dimTipMeas ? spec.dimTipMeas : ""}
-                                  onChange={(e) =>
-                                    onSpecChange(
-                                      index,
-                                      "dimTipMeas",
-                                      e.target.value
-                                    )
-                                  }
-                                  InputProps={{
-                                    endAdornment: (
-                                      <InputAdornment position="end">
-                                        mm
-                                      </InputAdornment>
-                                    ),
-                                  }}
-                                  size="small"
-                                  variant="standard"
-                                />
-                              </FormControl>
-                              <FormControl>
-                                <TextField
-                                  required
-                                  id="dimWaistMeas"
-                                  label="Waist"
-                                  type="number"
-                                  value={
-                                    spec.dimWaistMeas ? spec.dimWaistMeas : ""
-                                  }
-                                  onChange={(e) =>
-                                    onSpecChange(
-                                      index,
-                                      "dimWaistMeas",
-                                      e.target.value
-                                    )
-                                  }
-                                  InputProps={{
-                                    endAdornment: (
-                                      <InputAdornment position="end">
-                                        mm
-                                      </InputAdornment>
-                                    ),
-                                  }}
-                                  size="small"
-                                  variant="standard"
-                                />
-                              </FormControl>
-                              <FormControl>
-                                <TextField
-                                  required
-                                  id="dimTailMeas"
-                                  label="Tail"
-                                  type="number"
-                                  value={
-                                    spec.dimTailMeas ? spec.dimTailMeas : ""
-                                  }
-                                  onChange={(e) =>
-                                    onSpecChange(
-                                      index,
-                                      "dimTailMeas",
-                                      e.target.value
-                                    )
-                                  }
-                                  InputProps={{
-                                    endAdornment: (
-                                      <InputAdornment position="end">
-                                        mm
-                                      </InputAdornment>
-                                    ),
-                                  }}
-                                  size="small"
-                                  variant="standard"
-                                />
-                              </FormControl>
-                            </Stack>
-                          </Grid>
-                          {/* Camber */}
-                          <Grid item xs={12} sm={6} lg={4}>
-                            <Stack>
-                              <InputLabel>Camber</InputLabel>
-                              <FormControl>
-                                <TextField
-                                  id="camberStated"
-                                  label="Stated"
-                                  value={
-                                    spec.camberStated ? spec.camberStated : ""
-                                  }
-                                  onChange={(e) =>
-                                    onSpecChange(
-                                      index,
-                                      "camberStated",
-                                      e.target.value
-                                    )
-                                  }
-                                  InputProps={{
-                                    endAdornment: (
-                                      <InputAdornment position="end">
-                                        mm
-                                      </InputAdornment>
-                                    ),
-                                  }}
-                                  size="small"
-                                  variant="standard"
-                                />
-                              </FormControl>
-                              <FormControl>
-                                <TextField
-                                  id="camberMeas"
-                                  label="Measured"
-                                  value={spec.camberMeas ? spec.camberMeas : ""}
-                                  onChange={(e) =>
-                                    onSpecChange(
-                                      index,
-                                      "camberMeas",
-                                      e.target.value
-                                    )
-                                  }
-                                  InputProps={{
-                                    endAdornment: (
-                                      <InputAdornment position="end">
-                                        mm
-                                      </InputAdornment>
-                                    ),
-                                  }}
-                                  size="small"
-                                  variant="standard"
-                                />
-                              </FormControl>
-                            </Stack>
-                          </Grid>
-                          {/* Splay */}
-                          <Grid item xs={12} sm={6} lg={4}>
-                            <Stack>
-                              <InputLabel>Splay</InputLabel>
-                              <FormControl>
-                                <TextField
-                                  id="splayTip"
-                                  label="Tip"
-                                  type="number"
-                                  value={spec.splayTip ? spec.splayTip : ""}
-                                  onChange={(e) =>
-                                    onSpecChange(
-                                      index,
-                                      "splayTip",
-                                      e.target.value
-                                    )
-                                  }
-                                  InputProps={{
-                                    endAdornment: (
-                                      <InputAdornment position="end">
-                                        mm
-                                      </InputAdornment>
-                                    ),
-                                  }}
-                                  size="small"
-                                  variant="standard"
-                                />
-                              </FormControl>
-                              <FormControl>
-                                <TextField
-                                  id="splayTail"
-                                  label="Tail"
-                                  type="number"
-                                  value={spec.splayTail ? spec.splayTail : ""}
-                                  onChange={(e) =>
-                                    onSpecChange(
-                                      index,
-                                      "splayTail",
-                                      e.target.value
-                                    )
-                                  }
-                                  InputProps={{
-                                    endAdornment: (
-                                      <InputAdornment position="end">
-                                        mm
-                                      </InputAdornment>
-                                    ),
-                                  }}
-                                  size="small"
-                                  variant="standard"
-                                />
-                              </FormControl>
-                            </Stack>
-                          </Grid>
-                        </Grid>
-                        <Grid
-                          container
-                          justifyContent="flex-start"
-                          spacing={2}
-                          marginTop={2}
-                        >
-                          {/* Flex */}
-                          <Grid item xs={12} sm={6} lg={4}>
-                            <Grid container spacing={1}>
-                              <Grid item xs={12}>
-                                <InputLabel>Flex</InputLabel>
-                              </Grid>
-                              <Grid item xs={12} sm={6}>
-                                <TextField
-                                  id="flexTip"
-                                  label="Tip"
-                                  value={spec.flexTip ? spec.flexTip : ""}
-                                  onChange={(e) =>
-                                    onSpecChange(
-                                      index,
-                                      "flexTip",
-                                      e.target.value
-                                    )
-                                  }
-                                  size="small"
-                                />
-                              </Grid>
-                              <Grid item xs={12} sm={6}>
-                                <TextField
-                                  id="flexShovel"
-                                  label="Shovel"
-                                  value={spec.flexShovel ? spec.flexShovel : ""}
-                                  onChange={(e) =>
-                                    onSpecChange(
-                                      index,
-                                      "flexShovel",
-                                      e.target.value
-                                    )
-                                  }
-                                  size="small"
-                                />
-                              </Grid>
-                              <Grid item xs={12} sm={6}>
-                                <TextField
-                                  id="flexFront"
-                                  label="Front of Binding"
-                                  value={spec.flexFront ? spec.flexFront : ""}
-                                  onChange={(e) =>
-                                    onSpecChange(
-                                      index,
-                                      "flexFront",
-                                      e.target.value
-                                    )
-                                  }
-                                  size="small"
-                                />
-                              </Grid>
-                              <Grid item xs={12} sm={6}>
-                                <TextField
-                                  id="flexFoot"
-                                  label="Underfoot"
-                                  value={spec.flexFoot ? spec.flexFoot : ""}
-                                  onChange={(e) =>
-                                    onSpecChange(
-                                      index,
-                                      "flexFoot",
-                                      e.target.value
-                                    )
-                                  }
-                                  size="small"
-                                />
-                              </Grid>
-                              <Grid item xs={12} sm={6}>
-                                <TextField
-                                  id="flexBack"
-                                  label="Behind Binding"
-                                  value={spec.flexBack ? spec.flexBack : ""}
-                                  onChange={(e) =>
-                                    onSpecChange(
-                                      index,
-                                      "flexBack",
-                                      e.target.value
-                                    )
-                                  }
-                                  size="small"
-                                />
-                              </Grid>
-                              <Grid item xs={12} sm={6}>
-                                <TextField
-                                  id="flexTail"
-                                  label="Tail"
-                                  value={spec.flexTail ? spec.flexTail : ""}
-                                  onChange={(e) =>
-                                    onSpecChange(
-                                      index,
-                                      "flexTail",
-                                      e.target.value
-                                    )
-                                  }
-                                  size="small"
-                                />
-                              </Grid>
+                                        : ""
+                                    }
+                                    onChange={(e) =>
+                                      onSpecChange(index, "weightMeas", [
+                                        e.target.value,
+                                        spec.weightMeas &&
+                                        spec.weightMeas.length > 1
+                                          ? spec.weightMeas[1]
+                                          : "",
+                                      ])
+                                    }
+                                    InputProps={{
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          g
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                    size="small"
+                                    variant="standard"
+                                  />
+                                </FormControl>
+                                <FormControl>
+                                  <TextField
+                                    required
+                                    id="weightMeas2"
+                                    label="Measured 2"
+                                    type="number"
+                                    value={
+                                      spec.weightMeas &&
+                                      spec.weightMeas.length > 1
+                                        ? spec.weightMeas[1]
+                                        : ""
+                                    }
+                                    onChange={(e) =>
+                                      onSpecChange(index, "weightMeas", [
+                                        spec.weightMeas &&
+                                        spec.weightMeas.length > 0
+                                          ? spec.weightMeas[0]
+                                          : "",
+                                        e.target.value,
+                                      ])
+                                    }
+                                    InputProps={{
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          g
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                    size="small"
+                                    variant="standard"
+                                  />
+                                </FormControl>
+                              </Stack>
+                            </Grid>
+                            {/* Stated Dim */}
+                            <Grid item xs={12} sm={6} lg={4}>
+                              <Stack>
+                                <InputLabel>Dimensions</InputLabel>
+                                <FormControl>
+                                  <TextField
+                                    required
+                                    id="dimTip"
+                                    label="Tip"
+                                    type="number"
+                                    value={spec.dimTip ? spec.dimTip : ""}
+                                    onChange={(e) =>
+                                      onSpecChange(
+                                        index,
+                                        "dimTip",
+                                        e.target.value
+                                      )
+                                    }
+                                    InputProps={{
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          mm
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                    size="small"
+                                    variant="standard"
+                                  />
+                                </FormControl>
+                                <FormControl>
+                                  <TextField
+                                    required
+                                    id="dimWaist"
+                                    label="Waist"
+                                    type="number"
+                                    value={spec.dimWaist ? spec.dimWaist : ""}
+                                    onChange={(e) =>
+                                      onSpecChange(
+                                        index,
+                                        "dimWaist",
+                                        e.target.value
+                                      )
+                                    }
+                                    InputProps={{
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          mm
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                    size="small"
+                                    variant="standard"
+                                  />
+                                </FormControl>
+                                <FormControl>
+                                  <TextField
+                                    required
+                                    id="dimTail"
+                                    label="Tail"
+                                    type="number"
+                                    value={spec.dimTail ? spec.dimTail : ""}
+                                    onChange={(e) =>
+                                      onSpecChange(
+                                        index,
+                                        "dimTail",
+                                        e.target.value
+                                      )
+                                    }
+                                    InputProps={{
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          mm
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                    size="small"
+                                    variant="standard"
+                                  />
+                                </FormControl>
+                              </Stack>
+                            </Grid>
+                            {/* Measured Dim */}
+                            <Grid item xs={12} sm={6} lg={4}>
+                              <Stack>
+                                <InputLabel>Dimensions (Measured)</InputLabel>
+                                <FormControl>
+                                  <TextField
+                                    required
+                                    id="dimTipMeas"
+                                    label="Tip"
+                                    type="number"
+                                    value={
+                                      spec.dimTipMeas ? spec.dimTipMeas : ""
+                                    }
+                                    onChange={(e) =>
+                                      onSpecChange(
+                                        index,
+                                        "dimTipMeas",
+                                        e.target.value
+                                      )
+                                    }
+                                    InputProps={{
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          mm
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                    size="small"
+                                    variant="standard"
+                                  />
+                                </FormControl>
+                                <FormControl>
+                                  <TextField
+                                    required
+                                    id="dimWaistMeas"
+                                    label="Waist"
+                                    type="number"
+                                    value={
+                                      spec.dimWaistMeas ? spec.dimWaistMeas : ""
+                                    }
+                                    onChange={(e) =>
+                                      onSpecChange(
+                                        index,
+                                        "dimWaistMeas",
+                                        e.target.value
+                                      )
+                                    }
+                                    InputProps={{
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          mm
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                    size="small"
+                                    variant="standard"
+                                  />
+                                </FormControl>
+                                <FormControl>
+                                  <TextField
+                                    required
+                                    id="dimTailMeas"
+                                    label="Tail"
+                                    type="number"
+                                    value={
+                                      spec.dimTailMeas ? spec.dimTailMeas : ""
+                                    }
+                                    onChange={(e) =>
+                                      onSpecChange(
+                                        index,
+                                        "dimTailMeas",
+                                        e.target.value
+                                      )
+                                    }
+                                    InputProps={{
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          mm
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                    size="small"
+                                    variant="standard"
+                                  />
+                                </FormControl>
+                              </Stack>
+                            </Grid>
+                            {/* Camber */}
+                            <Grid item xs={12} sm={6} lg={4}>
+                              <Stack>
+                                <InputLabel>Camber</InputLabel>
+                                <FormControl>
+                                  <TextField
+                                    id="camberStated"
+                                    label="Stated"
+                                    value={
+                                      spec.camberStated ? spec.camberStated : ""
+                                    }
+                                    onChange={(e) =>
+                                      onSpecChange(
+                                        index,
+                                        "camberStated",
+                                        e.target.value
+                                      )
+                                    }
+                                    InputProps={{
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          mm
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                    size="small"
+                                    variant="standard"
+                                  />
+                                </FormControl>
+                                <FormControl>
+                                  <TextField
+                                    id="camberMeas"
+                                    label="Measured"
+                                    value={
+                                      spec.camberMeas ? spec.camberMeas : ""
+                                    }
+                                    onChange={(e) =>
+                                      onSpecChange(
+                                        index,
+                                        "camberMeas",
+                                        e.target.value
+                                      )
+                                    }
+                                    InputProps={{
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          mm
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                    size="small"
+                                    variant="standard"
+                                  />
+                                </FormControl>
+                              </Stack>
+                            </Grid>
+                            {/* Splay */}
+                            <Grid item xs={12} sm={6} lg={4}>
+                              <Stack>
+                                <InputLabel>Splay</InputLabel>
+                                <FormControl>
+                                  <TextField
+                                    id="splayTip"
+                                    label="Tip"
+                                    type="number"
+                                    value={spec.splayTip ? spec.splayTip : ""}
+                                    onChange={(e) =>
+                                      onSpecChange(
+                                        index,
+                                        "splayTip",
+                                        e.target.value
+                                      )
+                                    }
+                                    InputProps={{
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          mm
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                    size="small"
+                                    variant="standard"
+                                  />
+                                </FormControl>
+                                <FormControl>
+                                  <TextField
+                                    id="splayTail"
+                                    label="Tail"
+                                    type="number"
+                                    value={spec.splayTail ? spec.splayTail : ""}
+                                    onChange={(e) =>
+                                      onSpecChange(
+                                        index,
+                                        "splayTail",
+                                        e.target.value
+                                      )
+                                    }
+                                    InputProps={{
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          mm
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                    size="small"
+                                    variant="standard"
+                                  />
+                                </FormControl>
+                              </Stack>
                             </Grid>
                           </Grid>
-                          {/* Mount Point Factory */}
-                          <Grid item xs={12} sm={6} lg={4}>
-                            <FormControl fullWidth>
-                              <TextField
-                                id="mountPointFac"
-                                label="Factory Mount Points"
-                                multiline
-                                rows={4}
-                                placeholder="List Mount Points"
-                                value={
-                                  spec.mountPointFac
-                                    ? spec.mountPointFac.reduce(
-                                        (text, mp, currentIndex) => {
-                                          if (
-                                            spec.mountPointFac &&
-                                            currentIndex ===
-                                              spec.mountPointFac.length - 1
-                                          ) {
-                                            return text.concat(`${mp}`);
-                                          } else {
-                                            return text.concat(`${mp}\n`);
-                                          }
-                                        },
-                                        ""
+                          <Grid
+                            container
+                            justifyContent="flex-start"
+                            spacing={2}
+                            marginTop={2}
+                          >
+                            {/* Flex */}
+                            <Grid item xs={12} sm={6} lg={4}>
+                              <Grid container spacing={1}>
+                                <Grid item xs={12}>
+                                  <InputLabel>Flex</InputLabel>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                  <TextField
+                                    id="flexTip"
+                                    label="Tip"
+                                    value={spec.flexTip ? spec.flexTip : ""}
+                                    onChange={(e) =>
+                                      onSpecChange(
+                                        index,
+                                        "flexTip",
+                                        e.target.value
                                       )
-                                    : ""
-                                }
-                                onChange={(e) =>
-                                  onSpecChange(
-                                    index,
-                                    "mountPointFac",
-                                    e.target.value
-                                      ? e.target.value.split("\n")
-                                      : []
-                                  )
-                                }
-                                margin="dense"
-                                helperText="Enter each mount point on a new line"
-                              />
-                            </FormControl>
-                          </Grid>
-                          {/* Mount Point Blister */}
-                          <Grid item xs={12} sm={6} lg={4}>
-                            <FormControl fullWidth>
-                              <TextField
-                                id="mountPointFac"
-                                label="Blister Mount Points"
-                                multiline
-                                rows={4}
-                                placeholder="List Mount Points"
-                                value={
-                                  spec.mountPointBlist
-                                    ? spec.mountPointBlist.reduce(
-                                        (text, mp, currentIndex) => {
-                                          if (
-                                            spec.mountPointBlist &&
-                                            currentIndex ===
-                                              spec.mountPointBlist.length - 1
-                                          ) {
-                                            return text.concat(`${mp}`);
-                                          } else {
-                                            return text.concat(`${mp}\n`);
-                                          }
-                                        },
-                                        ""
+                                    }
+                                    size="small"
+                                  />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                  <TextField
+                                    id="flexShovel"
+                                    label="Shovel"
+                                    value={
+                                      spec.flexShovel ? spec.flexShovel : ""
+                                    }
+                                    onChange={(e) =>
+                                      onSpecChange(
+                                        index,
+                                        "flexShovel",
+                                        e.target.value
                                       )
-                                    : ""
-                                }
-                                onChange={(e) =>
-                                  onSpecChange(
-                                    index,
-                                    "mountPointBlist",
-                                    e.target.value
-                                      ? e.target.value.split("\n")
-                                      : []
-                                  )
-                                }
-                                margin="dense"
-                                helperText="Enter each mount point on a new line"
-                              />
-                            </FormControl>
+                                    }
+                                    size="small"
+                                  />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                  <TextField
+                                    id="flexFront"
+                                    label="Front of Binding"
+                                    value={spec.flexFront ? spec.flexFront : ""}
+                                    onChange={(e) =>
+                                      onSpecChange(
+                                        index,
+                                        "flexFront",
+                                        e.target.value
+                                      )
+                                    }
+                                    size="small"
+                                  />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                  <TextField
+                                    id="flexFoot"
+                                    label="Underfoot"
+                                    value={spec.flexFoot ? spec.flexFoot : ""}
+                                    onChange={(e) =>
+                                      onSpecChange(
+                                        index,
+                                        "flexFoot",
+                                        e.target.value
+                                      )
+                                    }
+                                    size="small"
+                                  />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                  <TextField
+                                    id="flexBack"
+                                    label="Behind Binding"
+                                    value={spec.flexBack ? spec.flexBack : ""}
+                                    onChange={(e) =>
+                                      onSpecChange(
+                                        index,
+                                        "flexBack",
+                                        e.target.value
+                                      )
+                                    }
+                                    size="small"
+                                  />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                  <TextField
+                                    id="flexTail"
+                                    label="Tail"
+                                    value={spec.flexTail ? spec.flexTail : ""}
+                                    onChange={(e) =>
+                                      onSpecChange(
+                                        index,
+                                        "flexTail",
+                                        e.target.value
+                                      )
+                                    }
+                                    size="small"
+                                  />
+                                </Grid>
+                              </Grid>
+                            </Grid>
+                            {/* Mount Point Factory */}
+                            <Grid item xs={12} sm={6} lg={4}>
+                              <FormControl fullWidth>
+                                <TextField
+                                  id="mountPointFac"
+                                  label="Factory Mount Points"
+                                  multiline
+                                  rows={4}
+                                  placeholder="List Mount Points"
+                                  value={
+                                    spec.mountPointFac
+                                      ? spec.mountPointFac.reduce(
+                                          (text, mp, currentIndex) => {
+                                            if (
+                                              spec.mountPointFac &&
+                                              currentIndex ===
+                                                spec.mountPointFac.length - 1
+                                            ) {
+                                              return text.concat(`${mp}`);
+                                            } else {
+                                              return text.concat(`${mp}\n`);
+                                            }
+                                          },
+                                          ""
+                                        )
+                                      : ""
+                                  }
+                                  onChange={(e) =>
+                                    onSpecChange(
+                                      index,
+                                      "mountPointFac",
+                                      e.target.value
+                                        ? e.target.value.split("\n")
+                                        : []
+                                    )
+                                  }
+                                  margin="dense"
+                                  helperText="Enter each mount point on a new line"
+                                />
+                              </FormControl>
+                            </Grid>
+                            {/* Mount Point Blister */}
+                            <Grid item xs={12} sm={6} lg={4}>
+                              <FormControl fullWidth>
+                                <TextField
+                                  id="mountPointFac"
+                                  label="Blister Mount Points"
+                                  multiline
+                                  rows={4}
+                                  placeholder="List Mount Points"
+                                  value={
+                                    spec.mountPointBlist
+                                      ? spec.mountPointBlist.reduce(
+                                          (text, mp, currentIndex) => {
+                                            if (
+                                              spec.mountPointBlist &&
+                                              currentIndex ===
+                                                spec.mountPointBlist.length - 1
+                                            ) {
+                                              return text.concat(`${mp}`);
+                                            } else {
+                                              return text.concat(`${mp}\n`);
+                                            }
+                                          },
+                                          ""
+                                        )
+                                      : ""
+                                  }
+                                  onChange={(e) =>
+                                    onSpecChange(
+                                      index,
+                                      "mountPointBlist",
+                                      e.target.value
+                                        ? e.target.value.split("\n")
+                                        : []
+                                    )
+                                  }
+                                  margin="dense"
+                                  helperText="Enter each mount point on a new line"
+                                />
+                              </FormControl>
+                            </Grid>
                           </Grid>
-                        </Grid>
-                      </div>
-                    );
-                  } else {
-                    return <div key={index}></div>;
-                  }
-                })}
-              </Grid>
-              {/* </Container> */}
-              {/* Submission Buttons */}
-              <Grid item xs={12} justifyContent="center">
-                <Grid
-                  container
-                  justifyContent="center"
-                  spacing={2}
-                  marginBottom={2}
-                >
-                  <Grid item>
-                    <Button
-                      onClick={createSki}
-                      color="primary"
-                      sx={{
-                        "&:hover": {
-                          backgroundColor: theme.palette.secondary.main,
-                        },
-                      }}
-                      variant="contained"
-                      disabled={!validInputs}
-                    >
-                      {skiId ? "Update" : "Create"}
-                    </Button>
-                  </Grid>
-                  <Grid item>
-                    <Button
-                      color="error"
-                      variant="contained"
-                      onClick={() =>
-                        router.push(skiId ? `/skis/${skiId}` : "/skis")
-                      }
-                    >
-                      Cancel
-                    </Button>
-                  </Grid>
-                  {!skiId && (
+                        </div>
+                      );
+                    } else {
+                      return <div key={index}></div>;
+                    }
+                  })}
+                </Grid>
+                {/* </Container> */}
+                {/* Submission Buttons */}
+                <Grid item xs={12} justifyContent="center">
+                  <Grid
+                    container
+                    justifyContent="center"
+                    spacing={2}
+                    marginBottom={2}
+                  >
                     <Grid item>
                       <Button
-                        onClick={clear}
-                        color="warning"
+                        onClick={createSki}
+                        color="primary"
+                        sx={{
+                          "&:hover": {
+                            backgroundColor: theme.palette.secondary.main,
+                          },
+                        }}
                         variant="contained"
+                        disabled={!validInputs}
                       >
-                        Reset
+                        {skiId ? "Update" : "Create"}
                       </Button>
                     </Grid>
-                  )}
+                    <Grid item>
+                      <Button
+                        color="error"
+                        variant="contained"
+                        onClick={() =>
+                          router.push(skiId ? `/skis/${skiId}` : "/skis")
+                        }
+                      >
+                        Cancel
+                      </Button>
+                    </Grid>
+                    {!skiId && (
+                      <Grid item>
+                        <Button
+                          onClick={clear}
+                          color="warning"
+                          variant="contained"
+                        >
+                          Reset
+                        </Button>
+                      </Grid>
+                    )}
+                  </Grid>
                 </Grid>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography align="center">
-                  <em>* = required</em>
-                </Typography>
-              </Grid>
-            </>
-          )}
-        </Grid>
-        <CreateManufacturerModal
-          currentManufacturers={dataMan ? dataMan : []}
-          onCreate={mutateMan}
-          open={manModalOpen}
-          createLoading={isLoadingCreateMan}
-          responseContent={manResponse}
-          onClose={onManModalClose}
-        />
-        {/* <CreateFamilyModal
+                <Grid item xs={12}>
+                  <Typography align="center">
+                    <em>* = required</em>
+                  </Typography>
+                </Grid>
+              </>
+            )}
+          </Grid>
+          <CreateManufacturerModal
+            currentManufacturers={dataMan ? dataMan : []}
+            onCreate={mutateMan}
+            open={manModalOpen}
+            createLoading={isLoadingCreateMan}
+            responseContent={manResponse}
+            onClose={onManModalClose}
+          />
+          {/* <CreateFamilyModal
           currentFamilies={dataFam ? dataFam : []}
           onCreate={mutateFam}
           open={famModalOpen}
@@ -1694,7 +1710,8 @@ export default function CreateSki() {
           manufacturers={dataMan ? dataMan : []}
           currentManufacturer={manufacturer}
         /> */}
-      </Container>
+        </Container>
+      </SignedIn>
     </>
   );
 }

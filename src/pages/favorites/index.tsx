@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Navbar } from "~/components/navbar";
 import { SkiTableCompare } from "../../components/SkiTable/SkiTableCompare";
 import { api } from "../../utils/api";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { RestrictedContent } from "~/components/AuthUtils";
 
-export default function Favorites() {
+function FavoritesTable() {
   const data = api.user.getFavorites.useQuery();
   const skis = data?.data;
-  console.log(skis);
+  // console.log(skis);
 
   const [height, setHeight] = useState(window.innerHeight / 1.5);
 
@@ -24,16 +26,27 @@ export default function Favorites() {
   }
 
   return (
+    <div className="transition-all duration-75 ease-linear sm:px-4 xl:ml-16">
+      <h1 className="my-0 w-full text-center">Favorites</h1>
+      <SkiTableCompare
+        skis={skis || []}
+        skisLoading={data.isLoading}
+        height={height}
+      />
+    </div>
+  );
+}
+
+export default function Favorites() {
+  return (
     <>
       <Navbar />
-      <div className="transition-all duration-75 ease-linear sm:px-4 xl:ml-16">
-        <h1 className="my-0 w-full text-center">Favorites</h1>
-        <SkiTableCompare
-          skis={skis || []}
-          skisLoading={data.isLoading}
-          height={height}
-        />
-      </div>
+      <SignedOut>
+        <RestrictedContent header="Sign in to Access Favorites" />
+      </SignedOut>
+      <SignedIn>
+        <FavoritesTable />
+      </SignedIn>
     </>
   );
 }
