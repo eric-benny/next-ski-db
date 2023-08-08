@@ -38,6 +38,7 @@ import { theme } from "../../legacy/Theme";
 import { SkiTableNew } from "../../components/SkiTable";
 import { AddGuideSkisModal } from "../../components/AddGuideSkisModal";
 import { Navbar } from "~/components/navbar";
+import { SignedOut } from "@clerk/nextjs";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
@@ -319,6 +320,7 @@ export default function Guide() {
                           <b>Summary: </b>
                         </Typography>
                       </Grid>
+
                       {isLoadingUpdate ? (
                         <CenterLoader />
                       ) : editing ? (
@@ -362,6 +364,14 @@ export default function Guide() {
                             >
                               <EditIcon />
                             </IconButton>
+                          </Grid>
+                          <Grid item xs={12} style={{ paddingTop: "5px" }}>
+                            <SignedOut>
+                              <span className="text-sm font-light italic">
+                                * Sample data for display purposes, sign in to
+                                view real data
+                              </span>
+                            </SignedOut>
                           </Grid>
                           <Grid item xs={12} sm={10} lg={11}>
                             <Typography

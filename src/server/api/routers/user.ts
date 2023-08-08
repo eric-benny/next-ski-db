@@ -1,9 +1,9 @@
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, privateProcedure } from "../trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
 export const userRouter = createTRPCRouter({
-  getFavorites: publicProcedure.query(async ({ ctx }) => {
+  getFavorites: privateProcedure.query(async ({ ctx }) => {
     if (ctx.userId) {
       const favorites = await ctx.prisma.skiFavorite.findMany({
         where: {
@@ -26,7 +26,7 @@ export const userRouter = createTRPCRouter({
     }
     return [];
   }),
-  addFavorite: publicProcedure
+  addFavorite: privateProcedure
     .input(z.object({ skiId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       if (ctx.userId) {
@@ -44,7 +44,7 @@ export const userRouter = createTRPCRouter({
       }
       return;
     }),
-  deleteFavorite: publicProcedure
+  deleteFavorite: privateProcedure
     .input(z.object({ skiId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       if (ctx.userId) {

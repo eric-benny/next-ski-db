@@ -1,6 +1,5 @@
 import React, { ReactNode } from "react";
 import {
-  Button,
   Card,
   CardActions,
   CardContent,
@@ -29,9 +28,9 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { AccountCircle } from "@mui/icons-material";
-import { CenterLoader } from "../CenterLoader";
 import { useRouter } from "next/router";
-import { SignIn, SignOutButton, useAuth, useUser } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
+import { SignInButton } from "../AuthUtils";
 
 interface Props {
   children?: ReactNode;
@@ -206,7 +205,7 @@ export function Navbar() {
                       <button
                         className="rounded-md border border-red-500 bg-gray-50 px-3 py-1 text-xl shadow-lg hover:cursor-pointer hover:bg-red-50"
                         onClick={() => {
-                          setAccountOpen(false)
+                          setAccountOpen(false);
                           signOut();
                         }}
                       >
@@ -232,7 +231,7 @@ export function Navbar() {
                 </IconButton>
               </div>
             ) : (
-              <></>
+              <SignInButton />
               // <SignIn path="/sign-in" routing="path" signUpUrl="/sign-up" />
               // <button
               //   className="rounded-md border-solid border-red-500 bg-gray-50 px-3 py-1 text-xl hover:cursor-pointer hover:bg-red-50 hover:ring-2 hover:ring-red-200 hover:ring-opacity-50"

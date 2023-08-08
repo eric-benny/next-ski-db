@@ -1,4 +1,4 @@
-import { createTRPCRouter, privateProcedure, publicProcedure } from "../trpc";
+import { adminProcedure, createTRPCRouter, publicProcedure, reviewerProcedure } from "../trpc";
 import { z } from "zod";
 
 const skiSpecSchema = z.object({
@@ -54,6 +54,15 @@ const skiUploadSchema = z.object({
   deepDive: z.string().optional(),
 });
 
+const sampleNote = {
+  id: "abc123",
+  note: "This is a versitile ski",
+  lastUpdated: new Date("2023-04-23T18:25:43.511Z"),
+  skiDays: 5,
+  userId: "user123",
+  skiId: ""
+}
+
 export const skiRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     console.log('getting all skis in trpc endpoint');
@@ -71,9 +80,9 @@ export const skiRouter = createTRPCRouter({
   }),
   getOne: publicProcedure
     .input(z.object({ skiId: z.string().nullish() }))
-    .query(({ ctx, input }) => {
+    .query(async ({ ctx, input }) => {
       if (input.skiId) {
-        return ctx.prisma.ski.findFirst({
+        const ski = await ctx.prisma.ski.findFirst({
           where: {
             id: input.skiId,
           },
@@ -94,6 +103,12 @@ export const skiRouter = createTRPCRouter({
             secondarySkiComps: true,
           },
         });
+        if (!ctx.userId) {
+          sampleNote.skiId = input.skiId
+          if (ski) ski.notes = [sampleNote]
+          return ski
+        }
+        return ski;
       }
       return ctx.prisma.ski.findFirst({
         include: {
@@ -112,7 +127,7 @@ export const skiRouter = createTRPCRouter({
         },
       });
     }),
-  create: privateProcedure
+  create: reviewerProcedure
     .input(skiUploadSchema)
     .mutation(async ({ ctx, input }) => {
       const newSki = await ctx.prisma.ski.create({
@@ -242,7 +257,7 @@ export const skiRouter = createTRPCRouter({
       // }
       return newSki;
     }),
-  update: privateProcedure
+  update: reviewerProcedure
     .input(
       z.object({
         skiId: z.string(),
@@ -377,7 +392,7 @@ export const skiRouter = createTRPCRouter({
       }
       return newSki;
     }),
-  delete: privateProcedure
+  delete: adminProcedure
     .input(
       z.object({
         skiId: z.string(),
