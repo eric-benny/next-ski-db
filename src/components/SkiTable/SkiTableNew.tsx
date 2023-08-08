@@ -23,9 +23,8 @@ import {
   ChevronRightIcon,
 } from "@heroicons/react/20/solid";
 
-import {
-  RankingInfo,
-} from "@tanstack/match-sorter-utils";
+import { RankingInfo } from "@tanstack/match-sorter-utils";
+import { CenterLoader } from "../CenterLoader";
 
 declare module "@tanstack/table-core" {
   interface FilterFns {
@@ -63,7 +62,7 @@ const fuzzyFilter: FilterFn<Ski> = (row, columnId, value: string) => {
 };
 
 type Skis = RouterOutputs["ski"]["getAll"];
-type Ski = Omit<Skis[0], 'notes'>;
+type Ski = Omit<Skis[0], "notes">;
 type SkiLength = Ski["lengths"][0];
 
 interface SkiTableProps {
@@ -71,7 +70,9 @@ interface SkiTableProps {
   skisLoading: boolean;
   height?: string | number;
   selectedSkis?: Array<Ski & { index: string }>;
-  setSelectedSkis?: React.Dispatch<React.SetStateAction<Array<Ski & { index: string }>>>;
+  setSelectedSkis?: React.Dispatch<
+    React.SetStateAction<Array<Ski & { index: string }>>
+  >;
   selectionLimit?: number;
 }
 
@@ -373,21 +374,33 @@ export const SkiTableNew = ({
                   ))}
                 </thead>
                 <tbody>
-                  {table.getRowModel().rows.map((row) => (
-                    <tr key={row.original.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <td
-                          key={cell.id}
-                          className="border-0 border-y border-solid border-gray-400 border-opacity-30 p-2 text-sm"
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </td>
-                      ))}
+                  {skisLoading ? (
+                    <tr>
+                      <td>
+                        <div className="m-10">
+                          <CenterLoader />
+                        </div>
+                      </td>
                     </tr>
-                  ))}
+                  ) : (
+                    <>
+                      {table.getRowModel().rows.map((row) => (
+                        <tr key={row.original.id}>
+                          {row.getVisibleCells().map((cell) => (
+                            <td
+                              key={cell.id}
+                              className="border-0 border-y border-solid border-gray-400 border-opacity-30 p-2 text-sm"
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </>
+                  )}
                 </tbody>
               </table>
             </div>
