@@ -211,7 +211,7 @@ export const SkiTableNew = ({
         cell: (props) => (
           <Link
             href={`/skis/${props.row.original.id}`}
-            className="text-red-500 no-underline hover:text-red-800  hover:underline"
+            className="text-primary no-underline hover:text-red-800  hover:underline"
           >
             {props.getValue()}
           </Link>
@@ -317,10 +317,10 @@ export const SkiTableNew = ({
           }}
           className="m-2 flex w-full overflow-x-scroll"
         >
-          <div className="flex w-full flex-col flex-wrap rounded-md border-solid border-gray-400 border-opacity-40">
-            <div className="h-5/6 w-full flex-auto overflow-scroll rounded-md">
+          <div className="flex w-full flex-col flex-wrap rounded-md border-2 border-solid border-border border-opacity-40">
+            <div className="h-5/6 w-full flex-auto overflow-scroll rounded-sm">
               <table className="w-full border-collapse">
-                <thead className="rounded-md border-0 border-b border-solid border-gray-400">
+                <thead className="">
                   {table.getHeaderGroups().map((headerGroup) => (
                     <tr key={headerGroup.id} className="sticky top-0">
                       {headerGroup.headers.map((header) => (
