@@ -1,5 +1,4 @@
 import {
-  Button,
   Container,
   Divider,
   Grid,
@@ -28,7 +27,6 @@ import { theme } from "../../legacy/Theme";
 // import { CreateSkiCompModal } from './CreateSkiCompModal';
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -39,7 +37,11 @@ import { api, RouterOutputs } from "../../utils/api";
 import { CenterLoader } from "../../components/CenterLoader";
 import { SkiSpecCard } from "../../components/SkiSpecCard";
 import Link from "next/link";
-import { EllipsisHorizontalIcon, StarIcon } from "@heroicons/react/20/solid";
+import {
+  EllipsisHorizontalIcon,
+  PlusIcon,
+  StarIcon,
+} from "@heroicons/react/20/solid";
 import { StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
 import { NoteComponent } from "../../components/NoteComponent";
 import { Guide } from "../../components/Guide";
@@ -48,6 +50,7 @@ import { SignedOut, useUser } from "@clerk/nextjs";
 import { Navbar } from "~/components/navbar";
 import { ReviewerContent } from "~/components/AuthUtils/ReviewerContent";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "~/components/ui/button";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
@@ -391,10 +394,9 @@ export default function SkiDetail() {
             <AlertTitle>Confirm Delete</AlertTitle>
             Are you sure you wish to delete this ski?
             <Button
-              color="error"
-              variant="contained"
-              size="small"
-              sx={{ marginLeft: 2 }}
+              variant="destructive"
+              size="sm"
+              className="ml-2"
               onClick={deleteSkiConfirm}
             >
               CONFIRM
@@ -584,7 +586,7 @@ export default function SkiDetail() {
                 className="w-full"
               >
                 <div className="flex justify-center">
-                  <span className="text-lg font-medium p-1 pr-2">Specs:</span>
+                  <span className="p-1 pr-2 text-lg font-medium">Specs:</span>
                   <TabsList>
                     {ski?.specs
                       .sort((a, b) => b.length - a.length)
@@ -725,18 +727,11 @@ export default function SkiDetail() {
                   <ReviewerContent>
                     <Button
                       onClick={newNote}
-                      color="primary"
-                      sx={{
-                        "&:hover": {
-                          backgroundColor: theme.palette.secondary.main,
-                        },
-                      }}
                       disabled={
                         !!ski.notes.find((note) => note.userId === user?.id)
                       }
-                      variant="contained"
-                      startIcon={<AddIcon />}
                     >
+                      <PlusIcon className="mr-2 h-5 w-5 align-middle" />
                       New
                     </Button>
                   </ReviewerContent>
@@ -784,15 +779,8 @@ export default function SkiDetail() {
                 {/* <Grid item>
                   <Button
                     onClick={() => setCompModalOpen(true)}
-                    color="primary"
-                    sx={{
-                      "&:hover": {
-                        backgroundColor: theme.palette.secondary.main,
-                      },
-                    }}
-                    variant="contained"
-                    startIcon={<AddIcon />}
                   >
+                    <PlusIcon className="mr-2 h-5 w-5 align-middle" />
                     New
                   </Button>
                 </Grid> */}

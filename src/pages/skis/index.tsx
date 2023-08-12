@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Grid } from "@mui/material";
 // import { Link as RouterLink } from 'react-router-dom';
-import AddIcon from "@mui/icons-material/Add";
 import { theme } from "../../legacy/Theme";
 import { SkiTableCompare } from "../../components/SkiTable/SkiTableCompare";
 import { api, RouterOutputs } from "../../utils/api";
@@ -9,6 +8,7 @@ import { useRouter } from "next/router";
 import { Navbar } from "~/components/navbar";
 import { ReviewerContent } from "~/components/AuthUtils/ReviewerContent";
 import { Button } from "@/components/ui/button";
+import { PlusIcon } from "@heroicons/react/20/solid";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 
@@ -46,7 +46,7 @@ export default function Skis() {
             <div className="flex w-full">
               <div className="ml-auto p-2">
                 <Button onClick={() => router.push("/skis/create")}>
-                  <AddIcon className="mr-2 h-4 w-4" /> SKI
+                  <PlusIcon className="mr-2 h-5 w-5 align-middle" /> SKI
                 </Button>
               </div>
             </div>
