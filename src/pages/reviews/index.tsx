@@ -9,7 +9,7 @@ import {
   Gender,
   Ability,
   ABILITY,
-} from "./data";
+} from "../../lib/data";
 import {
   Bar,
   BarChart,
@@ -407,7 +407,7 @@ const Reviews: NextPage = () => {
           width={"65%"}
           height={40 * data.length}
           debounce={50}
-          
+
         >
           <BarChart data={data.slice(0, 5)} layout="vertical">
             <XAxis
