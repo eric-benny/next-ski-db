@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Button,
   Container,
   FormControl,
   Grid,
@@ -21,7 +20,6 @@ import {
   Dialog,
   Autocomplete,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import { theme } from "../../../legacy/Theme";
 import { useRouter } from "next/router";
 import { CenterLoader } from "../../../components/CenterLoader";
@@ -32,6 +30,8 @@ import { SkiLegacy, SkiSpec } from "../../../legacy/Services/Skis";
 import { Navbar } from "~/components/navbar";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { RestrictedContent } from "~/components/AuthUtils";
+import { PlusIcon } from "@heroicons/react/24/solid";
+import { Button } from "~/components/ui/button";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
@@ -548,7 +548,7 @@ export default function CreateSki() {
     <>
       <Navbar />
       <SignedOut>
-        <RestrictedContent header="Sign in to create skis"/>
+        <RestrictedContent header="Sign in to create skis" />
       </SignedOut>
       <SignedIn>
         <Container>
@@ -563,10 +563,7 @@ export default function CreateSki() {
               <AlertTitle>Success</AlertTitle>
               View New Ski
               {alertContent && alertContent.id && (
-                <Button
-                  onClick={() => router.push(`/skis/${alertContent.id}`)}
-                  color="primary"
-                >
+                <Button onClick={() => router.push(`/skis/${alertContent.id}`)}>
                   Go!
                 </Button>
               )}
@@ -639,17 +636,8 @@ export default function CreateSki() {
                       </FormControl>
                     </Grid>
                     <Grid item xs={4} alignSelf="center">
-                      <Button
-                        onClick={() => setManModalOpen(true)}
-                        color="primary"
-                        sx={{
-                          "&:hover": {
-                            backgroundColor: theme.palette.secondary.main,
-                          },
-                        }}
-                        variant="contained"
-                        startIcon={<AddIcon />}
-                      >
+                      <Button onClick={() => setManModalOpen(true)}>
+                        <PlusIcon className="mr-2 h-5 w-5 align-middle" />
                         New
                       </Button>
                     </Grid>
@@ -700,17 +688,8 @@ export default function CreateSki() {
                       </FormControl>
                     </Grid>
                     <Grid item xs={4} alignSelf="center">
-                      <Button
-                        onClick={() => setFamModalOpen(true)}
-                        color="primary"
-                        sx={{
-                          "&:hover": {
-                            backgroundColor: theme.palette.secondary.main,
-                          },
-                        }}
-                        variant="contained"
-                        startIcon={<AddIcon />}
-                      >
+                      <Button onClick={() => setFamModalOpen(true)}>
+                        <PlusIcon className="mr-2 h-5 w-5 align-middle" />
                         New
                       </Button>
                     </Grid>
@@ -832,7 +811,7 @@ export default function CreateSki() {
                               onClick={addAvailableLength}
                               disabled={lengthInvalid(availableLengthInput)}
                             >
-                              <AddIcon />
+                              <PlusIcon className="allign-middle h-5 w-5" />
                             </IconButton>
                           </span>
                         </Tooltip>
@@ -1648,13 +1627,6 @@ export default function CreateSki() {
                     <Grid item>
                       <Button
                         onClick={createSki}
-                        color="primary"
-                        sx={{
-                          "&:hover": {
-                            backgroundColor: theme.palette.secondary.main,
-                          },
-                        }}
-                        variant="contained"
                         disabled={!validInputs}
                       >
                         {skiId ? "Update" : "Create"}
@@ -1662,22 +1634,17 @@ export default function CreateSki() {
                     </Grid>
                     <Grid item>
                       <Button
-                        color="error"
-                        variant="contained"
                         onClick={() =>
                           router.push(skiId ? `/skis/${skiId}` : "/skis")
                         }
+                        variant="destructive"
                       >
                         Cancel
                       </Button>
                     </Grid>
                     {!skiId && (
                       <Grid item>
-                        <Button
-                          onClick={clear}
-                          color="warning"
-                          variant="contained"
-                        >
+                        <Button onClick={clear} variant="destructive" className="bg-orange-500 hover:bg-orange-300">
                           Reset
                         </Button>
                       </Grid>

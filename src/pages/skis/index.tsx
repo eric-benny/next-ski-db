@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Button, Container, FormControl, Grid, TextField } from "@mui/material";
+import { Container, Grid } from "@mui/material";
 // import { Link as RouterLink } from 'react-router-dom';
-import AddIcon from "@mui/icons-material/Add";
 import { theme } from "../../legacy/Theme";
 import { SkiTableCompare } from "../../components/SkiTable/SkiTableCompare";
 import { api, RouterOutputs } from "../../utils/api";
 import { useRouter } from "next/router";
 import { Navbar } from "~/components/navbar";
-import { SignedIn } from "@clerk/nextjs";
 import { ReviewerContent } from "~/components/AuthUtils/ReviewerContent";
+import { Button } from "@/components/ui/button";
+import { PlusIcon } from "@heroicons/react/20/solid";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 
@@ -45,19 +45,8 @@ export default function Skis() {
           <ReviewerContent>
             <div className="flex w-full">
               <div className="ml-auto p-2">
-                <Button
-                  onClick={() => router.push("/skis/create")}
-                  color="primary"
-                  sx={{
-                    "&:hover": {
-                      backgroundColor: theme.palette.secondary.main,
-                      color: "white",
-                    },
-                  }}
-                  variant="contained"
-                  startIcon={<AddIcon />}
-                >
-                  Ski
+                <Button onClick={() => router.push("/skis/create")}>
+                  <PlusIcon className="mr-2 h-5 w-5 align-middle" /> SKI
                 </Button>
               </div>
             </div>

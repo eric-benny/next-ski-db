@@ -10,7 +10,6 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme, Theme, CSSObject, styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -18,19 +17,23 @@ import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import StorageIcon from "@mui/icons-material/Storage";
-import StarIcon from "@mui/icons-material/Star";
-import MenuBookIcon from "@mui/icons-material/MenuBook";
 import MuiListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { AccountCircle } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { SignInButton } from "../AuthUtils";
+import {
+  SparklesIcon,
+  BookOpenIcon,
+  CircleStackIcon,
+  StarIcon,
+  Bars3Icon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  UserCircleIcon
+} from "@heroicons/react/24/solid";
 
 interface Props {
   children?: ReactNode;
@@ -167,7 +170,7 @@ export function Navbar() {
                 ...(open && { display: "none" }),
               }}
             >
-              <MenuIcon />
+              <Bars3Icon className="h-6, w-6 align-middle" />
             </IconButton>
             <Typography
               variant="h5"
@@ -227,7 +230,7 @@ export function Navbar() {
                   onClick={(e) => handlePopper(e)}
                   color="inherit"
                 >
-                  <AccountCircle />
+                  <UserCircleIcon className="h-9 w-9 align-middle" />
                 </IconButton>
               </div>
             ) : (
@@ -246,18 +249,35 @@ export function Navbar() {
           <DrawerHeader>
             <IconButton onClick={handleDrawerClose}>
               {theme.direction === "rtl" ? (
-                <ChevronRightIcon />
+                <ChevronRightIcon className="h-5 w-5 align-middle" />
               ) : (
-                <ChevronLeftIcon />
+                <ChevronLeftIcon className="h-5 w-5 align-middle" />
               )}
             </IconButton>
           </DrawerHeader>
           <Divider />
           <List>
             {[
-              { name: "SkiDB", link: "/skis", icon: <StorageIcon /> },
-              { name: "Favorites", link: "/favorites", icon: <StarIcon /> },
-              { name: "Buyer's Guide", link: "/guide", icon: <MenuBookIcon /> },
+              {
+                name: "SkiDB",
+                link: "/skis",
+                icon: <CircleStackIcon className="h-6 w-6 align-middle" />,
+              },
+              {
+                name: "Favorites",
+                link: "/favorites",
+                icon: <StarIcon className="h-6 w-6 align-middle" />,
+              },
+              {
+                name: "Buyer's Guide",
+                link: "/guide",
+                icon: <BookOpenIcon className="h-6 w-6 align-middle" />,
+              },
+              {
+                name: "Reviews",
+                link: "/reviews",
+                icon: <SparklesIcon className="h-6 w-6 align-middle" />,
+              },
             ].map((navItem, index) => (
               <ListItem key={navItem.link}>
                 <ListItemButton

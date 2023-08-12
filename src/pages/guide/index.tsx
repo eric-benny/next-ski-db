@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Button from "@mui/material/Button";
 import { Container } from "@mui/system";
 import {
   Accordion,
@@ -39,6 +38,7 @@ import { SkiTableNew } from "../../components/SkiTable";
 import { AddGuideSkisModal } from "../../components/AddGuideSkisModal";
 import { Navbar } from "~/components/navbar";
 import { SignedOut } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
@@ -501,21 +501,12 @@ export default function Guide() {
                     <Grid item>
                       <div className="flex">
                         <Button
-                          color="primary"
-                          sx={{
-                            "&:hover": {
-                              backgroundColor: theme.palette.secondary.main,
-                              color: "white",
-                            },
-                          }}
-                          variant="contained"
-                          startIcon={<AddIcon />}
                           onClick={() => {
                             setAddModalOpen(true);
                           }}
                           disabled={skisToAdd.length < 1}
                         >
-                          Add Selected Skis
+                          <AddIcon className="mr-2"/> Add Selected Skis
                         </Button>
                         <div className="flex p-2">
                           <span className="text-lg">

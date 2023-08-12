@@ -47,8 +47,6 @@ export const createTRPCContext = (_opts: CreateNextContextOptions) => {
   const { req } = _opts;
   const sesh = getAuth(req);
 
-  console.log(sesh);
-
   const isAdmin = sesh.sessionClaims?.admin ?? false;
   const userId = sesh.userId;
 

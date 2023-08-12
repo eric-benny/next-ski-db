@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Button, Chip, Grid } from "@mui/material";
+import { Chip, Grid } from "@mui/material";
 // import { Link as RouterLink } from 'react-router-dom';
 import { theme } from "../../legacy/Theme";
 import { SkiTableNew } from ".";
 import { ComparisonModal } from "../ComparisonModal";
 import { RouterOutputs } from "../../utils/api";
+import { Button } from "@/components/ui/button";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
@@ -22,7 +23,9 @@ export const SkiTableCompare = ({
 }: SkiTableProps) => {
   // const { isLoading, isError, data, error } = useSkisFull()
 
-  const [compareSkis, setCompareSkis] = useState<Array<Ski & {index: string}>>([]);
+  const [compareSkis, setCompareSkis] = useState<
+    Array<Ski & { index: string }>
+  >([]);
 
   function removeCompareSki(idToRemove: string) {
     const newCompareSkis = compareSkis.filter(
@@ -83,14 +86,7 @@ export const SkiTableCompare = ({
           <Grid container spacing={2}>
             <Grid item xs={4} className="pl-6">
               <Button
-                color="primary"
-                sx={{
-                  "&:hover": {
-                    backgroundColor: theme.palette.secondary.main,
-                  },
-                }}
                 onClick={() => setCompModalOpen(true)}
-                variant="contained"
                 disabled={compareSkis.length > 0 ? false : true}
               >
                 Compare

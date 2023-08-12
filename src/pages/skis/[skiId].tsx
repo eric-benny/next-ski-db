@@ -1,5 +1,4 @@
 import {
-  Button,
   Container,
   Divider,
   Grid,
@@ -28,16 +27,9 @@ import { theme } from "../../legacy/Theme";
 // import { CreateSkiCompModal } from './CreateSkiCompModal';
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import RemoveIcon from "@mui/icons-material/Remove";
-import {
-  Carousel,
-  CarouselItem,
-  CarouselControl,
-  CarouselIndicators,
-} from "reactstrap";
 import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
 import InfoIcon from "@mui/icons-material/Info";
 import { useRouter } from "next/router";
@@ -45,22 +37,25 @@ import { api, RouterOutputs } from "../../utils/api";
 import { CenterLoader } from "../../components/CenterLoader";
 import { SkiSpecCard } from "../../components/SkiSpecCard";
 import Link from "next/link";
-import { EllipsisHorizontalIcon, StarIcon } from "@heroicons/react/20/solid";
+import {
+  EllipsisHorizontalIcon,
+  PlusIcon,
+  StarIcon,
+} from "@heroicons/react/20/solid";
 import { StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { NoteComponent } from "../../components/NoteComponent";
 import { Guide } from "../../components/Guide";
 import { ComparisonTable } from "../../components/ComparisonTable";
 import { SignedOut, useUser } from "@clerk/nextjs";
 import { Navbar } from "~/components/navbar";
 import { ReviewerContent } from "~/components/AuthUtils/ReviewerContent";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "~/components/ui/button";
 
 type Skis = RouterOutputs["ski"]["getAll"];
 type Ski = Skis[0];
 type SkiLength = Ski["lengths"][0];
 type Note = NonNullable<RouterOutputs["ski"]["getOne"]>["notes"][0];
-
-const StyledControl = styled(CarouselControl)({});
 
 export default function SkiDetail() {
   const { user } = useUser();
@@ -399,10 +394,9 @@ export default function SkiDetail() {
             <AlertTitle>Confirm Delete</AlertTitle>
             Are you sure you wish to delete this ski?
             <Button
-              color="error"
-              variant="contained"
-              size="small"
-              sx={{ marginLeft: 2 }}
+              variant="destructive"
+              size="sm"
+              className="ml-2"
               onClick={deleteSkiConfirm}
             >
               CONFIRM
@@ -587,58 +581,40 @@ export default function SkiDetail() {
             </Grid>
 
             <Grid item xs={12} md={8}>
-              <Carousel
-                activeIndex={activeIndex}
-                next={next}
-                previous={previous}
-                dark
-                interval={0}
+              <Tabs
+                defaultValue={ski?.specs[0]?.length.toString()}
+                className="w-full"
               >
-                <CarouselIndicators
-                  items={ski.specs ? ski.specs : []}
-                  activeIndex={activeIndex}
-                  onClickHandler={goToIndex}
-                />
+                <div className="flex justify-center">
+                  <span className="p-1 pr-2 text-lg font-medium">Specs:</span>
+                  <TabsList>
+                    {ski?.specs
+                      .sort((a, b) => b.length - a.length)
+                      .map((spec, i) => {
+                        return (
+                          <TabsTrigger
+                            key={spec.length}
+                            value={spec.length.toString()}
+                          >
+                            {spec.length}
+                          </TabsTrigger>
+                        );
+                      })}
+                  </TabsList>
+                </div>
                 {ski?.specs
                   .sort((a, b) => b.length - a.length)
                   .map((spec, i) => {
                     return (
-                      <CarouselItem
-                        onExiting={() => setAnimating(true)}
-                        onExited={() => setAnimating(false)}
-                        key={i}
+                      <TabsContent
+                        key={spec.length}
+                        value={spec.length.toString()}
                       >
                         <SkiSpecCard textVariant="body1" key={i} spec={spec} />
-                      </CarouselItem>
+                      </TabsContent>
                     );
                   })}
-                {ski.specs.length > 1 && (
-                  <>
-                    <StyledControl
-                      sx={{
-                        display: {
-                          xs: "none",
-                          sm: ski.specs.length > 1 ? "flex" : "none",
-                        },
-                      }}
-                      direction="prev"
-                      directionText="Previous"
-                      onClickHandler={previous}
-                    />
-                    <StyledControl
-                      sx={{
-                        display: {
-                          xs: "none",
-                          sm: ski.specs.length > 1 ? "flex" : "none",
-                        },
-                      }}
-                      direction="next"
-                      directionText="Next"
-                      onClickHandler={next}
-                    />
-                  </>
-                )}
-              </Carousel>
+              </Tabs>
             </Grid>
             <Grid item xs={12} md={3}>
               <Stack spacing={2} direction={{ xs: "row", md: "column" }}>
@@ -751,18 +727,11 @@ export default function SkiDetail() {
                   <ReviewerContent>
                     <Button
                       onClick={newNote}
-                      color="primary"
-                      sx={{
-                        "&:hover": {
-                          backgroundColor: theme.palette.secondary.main,
-                        },
-                      }}
                       disabled={
                         !!ski.notes.find((note) => note.userId === user?.id)
                       }
-                      variant="contained"
-                      startIcon={<AddIcon />}
                     >
+                      <PlusIcon className="mr-2 h-5 w-5 align-middle" />
                       New
                     </Button>
                   </ReviewerContent>
@@ -810,15 +779,8 @@ export default function SkiDetail() {
                 {/* <Grid item>
                   <Button
                     onClick={() => setCompModalOpen(true)}
-                    color="primary"
-                    sx={{
-                      "&:hover": {
-                        backgroundColor: theme.palette.secondary.main,
-                      },
-                    }}
-                    variant="contained"
-                    startIcon={<AddIcon />}
                   >
+                    <PlusIcon className="mr-2 h-5 w-5 align-middle" />
                     New
                   </Button>
                 </Grid> */}
