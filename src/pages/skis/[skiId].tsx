@@ -46,7 +46,7 @@ import { StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
 import { NoteComponent } from "../../components/NoteComponent";
 import { Guide } from "../../components/Guide";
 import { ComparisonTable } from "../../components/ComparisonTable";
-import { SignedOut, useUser } from "@clerk/nextjs";
+import { SignedOut, useUser, SignedIn } from "@clerk/nextjs";
 import { Navbar } from "~/components/navbar";
 import { ReviewerContent } from "~/components/AuthUtils/ReviewerContent";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -87,7 +87,7 @@ export default function SkiDetail() {
     data: data,
     isLoading: isLoadingFav,
     isRefetching,
-  } = api.user.getFavorites.useQuery();
+  } = api.user.getFavorites.useQuery(undefined, { enabled: !!user?.id });
   const favorites = data;
 
   const { mutate: addFav, isLoading: isLoadingAddFav } =
@@ -420,30 +420,32 @@ export default function SkiDetail() {
           >
             <Grid container item justifyContent="center" xs={12}>
               <Stack direction="row" alignItems="center">
-                {isLoadingAddFav ||
-                isLoadingDelFav ||
-                isLoadingFav ||
-                isRefetching ? (
-                  <EllipsisHorizontalIcon className="m-2 h-7 w-7 animate-pulse text-gray-500 " />
-                ) : !favorites?.find((f) => f.id === ski.id) ? (
-                  <StarIconOutline
-                    onClick={() => {
-                      addFav({
-                        skiId: ski.id ? ski.id : "",
-                      });
-                    }}
-                    className="m-2 h-7 w-7 text-gray-500 hover:cursor-pointer"
-                  />
-                ) : (
-                  <StarIcon
-                    onClick={() => {
-                      deleteFav({
-                        skiId: ski.id ? ski.id : "",
-                      });
-                    }}
-                    className="m-2 h-7 w-7 text-yellow-500 hover:cursor-pointer"
-                  />
-                )}
+                <SignedIn>
+                  {isLoadingAddFav ||
+                  isLoadingDelFav ||
+                  isLoadingFav ||
+                  isRefetching ? (
+                    <EllipsisHorizontalIcon className="m-2 h-7 w-7 animate-pulse text-gray-500 " />
+                  ) : !favorites?.find((f) => f.id === ski.id) ? (
+                    <StarIconOutline
+                      onClick={() => {
+                        addFav({
+                          skiId: ski.id ? ski.id : "",
+                        });
+                      }}
+                      className="m-2 h-7 w-7 text-gray-500 hover:cursor-pointer"
+                    />
+                  ) : (
+                    <StarIcon
+                      onClick={() => {
+                        deleteFav({
+                          skiId: ski.id ? ski.id : "",
+                        });
+                      }}
+                      className="m-2 h-7 w-7 text-yellow-500 hover:cursor-pointer"
+                    />
+                  )}
+                </SignedIn>
                 <Typography variant="h2" textAlign="center">
                   {ski ? formatSkiName(ski) : "Model Name Not Found"}
                 </Typography>
