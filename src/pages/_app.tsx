@@ -4,6 +4,7 @@ import { type AppType } from "next/app";
 import { api } from "../utils/api";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "../utils/theme";
+import { Analytics } from "@vercel/analytics/react";
 
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
@@ -11,16 +12,8 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
 import "../styles/globals.css";
-import { Navbar } from "../components/navbar";
 import { useRouter } from "next/router";
-import {
-  ClerkProvider,
-  RedirectToSignIn,
-  SignIn,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-} from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const publicPages: Array<string> = [
   "/sign-in/[[...index]]",
@@ -34,14 +27,15 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   const isPublicPage = publicPages.includes(pathname);
 
   return (
-    <ClerkProvider {...pageProps}>
-      <ThemeProvider theme={theme}>
-        {isPublicPage ? (
-          <Component {...pageProps} />
-        ) : (
-          <>
-          <Component {...pageProps} />
-            {/* <SignedIn>
+    <>
+      <ClerkProvider {...pageProps}>
+        <ThemeProvider theme={theme}>
+          {isPublicPage ? (
+            <Component {...pageProps} />
+          ) : (
+            <>
+              <Component {...pageProps} />
+              {/* <SignedIn>
               <Component {...pageProps} />
             </SignedIn>
             <SignedOut>
@@ -60,10 +54,12 @@ const MyApp: AppType = ({ Component, pageProps }) => {
               </div>
               <RedirectToSignIn />
             </SignedOut> */}
-          </>
-        )}
-      </ThemeProvider>
-    </ClerkProvider>
+            </>
+          )}
+        </ThemeProvider>
+      </ClerkProvider>
+      <Analytics />
+    </>
   );
 };
 
