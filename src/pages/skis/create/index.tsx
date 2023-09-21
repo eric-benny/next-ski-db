@@ -219,6 +219,110 @@ export default function CreateSki() {
     }
   };
 
+  // Helper to copy ski values from text
+  const [rawText, setRawText] = useState<string>("");
+  const parseText = async () => {
+    if (rawText) {
+      const ski = await fetch("/api/parse", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify({ text: rawText }), // body data type must match "Content-Type" header
+      }).then(function (response) {
+        // The API call was successful!
+        return response.json();
+      });
+
+      try {
+        setFromText(ski);
+      } catch {
+        alert('Unable to parse text')
+      }
+    }
+  };
+
+  const setFromText = (data: any) => {
+    setModel(data.model);
+    const man = data.manufacturer
+      ? dataMan?.find((m) => m.name === data.manufacturer)?.id
+      : "";
+    setManufacturer(man ? man : "");
+    setYearCurrent(data.yearCurrent);
+    setYearReleased(data.yearReleased);
+    setAvailableLengths(data.lengths || []);
+    const editSpecs = data.specs.map((spec: any) => ({
+      active: true,
+      length: spec.length,
+      measuredLength: spec.measuredLength?.toString(),
+      weightStated: spec.weightStated?.toString(),
+      weightMeas:
+        spec.weightMeas?.length === 2
+          ? [spec.weightMeas[0], spec.weightMeas[1]]
+          : ["", ""],
+      dimTip: spec.dimTip?.toString(),
+      dimWaist: spec.dimWaist?.toString(),
+      dimTail: spec.dimTail?.toString(),
+      dimTipMeas: spec.dimTipMeas?.toString(),
+      dimWaistMeas: spec.dimWaistMeas?.toString(),
+      dimTailMeas: spec.dimTailMeas?.toString(),
+      sidcutStated: spec.sidcutStated?.toString(),
+      splayTip: spec.splayTip?.toString(),
+      splayTail: spec.splayTail?.toString(),
+      camberStated: spec.camberStated?.toString(),
+      camberMeas: spec.camberMeas?.toString(),
+      core: spec.core || undefined,
+      base: spec.base || undefined,
+      mountPointFac: spec.mountPointFac || [],
+      mountPointBlist: spec.mountPointBlist || [],
+      flexTip: spec.flexTip || undefined,
+      flexShovel: spec.flexShovel || undefined,
+      flexFront: spec.flexFront || undefined,
+      flexFoot: spec.flexFoot || undefined,
+      flexBack: spec.flexBack || undefined,
+      flexTail: spec.flexTail || undefined,
+    }));
+
+    setSpecs([
+      ...editSpecs,
+      ...data.lengths
+        ?.filter(
+          (l: number) => !data.specs.find((spec: any) => spec.length === l)
+        )
+        .map((l: number) => {
+          return {
+            active: false,
+            length: l,
+            measuredLength: undefined,
+            weightStated: undefined,
+            weightMeas: ["", ""],
+            dimTip: undefined,
+            dimWaist: undefined,
+            dimTail: undefined,
+            dimTipMeas: undefined,
+            dimWaistMeas: undefined,
+            dimTailMeas: undefined,
+            sidcutStated: undefined,
+            splayTip: undefined,
+            splayTail: undefined,
+            camberStated: undefined,
+            camberMeas: undefined,
+            core: undefined,
+            base: undefined,
+            mountPointFac: [],
+            mountPointBlist: [],
+            flexTip: undefined,
+            flexShovel: undefined,
+            flexFront: undefined,
+            flexFoot: undefined,
+            flexBack: undefined,
+            flexTail: undefined,
+          };
+        }),
+    ]);
+  };
+
   // Top level parameters
   const [model, setModel] = useState<string>("");
   const [manufacturer, setManufacturer] = useState<string>("");
@@ -383,6 +487,7 @@ export default function CreateSki() {
   const clear = () => {
     setModel("");
     setManufacturer("");
+    setParent(null)
     setSkiFamily(undefined);
     setYearCurrent(undefined);
     setYearReleased(undefined);
@@ -588,6 +693,18 @@ export default function CreateSki() {
                   <Typography variant="h4" align="left">
                     Ski Info:
                   </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <TextField
+                    fullWidth
+                    multiline
+                    label="Starter Text"
+                    value={rawText}
+                    onChange={(e) => setRawText(e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={4} alignSelf="center">
+                  <Button onClick={parseText}>Submit</Button>
                 </Grid>
                 {/* Model */}
                 <Grid item xs={12} sm={6} lg={3}>
@@ -1625,10 +1742,7 @@ export default function CreateSki() {
                     marginBottom={2}
                   >
                     <Grid item>
-                      <Button
-                        onClick={createSki}
-                        disabled={!validInputs}
-                      >
+                      <Button onClick={createSki} disabled={!validInputs}>
                         {skiId ? "Update" : "Create"}
                       </Button>
                     </Grid>
@@ -1644,7 +1758,11 @@ export default function CreateSki() {
                     </Grid>
                     {!skiId && (
                       <Grid item>
-                        <Button onClick={clear} variant="destructive" className="bg-orange-500 hover:bg-orange-300">
+                        <Button
+                          onClick={clear}
+                          variant="destructive"
+                          className="bg-orange-500 hover:bg-orange-300"
+                        >
                           Reset
                         </Button>
                       </Grid>
