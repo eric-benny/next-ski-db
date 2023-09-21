@@ -498,6 +498,7 @@ export default function CreateSki() {
     setAvailableLengthInput("");
     setAvailableLengths([]);
     setSpecs([]);
+    setRawText("")
   };
 
   useEffect(() => {
